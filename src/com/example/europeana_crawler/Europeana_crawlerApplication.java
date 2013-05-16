@@ -1,20 +1,30 @@
 package com.example.europeana_crawler;
 
+import views.MainView;
+
 import com.vaadin.Application;
-import com.vaadin.ui.*;
+
+import com.vaadin.ui.themes.Runo;
+
+import controllers.ViewController;
 
 /**
  * Main application class.
  */
 public class Europeana_crawlerApplication extends Application {
- 
-    @Override
-    public void init() {
-        Window mainWindow = new Window("Europeana_crawler Application");
-        Label label = new Label("Hello Vaadin user");
-        mainWindow.addComponent(label);
-        setMainWindow(mainWindow);
-    }
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5514907833234524517L;
+
+	@Override
+	public void init() {
+		this.setTheme(Runo.themeName());
+		MainView mainView = new MainView();
+		ViewController viewController = new ViewController(mainView);
+		this.setMainWindow(viewController.getMainView());
+	}
 
 }
 
