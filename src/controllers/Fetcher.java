@@ -5,6 +5,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+
+import model.Item;
+import model.SearchResponse;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Fetcher {
 	
@@ -22,12 +29,12 @@ public class Fetcher {
 		return instance;
 	}
 
-	public String searchMetaData(String t){
+	public SearchResponse searchMetaData(String t){
 		URL url;
 		HttpURLConnection connection = null;
 		//it's just for testing
 		String urlTarget = "http://europeana.eu/api//v2/search.json?wskey=" + APIKEY;
-		urlTarget = urlTarget + "&query=" + t + "&start=1&rows=1&profile=standard&qf=TYPE:VIDEO";
+		urlTarget = urlTarget + "&query=" + t + "&start=1&rows=1&profile=standard";
 		try{
 			url = new URL(urlTarget);
 			connection = (HttpURLConnection)url.openConnection();
@@ -46,7 +53,20 @@ public class Fetcher {
 				response.append('\r');
 			}
 			rd.close();
-			return response.toString();
+			
+			System.out.print(response.toString());
+			
+			ArrayList<Item> items = null;
+			JSONObject jsonResponse = new JSONObject(response.toString());
+			Integer itemsCount = jsonResponse.getInt("itemsCount");
+			Integer totalResults = jsonResponse.getInt("totalResults");
+			if(jsonResponse.get("success").equals("true") && 
+					totalResults > 0){
+				//TODO: Call parseItems
+			}
+			SearchResponse searchResponse = new SearchResponse(items, itemsCount, totalResults);
+			
+			return searchResponse;
 
 		}catch(Exception e){
 			e.printStackTrace();
@@ -59,5 +79,12 @@ public class Fetcher {
 			}
 		}
 	}
+	
+	/*
+	private ArrayList<Item> parseItems(String source){
+		JSONArray array = new JSONArray(source);
+		
+	}
+	*/
 
 }

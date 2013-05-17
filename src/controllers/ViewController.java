@@ -1,5 +1,7 @@
 package controllers;
 
+import model.Item;
+import model.SearchResponse;
 import views.MainView;
 
 import com.vaadin.ui.Button.ClickEvent;
@@ -43,9 +45,11 @@ class SearchListener implements Button.ClickListener{
 
 	public void buttonClick(ClickEvent event) {
 		Fetcher fetcher = Fetcher.getFetcher();
-		String response = fetcher.searchMetaData(
+		SearchResponse response = fetcher.searchMetaData(
 				(String) viewController.getMainView().getTextfield().getValue());
-		System.out.print(response);
+		//Item[] items = response.getItems();
+		//Item item = items[0];
+		System.out.print(response.getItemsCount());
 	}
 	
 	
