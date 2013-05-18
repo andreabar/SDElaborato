@@ -1,5 +1,7 @@
 package controllers;
 
+import java.util.ArrayList;
+
 import model.Item;
 import model.SearchResponse;
 import views.MainView;
@@ -47,9 +49,8 @@ class SearchListener implements Button.ClickListener{
 		Fetcher fetcher = Fetcher.getFetcher();
 		SearchResponse response = fetcher.searchMetaData(
 				(String) viewController.getMainView().getTextfield().getValue());
-		//Item[] items = response.getItems();
-		//Item item = items[0];
-		System.out.print(response.getItemsCount());
+		ArrayList<Item> items = response.getItems();
+		System.out.print(items.get(0).getId());
 	}
 	
 	

@@ -11,6 +11,7 @@ import model.Item;
 import model.SearchResponse;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Fetcher {
@@ -60,9 +61,9 @@ public class Fetcher {
 			JSONObject jsonResponse = new JSONObject(response.toString());
 			Integer itemsCount = jsonResponse.getInt("itemsCount");
 			Integer totalResults = jsonResponse.getInt("totalResults");
-			if(jsonResponse.get("success").equals("true") && 
+			if(jsonResponse.getBoolean("success") && 
 					totalResults > 0){
-				//TODO: Call parseItems
+				items = parseItems(jsonResponse.getJSONArray("items"));
 			}
 			SearchResponse searchResponse = new SearchResponse(items, itemsCount, totalResults);
 			
@@ -80,11 +81,88 @@ public class Fetcher {
 		}
 	}
 	
-	/*
-	private ArrayList<Item> parseItems(String source){
-		JSONArray array = new JSONArray(source);
+	
+	private ArrayList<Item> parseItems(JSONArray array){
+		ArrayList<Item> items = new ArrayList<Item>();
+		//System.out.print(array.toString());
+
+		for(int i = 0; i < array.length(); i++){
+			
+				Item item = new Item();
+				JSONObject jsonItem = array.getJSONObject(i);
+				item.setCompleteness(jsonItem.getInt("completeness"));
+				item.setDataProvider(convertJSONArrayToStringArray(jsonItem.getJSONArray("dataProvider")));
+				item.setEuropeanaCollectionName(convertJSONArrayToStringArray
+						(jsonItem.getJSONArray("europeanaCollectionName")));
+				item.setGuid(jsonItem.getString("guid"));
+				item.setId(jsonItem.getString("id"));
+				item.setLink(jsonItem.getString("link"));
+				item.setProvider(convertJSONArrayToStringArray(jsonItem.getJSONArray("provider")));
+				item.setType(jsonItem.getString("type"));
+				try{
+					item.setRights(convertJSONArrayToStringArray(jsonItem.getJSONArray("rights")));
+				}catch(JSONException e){
+					item.setRights(convertJSONArrayToStringArray(null));
+				}
+				try{
+					item.setEdmConceptLabel(jsonItem.getString("edmConceptLabel"));
+				}catch(JSONException e){
+					item.setEdmConceptLabel("null");
+				}
+				try{
+					item.setEdmPreview(jsonItem.getString("edmPreview"));
+				}catch(JSONException e){
+					item.setEdmPreview("null");
+				}
+				try{
+					item.setDcCreator(convertJSONArrayToStringArray(jsonItem.getJSONArray("dcCreator")));
+				}catch(JSONException e){
+					item.setDcCreator(convertJSONArrayToStringArray(null));
+				}
+				try{
+					item.setEdmTimespanLabel(jsonItem.getString("edmTimespanLabel"));
+				}catch(JSONException e){
+					item.setEdmTimespanLabel("null");
+				}
+				try{
+					item.setEuropeanaCompleteness(jsonItem.getInt("europeanaCompleteness"));
+				}catch(JSONException e){
+					item.setEuropeanaCompleteness(0);
+				}
+				try{
+					item.setLanguage(convertJSONArrayToStringArray(jsonItem.getJSONArray("language")));
+				}catch(JSONException e){
+					item.setLanguage(convertJSONArrayToStringArray(null));
+				}
+				try{
+					item.setTitle(jsonItem.getString("title"));
+				}catch(JSONException e){
+					item.setTitle("null");
+				}				
+				try{
+					item.setYear(jsonItem.getString("year"));
+				}catch(JSONException e){
+					item.setYear("null");
+				}					
+				items.add(item);
+		}
+		
+		return items;
 		
 	}
-	*/
+	
+	private ArrayList<String> convertJSONArrayToStringArray(JSONArray jsonArray){
+		ArrayList<String> list = new ArrayList<String>();
+		if (jsonArray != null) { 
+			   int len = jsonArray.length();
+			   for (int i=0;i<len;i++){ 
+			    list.add(jsonArray.get(i).toString());
+			   } 
+		} else {
+			list.add("null");
+		}
+		return list;
+	}
+	
 
 }

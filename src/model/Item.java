@@ -1,21 +1,23 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Item {
 	private Integer completeness;
-	private String[] dataProvider;
-	private String[] europeanaCollectionName;
+	private ArrayList<String> dataProvider;
+	private ArrayList<String> europeanaCollectionName;
 	private String id;
 	private String guid;
 	private String link;
-	private String provider;
-	private String[] rights;
+	private ArrayList<String> provider;
+	private ArrayList<String> rights;
 	private String type;
-	private String[] dcCreator;
+	private ArrayList<String> dcCreator;
 	private String edmConceptLabel;
 	private String edmPreview;
 	private String edmTimespanLabel;
 	private Integer europeanaCompleteness;
-	private String[] language;
+	private ArrayList<String> language;
 	private String title;
 	private String year;
 	
@@ -31,16 +33,16 @@ public class Item {
 	public void setCompleteness(Integer completeness) {
 		this.completeness = completeness;
 	}
-	public String[] getDataProvider() {
+	public ArrayList<String> getDataProvider() {
 		return dataProvider;
 	}
-	public void setDataProvider(String[] dataProvider) {
+	public void setDataProvider(ArrayList<String> dataProvider) {
 		this.dataProvider = dataProvider;
 	}
-	public String[] getEuropeanaCollectionName() {
+	public ArrayList<String> getEuropeanaCollectionName() {
 		return europeanaCollectionName;
 	}
-	public void setEuropeanaCollectionName(String[] europeanaCollectionName) {
+	public void setEuropeanaCollectionName(ArrayList<String> europeanaCollectionName) {
 		this.europeanaCollectionName = europeanaCollectionName;
 	}
 	public String getId() {
@@ -61,16 +63,16 @@ public class Item {
 	public void setLink(String link) {
 		this.link = link;
 	}
-	public String getProvider() {
+	public ArrayList<String> getProvider() {
 		return provider;
 	}
-	public void setProvider(String provider) {
+	public void setProvider(ArrayList<String> provider) {
 		this.provider = provider;
 	}
-	public String[] getRights() {
+	public ArrayList<String> getRights() {
 		return rights;
 	}
-	public void setRights(String[] rights) {
+	public void setRights(ArrayList<String> rights) {
 		this.rights = rights;
 	}
 	public String getType() {
@@ -79,10 +81,10 @@ public class Item {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public String[] getDcCreator() {
+	public ArrayList<String> getDcCreator() {
 		return dcCreator;
 	}
-	public void setDcCreator(String[] dcCreator) {
+	public void setDcCreator(ArrayList<String> dcCreator) {
 		this.dcCreator = dcCreator;
 	}
 	public String getEdmConceptLabel() {
@@ -109,10 +111,10 @@ public class Item {
 	public void setEuropeanaCompleteness(Integer europeanaCompleteness) {
 		this.europeanaCompleteness = europeanaCompleteness;
 	}
-	public String[] getLanguage() {
+	public ArrayList<String> getLanguage() {
 		return language;
 	}
-	public void setLanguage(String[] language) {
+	public void setLanguage(ArrayList<String> language) {
 		this.language = language;
 	}
 	public String getTitle() {
