@@ -4,7 +4,9 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import model.EuropenaQuery;
+import model.Query;
 import model.Record;
+import model.VimeoQuery;
 import views.MainView;
 
 import com.vaadin.ui.Button.ClickEvent;
@@ -58,17 +60,17 @@ class SearchListener implements Button.ClickListener{
 		ArrayList<Record> list;
 		try {
 			EuropenaQuery query = new EuropenaQuery(viewController.getMainView().getTextfield().getValue().toString());
-			query.setLimit(5);
+			query.setLimit(2);
 			query.setDataType("video");
+			query.setPublicIpr(true);
 		
 			list = fetcher.executeQuery(query);
 			
 			for(Record r : list){
-				System.out.println("Resource link: " + ((EuropeanaFetcher)fetcher).getRecordLink(r));
 				System.out.println("Title: " + r.getTitle());
 				System.out.println("Type: " + r.getType());
-				
-				System.out.println();
+				System.out.println("Link: " + r.getEuropeanaId());
+				System.out.println("Resources : " + r.getWebResources());
 			}
 			
 			
@@ -83,26 +85,6 @@ class SearchListener implements Button.ClickListener{
 		
 		
 		
-//		SearchResponse response = fetcher.searchMetaData(
-//				(String) viewController.getMainView().getTextfield().getValue());
-//		for(Record i : response.getItems()){
-//			
-//			System.out.println(i.);
-//			
-//		}
-//			try {
-//				fetcher.fetchItemUrl(i);
-//					System.out.println(i.getWebResources().getJSONObject(0).getString("about"));
-//			} catch (MalformedURLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (JSONException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 	}
 	
 	

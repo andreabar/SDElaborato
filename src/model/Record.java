@@ -2,32 +2,61 @@ package model;
 
 import java.util.ArrayList;
 
+import controllers.RecordController;
+
 public class Record {
+	
+	private String europeanaID;
+	private String type;
+	private int id;
+	
+	private String title;
+	private String language;
+	private ArrayList<String> webResources;
+
+	
+	
 	private Integer completeness;
 	private ArrayList<String> dataProviders;
 	
 	private ArrayList<String> europeanaCollectionName;
-	private String id;
 	private String guid;
 	private String link;
 	private ArrayList<String> providers;
 	private ArrayList<String> rights;
-	private String type;
 	private ArrayList<String> dcCreator;
 	private String edmConceptLabel;
 	private String edmPreview;
 	private String edmTimespanLabel;
 	private Integer europeanaCompleteness;
-	private ArrayList<String> language;
-	private String title;
 	private String year;
 	
 	public Record(){
 		
 	}
 	
-	
-	
+//	public String getShownLink() {
+//
+//		if(shownLink == null)
+//			try {
+//				shownLink = new EuropeanaFetcher().getRecordLink(this);
+//				return shownLink;
+//
+//			} catch (MalformedURLException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (JSONException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		
+//		return shownLink;
+//	}
+
+
 	public Integer getCompleteness() {
 		return completeness;
 	}
@@ -46,11 +75,11 @@ public class Record {
 	public void setEuropeanaCollectionName(ArrayList<String> europeanaCollectionName) {
 		this.europeanaCollectionName = europeanaCollectionName;
 	}
-	public String getId() {
-		return id;
+	public String getEuropeanaId() {
+		return europeanaID;
 	}
 	public void setId(String id) {
-		this.id = id;
+		this.europeanaID = id;
 	}
 	public String getGuid() {
 		return guid;
@@ -58,9 +87,10 @@ public class Record {
 	public void setGuid(String guid) {
 		this.guid = guid;
 	}
-	public String getLink() {
+	public String getJSONLink() {
 		return link;
 	}
+	
 	public void setLink(String link) {
 		this.link = link;
 	}
@@ -112,10 +142,10 @@ public class Record {
 	public void setEuropeanaCompleteness(Integer europeanaCompleteness) {
 		this.europeanaCompleteness = europeanaCompleteness;
 	}
-	public ArrayList<String> getLanguage() {
+	public String getLanguage() {
 		return language;
 	}
-	public void setLanguage(ArrayList<String> language) {
+	public void setLanguage(String language) {
 		this.language = language;
 	}
 	public String getTitle() {
@@ -130,5 +160,24 @@ public class Record {
 	public void setYear(String year) {
 		this.year = year;
 	}
+
+	public ArrayList<String> getWebResources() {
+
+		if(webResources == null)
+			webResources = RecordController.getWebResources(this);
+		return webResources;
+		
+	}
+
+	public void setWebResources(ArrayList<String> webResources) {
+		this.webResources = webResources;
+	}
+
+	public void setID(int i) {
+		id = i;
+	}
 	
+	public int getID(){
+		return id;
+	}
 }
