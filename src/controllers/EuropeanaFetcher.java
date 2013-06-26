@@ -27,43 +27,51 @@ public class EuropeanaFetcher extends JSONFetcher {
 	public ArrayList<Record> executeQuery(Query q) throws Exception {
 
 		URL request = buildQueryRequest(q);
-		if (request != null){
+		if (request != null) {
 			System.out.println("Query: " + request.toString());
-			return fetchResponse(request);
+			ArrayList<Record> response = fetchResponse(request);
+			DBHelper.saveRecords(response);
+
+			return response;
 		}
-		
-		else throw new Exception("Can't encode url.");
+
+		else
+			throw new Exception("Can't encode url.");
 
 	}
 
 	private ArrayList<Record> fetchResponse(URL request) throws Exception {
 
-		BufferedReader in = new BufferedReader(
-		        new InputStreamReader(request.openStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				request.openStream()));
 
-		        String inputLine = new String();
-		        while ((inputLine = in.readLine()) != null){
-		      	
-		        	JSONObject o =  new JSONObject(inputLine);
-		        	if(!o.getBoolean("success") || o.getInt("totalResults") == 0)
-		        		throw new Exception("Request couldn't be satisfied.");
-		        	
-		        	JSONArray items = o.getJSONArray("items");
-		        	return getRecordList(items);
-		        	
-		        }
-		        
-		        return null;
-		     
+		String inputLine = new String();
+		while ((inputLine = in.readLine()) != null) {
+
+			JSONObject o = new JSONObject(inputLine);
+			if (!o.getBoolean("success") )
+				throw new Exception("Request couldn't be satisfied.");
+			if( o.getInt("totalResults") == 0)
+				throw new Exception("No result found.");
+			
+			JSONArray items = o.getJSONArray("items");
+			ArrayList<Record> records = getRecordList(items);
+			return records;
+		}
+
+		return null;
+
 	}
 
-	private ArrayList<Record> getRecordList(JSONArray items) throws JSONException {
+	private ArrayList<Record> getRecordList(JSONArray items)
+			throws JSONException {
 
 		ArrayList<Record> list = new ArrayList<Record>();
 
 		for (int i = 0; i < items.length(); i++) {
 
 			Record item = new Record();
+			
 			JSONObject jsonItem = items.getJSONObject(i);
 			item.setCompleteness(jsonItem.getInt("completeness"));
 			item.setDataProvider(convertJSONArrayToStringArray(jsonItem
@@ -77,35 +85,36 @@ public class EuropeanaFetcher extends JSONFetcher {
 					.getJSONArray("provider")));
 			item.setType(jsonItem.getString("type"));
 			item.setTitle(jsonItem.getJSONArray("title").getString(0));
+			item.setLanguage(jsonItem.getJSONArray("language").getString(0));
 
-//			item.setRights(convertJSONArrayToStringArray(jsonItem
-//					.getJSONArray("rights")));
+			// item.setRights(convertJSONArrayToStringArray(jsonItem
+			// .getJSONArray("rights")));
 
-//			item.setEdmConceptLabel(jsonItem.getString("edmConceptLabel"));
-//
-//			item.setEdmPreview(jsonItem.getString("edmPreview"));
-//
-//			item.setDcCreator(convertJSONArrayToStringArray(jsonItem
-//					.getJSONArray("dcCreator")));
-//			item.setDcCreator(convertJSONArrayToStringArray(null));
-//
-//			item.setEdmTimespanLabel(jsonItem.getString("edmTimespanLabel"));
-//
-//			item.setEuropeanaCompleteness(jsonItem
-//					.getInt("europeanaCompleteness"));
-//
-//			item.setEuropeanaCompleteness(0);
-//			item.setLanguage(convertJSONArrayToStringArray(jsonItem
-//					.getJSONArray("language")));
-//
-//
-//			item.setYear(jsonItem.getString("year"));
+			// item.setEdmConceptLabel(jsonItem.getString("edmConceptLabel"));
+			//
+			// item.setEdmPreview(jsonItem.getString("edmPreview"));
+			//
+			// item.setDcCreator(convertJSONArrayToStringArray(jsonItem
+			// .getJSONArray("dcCreator")));
+			// item.setDcCreator(convertJSONArrayToStringArray(null));
+			//
+			// item.setEdmTimespanLabel(jsonItem.getString("edmTimespanLabel"));
+			//
+			// item.setEuropeanaCompleteness(jsonItem
+			// .getInt("europeanaCompleteness"));
+			//
+			// item.setEuropeanaCompleteness(0);
+			// item.setLanguage(convertJSONArrayToStringArray(jsonItem
+			// .getJSONArray("language")));
+			//
+			//
+			// item.setYear(jsonItem.getString("year"));
 
 			list.add(item);
 		}
-	
+
 		return list;
-	
+
 	}
 
 	private ArrayList<String> convertJSONArrayToStringArray(JSONArray jsonArray)
@@ -130,46 +139,12 @@ public class EuropeanaFetcher extends JSONFetcher {
 			urlTarget += "&qf=LANGUAGE:" + q.getLanguage();
 		if (null != q.getIprType())
 			urlTarget += "&qf=RIGHTS:" + q.getIprType();
-		if(null != q.getDataType())
+		if (null != q.getDataType())
 			urlTarget += "&qf=TYPE:" + q.getDataType().toUpperCase();
 
-			return new URL(urlTarget.replaceAll(" ", "%20"));
-		
-		
+		return new URL(urlTarget.replaceAll(" ", "%20"));
 
 	}
+
 	
-	public String getRecordLink(Record r) throws MalformedURLException, IOException, JSONException {
-		 BufferedReader in = new BufferedReader(
-			        new InputStreamReader(new URL(r.getLink()).openStream()));
-
-			        String inputLine = new String();
-			        while ((inputLine = in.readLine()) != null){
-			      	
-			        	JSONObject o =  new JSONObject(inputLine);	
-			        	JSONArray array = o.getJSONObject("object").getJSONArray("aggregations");
-			        	
-			        	try{ 
-			        		return array.getJSONObject(0).get("edmIsShownBy").toString();
-			        	}
-			        	catch(JSONException e){
-			        		
-			        		 return array.getJSONObject(0).get("edmIsShownAt").toString();
-			        	}
-			        		
-//			        	int i  = 0;
-//			        	boolean found = false;
-//			        	JSONArray resources = null;
-//			        	while(i < array.length() && !found ){
-//			        		if(null != array.optJSONArray(i)){
-//			        			resources = array.getJSONArray(i);
-//			        			found = true;
-//			        		}
-//			        	i++;	
-//			        	}
-//			        	r.setWebResources(resources);
-			        }
-					return inputLine;
-	}
-
 }
