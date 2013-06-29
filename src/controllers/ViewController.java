@@ -9,6 +9,8 @@ import model.Record;
 import model.VimeoQuery;
 import views.MainView;
 
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
 
@@ -16,10 +18,12 @@ public class ViewController {
 
 
 	private MainView mainView;
+	private Integer sourceSelected;
 	
 	public ViewController(MainView m){
 		this.setMainView(m);
 		this.mainView.getSearchButton().addListener(new SearchListener(this));
+		this.mainView.getGroupSelector().addListener(new GroupSelectorListener(this));
 	}
 
 	
@@ -31,17 +35,27 @@ public class ViewController {
 	public MainView getMainView() {
 		return mainView;
 	}
+
+
+	public Integer getSourceSelected() {
+		return sourceSelected;
+	}
+
+
+	public void setSourceSelected(Integer sourceSelected) {
+		this.sourceSelected = sourceSelected;
+	}
 	
 	
 
 }
 
 class SearchListener implements Button.ClickListener{
-
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5263060985736943700L;
+	private static final long serialVersionUID = 8226238264247152044L;
 	private ViewController viewController;
 	
 	public SearchListener(ViewController viewController){
@@ -87,5 +101,34 @@ class SearchListener implements Button.ClickListener{
 		
 	}
 	
+	
+}
+
+class GroupSelectorListener implements ValueChangeListener{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2988676404511145837L;
+
+	private ViewController viewController;
+	
+	public GroupSelectorListener(ViewController viewController){
+		this.viewController = viewController;
+		viewController.setSourceSelected(0);
+	}
+	
+	public void valueChange(ValueChangeEvent event) {
+		if(viewController.getMainView().getGroupSelector().getValue().equals("Europeana")){
+			viewController.setSourceSelected(0);
+			viewController.getMainView().getTypeSelect().setEnabled(true);
+			viewController.getMainView().getLanguageSelect().setEnabled(true);
+		} else if(viewController.getMainView().getGroupSelector().getValue().equals("Vimeo")){
+			viewController.setSourceSelected(1);
+			viewController.getMainView().getTypeSelect().setValue("VIDEO");
+			viewController.getMainView().getTypeSelect().setEnabled(false);
+			viewController.getMainView().getLanguageSelect().setEnabled(false);
+		}
+	}
 	
 }
