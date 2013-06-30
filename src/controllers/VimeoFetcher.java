@@ -9,18 +9,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.VimeoApi;
-import org.scribe.model.OAuthConfig;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;
 import org.scribe.model.Token;
 import org.scribe.model.Verb;
-import org.scribe.oauth.OAuth10aServiceImpl;
 import org.scribe.oauth.OAuthService;
 
-import com.google.gwt.dev.js.rhino.TokenStream;
+import views.MainView;
 
 import model.Query;
 import model.Record;
+import model.VimeoQuery;
 
 public class VimeoFetcher extends JSONFetcher{
 
@@ -40,10 +39,10 @@ public class VimeoFetcher extends JSONFetcher{
 			throws MalformedURLException, Exception {
 
 		URL query = buildQueryRequest(q);
-		
 		OAuthRequest req = new OAuthRequest(Verb.POST, query.toString());
 		service.signRequest(new Token(token, token_secret), req);
 		Response response = req.send();
+	
 		ArrayList<Record> records = saveRecords(response.getBody());
 		DBHelper.saveRecords(records);
 		
@@ -77,33 +76,12 @@ public class VimeoFetcher extends JSONFetcher{
 			
 			JSONObject jsonItem = items.getJSONObject(i);
 		
-			item.setId("http://vimeo.com/" + jsonItem.getInt("id"));
+			item.setId(jsonItem.get("id").toString());
 			item.setType("VIDEO");
 			item.setTitle(jsonItem.getString("title"));
 			item.setLanguage("unknown");
-
-			// item.setRights(convertJSONArrayToStringArray(jsonItem
-			// .getJSONArray("rights")));
-
-			// item.setEdmConceptLabel(jsonItem.getString("edmConceptLabel"));
-			//
-			// item.setEdmPreview(jsonItem.getString("edmPreview"));
-			//
-			// item.setDcCreator(convertJSONArrayToStringArray(jsonItem
-			// .getJSONArray("dcCreator")));
-			// item.setDcCreator(convertJSONArrayToStringArray(null));
-			//
-			// item.setEdmTimespanLabel(jsonItem.getString("edmTimespanLabel"));
-			//
-			// item.setEuropeanaCompleteness(jsonItem
-			// .getInt("europeanaCompleteness"));
-			//
-			// item.setEuropeanaCompleteness(0);
-			// item.setLanguage(convertJSONArrayToStringArray(jsonItem
-			// .getJSONArray("language")));
-			//
-			//
-			// item.setYear(jsonItem.getString("year"));
+			item.setWebResources(new ArrayList<String>());
+			item.getWebResources().add("http://vimeo.com/" + item.getEuropeanaId());
 
 			list.add(item);
 		}
@@ -116,11 +94,23 @@ public class VimeoFetcher extends JSONFetcher{
 	private URL buildQueryRequest(Query q) throws MalformedURLException {
 
 		String urlTarget = endpoint + q.getInput();
-		if (-1 != q.getLimit())
-			urlTarget += "&page=" + q.getLimit();
+		if (-1 != q.getLimit()){
+			urlTarget += "&page=" + ((VimeoQuery)q).getPages() + "&per_page=" + ((VimeoQuery)q).getRpp();;
+			
+		}
 		
+		System.out.println("QUERY: " + urlTarget);
 		return new URL(urlTarget.replaceAll(" ", "%20"));
 
+	}
+
+
+	@Override
+	public Query buildQuery(MainView mainView) {
+
+		VimeoQuery q = new VimeoQuery(mainView.getTextfield().getValue().toString().trim());
+		q.setLimit((Integer)mainView.getStepper().getValue());
+		return q;
 	}
 	
 	

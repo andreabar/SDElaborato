@@ -9,7 +9,8 @@ public class VimeoQuery extends Query {
 	public VimeoQuery(String input) {
 
 		super(input);
-		
+		pages = 1;
+
 	}
 	
 	public void setResultsPerPage(int i){
@@ -24,13 +25,24 @@ public class VimeoQuery extends Query {
 	
 	public void setLimit(int i){
 		
+		super.setLimit(i);
 		if(i <= 50){
 			setPages(1);
 			setResultsPerPage(i);
 		}
-		else
-			setPages(i/50);
+		else{
+			setPages((int) Math.ceil(i/50)); //TODO: per non multipli di 50
+			setResultsPerPage(50);
+		}
 		
+	}
+
+	public int getRpp() {
+		return rpp;
+	}
+
+	public int getPages() {
+		return pages;
 	}
 	
 }

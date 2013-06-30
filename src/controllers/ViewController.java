@@ -11,6 +11,7 @@ import views.MainView;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.terminal.UserError;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
 
@@ -63,27 +64,30 @@ class SearchListener implements Button.ClickListener{
 	}
 
 	public void buttonClick(ClickEvent event) {
+	
+		if(null == viewController.getMainView().getTextfield().getValue()){
+			viewController.getMainView().getTextfield().setComponentError(new UserError("required"));
+			return;
+		}
+	
+		JSONFetcher fetcher = null;
 		
-		//TODO: creare dei selettori per i filtri, in particolare, per adesso, # di risultati
-		//lingua dei contenuti (mettine solo alcune di prova per ora, la conversione vedila in
-		//Europena API, ad esempio Italiano è it), una checkbox per risultati free access, e 
-		// una scelta sul tipo di data (VIDEO, TEXT, IMAGE). Per ora usiamo questi, poi li aggiungiamo
-		// all'evenienza (anche a seconda di cosa fare con Youtube).
+		if(viewController.getSourceSelected() == 0)
+			fetcher = new EuropeanaFetcher();
+		else
+			fetcher = new VimeoFetcher();
 		
-		JSONFetcher fetcher = new EuropeanaFetcher();
 		ArrayList<Record> list;
 		try {
-			EuropenaQuery query = new EuropenaQuery(viewController.getMainView().getTextfield().getValue().toString());
-			query.setLimit(2);
-			query.setDataType("video");
-			query.setPublicIpr(true);
-		
+			
+			
+			Query query = fetcher.buildQuery(viewController.getMainView());
+
 			list = fetcher.executeQuery(query);
 			
 			for(Record r : list){
 				System.out.println("Title: " + r.getTitle());
 				System.out.println("Type: " + r.getType());
-				System.out.println("Link: " + r.getEuropeanaId());
 				System.out.println("Resources : " + r.getWebResources());
 			}
 			

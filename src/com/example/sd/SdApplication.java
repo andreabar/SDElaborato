@@ -1,7 +1,6 @@
 package com.example.sd;
 
-import java.net.MalformedURLException;
-
+import util.Languages;
 import views.MainView;
 
 import com.vaadin.Application;
@@ -10,7 +9,6 @@ import com.vaadin.ui.themes.Runo;
 
 import controllers.DBHelper;
 import controllers.ViewController;
-import controllers.VimeoFetcher;
 
 /**
  * Main application class.
@@ -26,6 +24,7 @@ public class SdApplication extends Application {
 	public void init() {
 		
 		DBHelper.connectToDB();
+		Languages.buildMap();
 		
 		this.setTheme(Runo.themeName());
 		MainView mainView = new MainView();

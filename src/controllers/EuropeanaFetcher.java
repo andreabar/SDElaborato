@@ -11,6 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import util.Languages;
+import views.MainView;
+
+import model.EuropenaQuery;
 import model.Query;
 import model.Record;
 
@@ -144,6 +148,19 @@ public class EuropeanaFetcher extends JSONFetcher {
 
 		return new URL(urlTarget.replaceAll(" ", "%20"));
 
+	}
+
+	@Override
+	public Query buildQuery(MainView mainView) {
+	
+		EuropenaQuery query = new EuropenaQuery(mainView.getTextfield().getValue().toString());
+		query.setLimit((Integer)mainView.getStepper().getValue());
+		query.setDataType(mainView.getTypeSelect().getValue().toString());
+		query.setPublicIpr(mainView.getDownloadable().booleanValue());
+		query.setLanguage(Languages.get(mainView.getLanguageSelect().getValue().toString()));
+		
+		return query;
+		
 	}
 
 	
