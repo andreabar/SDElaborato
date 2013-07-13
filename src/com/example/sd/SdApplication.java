@@ -24,8 +24,8 @@ public class SdApplication extends Application {
 	public void init() {
 		
 		DBHelper.connectToDB();
-		Languages.buildMap();
-		
+		Languages.buildMap();	
+
 		this.setTheme(Runo.themeName());
 		MainView mainView = new MainView();
 		ViewController viewController = new ViewController(mainView);

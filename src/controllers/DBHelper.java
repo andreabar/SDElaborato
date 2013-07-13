@@ -1,6 +1,7 @@
 package controllers;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ public class DBHelper {
 		}
 
 		statement.executeUpdate();
+		System.out.println(statement.getResultSetType());
 		
 		saveResources(records);
 		
@@ -77,7 +79,7 @@ public class DBHelper {
 
 	private static void saveResources(ArrayList<Record> records) throws SQLException {
 
-		String query = "INSERT INTO location (record, resource) VALUES ";
+		String query = "INSERT INTO location (record, url) VALUES ";
 		int j = 1;
 
 		
@@ -93,16 +95,38 @@ public class DBHelper {
 		java.sql.PreparedStatement statement = getConnection()
 				.prepareStatement(update);
 		for(Record r : records){
+			int id = getRecordID(r);
+			if(id != -1){
 			ArrayList<String> resources = r.getWebResources();
 			for(String s : resources){
-				statement.setString(j, r.getEuropeanaId());
+				statement.setInt(j, id);
 				j++;
 				statement.setString(j, s);
 				j++;			}
+			}
 		}
 			statement.executeUpdate();
 
 		}
+
+	private static int getRecordID(Record r) {
+
+		String q = new String("SELECT rid FROM record WHERE STRCMP(link, '" + r.getEuropeanaId() + "') = 0;");
+		System.out.println(q);
+		try {
+			ResultSet resultSet = getConnection().createStatement().executeQuery(q);
+			int id = -1;
+			while(resultSet.next())
+				id = resultSet.getInt("rid");
+			
+			return id;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+		
+	}
 			
 		
 	
