@@ -4,13 +4,18 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import model.Record;
+import model.Search;
 
 public class DBHelper {
 
@@ -47,7 +52,7 @@ public class DBHelper {
 		return connection;
 	}
 
-	public static void saveRecords(ArrayList<Record> records)
+	public static void saveRecords(ArrayList<Record> records, String input)
 			throws SQLException {
 
 		String query = "INSERT INTO record (type, language, link, title) VALUES ";
@@ -74,6 +79,7 @@ public class DBHelper {
 		System.out.println(statement.getResultSetType());
 		
 		saveResources(records);
+		saveResearch(records, input);
 		
 	}
 
@@ -108,6 +114,40 @@ public class DBHelper {
 			statement.executeUpdate();
 
 		}
+	
+	private static void saveResearch (ArrayList<Record> records, String input) throws SQLException {
+		Date now = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String currentTime = sdf.format(now);
+		String query = "INSERT INTO search (record, date, keyword) VALUES ";
+
+		for (int i = 0; i < records.size(); i++) {
+			query += "(?,?,?)";
+			if (i < records.size() - 1)
+				query += ",";
+			else
+				query += ";";
+		}
+
+		java.sql.PreparedStatement statement = getConnection()
+				.prepareStatement(query);
+
+		int j = 1;
+
+		for(Record r : records){
+			int id = getRecordID(r);
+			if(id != -1){
+				statement.setInt(j, id);
+				j++;
+				statement.setString(j, currentTime);
+				j++;
+				statement.setString(j, input);
+				j++;
+			}
+
+		}
+		statement.executeUpdate();
+	}
 
 	private static int getRecordID(Record r) {
 
@@ -128,7 +168,37 @@ public class DBHelper {
 		
 	}
 			
+	public static ArrayList<Search> getSearches() throws SQLException, ParseException{
+		ArrayList<Search> searches = new ArrayList<Search>();
+		ArrayList<Integer> records = new ArrayList<Integer>();
 		
+		String q = new String("SELECT * FROM search");
+		
+		java.sql.PreparedStatement statement = getConnection()
+				.prepareStatement(q);
+		
+		ResultSet result = statement.executeQuery();
+		Date firstDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("1970-01-01 00:00:00");
+		Date oldDate = firstDate;
+		String keyword = new String();
+		
+		while (result.next()) {
+			Date newDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(result.getString("date"));
+			if(newDate.after(oldDate) && !(oldDate.equals(firstDate))){
+				Search newSearch = new Search(records, oldDate, keyword);
+				searches.add(newSearch);
+				records.clear();
+			}
+			records.add(result.getInt("record"));
+			keyword = result.getString("keyword");
+			oldDate = newDate;
+			
+		}
+		Search newSearch = new Search(records, oldDate, keyword);
+		searches.add(newSearch);
+		
+		return searches;
+	}
 	
 
 }

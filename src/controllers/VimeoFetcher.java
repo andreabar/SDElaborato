@@ -44,7 +44,7 @@ public class VimeoFetcher extends JSONFetcher{
 		Response response = req.send();
 	
 		ArrayList<Record> records = saveRecords(response.getBody());
-		DBHelper.saveRecords(records);
+		DBHelper.saveRecords(records, q.getInput());
 		
 		return records;
 

@@ -34,7 +34,7 @@ public class EuropeanaFetcher extends JSONFetcher {
 		if (request != null) {
 			System.out.println("Query: " + request.toString());
 			ArrayList<Record> response = fetchResponse(request);
-			DBHelper.saveRecords(response);
+			DBHelper.saveRecords(response, q.getInput());
 
 			return response;
 		}

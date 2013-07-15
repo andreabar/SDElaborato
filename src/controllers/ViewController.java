@@ -1,11 +1,14 @@
 package controllers;
 
 import java.net.MalformedURLException;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import model.EuropenaQuery;
 import model.Query;
 import model.Record;
+import model.Search;
 import model.VimeoQuery;
 import views.MainView;
 
@@ -25,6 +28,26 @@ public class ViewController {
 		this.setMainView(m);
 		this.mainView.getSearchButton().addListener(new SearchListener(this));
 		this.mainView.getGroupSelector().addListener(new GroupSelectorListener(this));
+		loadSearchTable();
+	}
+	
+	private void loadSearchTable(){
+		ArrayList<Search> searches = new ArrayList<Search>();
+		try {
+			searches = DBHelper.getSearches();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		if(!searches.isEmpty()){
+			int i = 0;
+			for(Search s : searches){
+				i++;
+				Object rowItem[] = new Object[]{s.getDate(), s.getKeyword()};
+				this.mainView.getSearchTable().addItem(rowItem, i);
+			}
+		}
 	}
 
 	
@@ -65,7 +88,9 @@ class SearchListener implements Button.ClickListener{
 
 	public void buttonClick(ClickEvent event) {
 	
-		if(null == viewController.getMainView().getTextfield().getValue()){
+		this.viewController.getMainView().getSearchButton().setEnabled(false);
+		
+		if(viewController.getMainView().getTextfield().getValue().equals(new String())){
 			viewController.getMainView().getTextfield().setComponentError(new UserError("required"));
 			return;
 		}
@@ -102,7 +127,8 @@ class SearchListener implements Button.ClickListener{
 		}
 		
 		
-		
+		this.viewController.getMainView().getSearchButton().setEnabled(true);
+
 	}
 	
 	
