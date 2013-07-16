@@ -7,8 +7,8 @@ import com.vaadin.Application;
 
 import com.vaadin.ui.themes.Runo;
 
-import controllers.DBHelper;
 import controllers.ViewController;
+import dbutil.DBHelper;
 
 /**
  * Main application class.

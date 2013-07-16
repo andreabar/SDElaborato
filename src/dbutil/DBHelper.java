@@ -1,4 +1,4 @@
-package controllers;
+package dbutil;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -18,6 +18,7 @@ public class DBHelper {
 	
 	public static Connection connectToDB() {
 
+		Builder.buildDB();
 		Context initCtx;
 		try {
 			initCtx = new InitialContext();

@@ -15,6 +15,8 @@ import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
+import dbutil.DBHelper;
+
 import views.MainView;
 
 import model.Query;

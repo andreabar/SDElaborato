@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import dbutil.DBHelper;
+
 import util.Languages;
 import views.MainView;
 
