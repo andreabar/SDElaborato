@@ -1,12 +1,17 @@
 package controllers;
 
 import java.net.MalformedURLException;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import model.EuropenaQuery;
 import model.Query;
 import model.Record;
+import model.Search;
 import model.VimeoQuery;
+import views.DetailsView;
 import views.MainView;
 
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -25,6 +30,29 @@ public class ViewController {
 		this.setMainView(m);
 		this.mainView.getSearchButton().addListener(new SearchListener(this));
 		this.mainView.getGroupSelector().addListener(new GroupSelectorListener(this));
+		this.mainView.getSearchTable().addListener(new TableClickListener(this));
+		this.mainView.getDetailsButton().addListener(new DetailsListener(this));
+		loadSearchTable();
+	}
+	
+	protected void loadSearchTable(){
+		this.mainView.getSearchTable().removeAllItems();
+		ArrayList<Search> searches = new ArrayList<Search>();
+		try {
+			searches = DBHelper.getSearches();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		if(!searches.isEmpty()){
+			int i = 0;
+			for(Search s : searches){
+				i++;
+				Object rowItem[] = new Object[]{s.getDate(), s.getKeyword(), s.getRecordsId().size()};
+				this.mainView.getSearchTable().addItem(rowItem, i);
+			}
+		}
 	}
 
 	
@@ -65,7 +93,9 @@ class SearchListener implements Button.ClickListener{
 
 	public void buttonClick(ClickEvent event) {
 	
-		if(null == viewController.getMainView().getTextfield().getValue()){
+		this.viewController.getMainView().getSearchButton().setEnabled(false);
+		
+		if(viewController.getMainView().getTextfield().getValue().equals(new String())){
 			viewController.getMainView().getTextfield().setComponentError(new UserError("required"));
 			return;
 		}
@@ -102,7 +132,9 @@ class SearchListener implements Button.ClickListener{
 		}
 		
 		
-		
+		this.viewController.getMainView().getSearchButton().setEnabled(true);
+		this.viewController.loadSearchTable();
+
 	}
 	
 	
@@ -133,6 +165,53 @@ class GroupSelectorListener implements ValueChangeListener{
 			viewController.getMainView().getTypeSelect().setEnabled(false);
 			viewController.getMainView().getLanguageSelect().setEnabled(false);
 		}
+	}
+	
+}
+
+class TableClickListener implements ValueChangeListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2459096720898773538L;
+
+	private ViewController viewController;
+	
+	public TableClickListener(ViewController v){
+		this.viewController = v;
+	}
+	
+	public void valueChange(ValueChangeEvent event) {
+		if(null != this.viewController.getMainView().getSearchTable().getValue()){
+			this.viewController.getMainView().getDetailsButton().setEnabled(true);
+		} else {
+			this.viewController.getMainView().getDetailsButton().setEnabled(false);
+		}
+	}
+	
+}
+
+class DetailsListener implements Button.ClickListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -445081953325867218L;
+	private ViewController viewController;
+	
+	public DetailsListener(ViewController v){
+		this.viewController = v;
+	}
+
+	public void buttonClick(ClickEvent event) {
+		Object selectedId = this.viewController.getMainView().getSearchTable().getValue();
+		Date selectedDate = (Date) this.viewController.getMainView().getSearchTable().getItem(selectedId).
+				getItemProperty("Date").getValue();
+		String selectedKeyword = (String) this.viewController.getMainView().getSearchTable().getItem(selectedId).
+				getItemProperty("Keyword").getValue();
+		DetailsViewController dvc = new DetailsViewController(selectedDate, selectedKeyword);
+		this.viewController.getMainView().addWindow(dvc.getDetailsView());
 	}
 	
 }
