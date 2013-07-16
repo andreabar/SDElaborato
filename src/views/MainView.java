@@ -1,5 +1,6 @@
 package views;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.vaadin.risto.stepper.IntStepper;
@@ -37,6 +38,7 @@ public class MainView extends Window {
 	private OptionGroup groupSelector;
 	private CheckBox downloadable;
 	private Table searchTable;
+	private Button detailsButton;
 	
 	
 	public MainView(){
@@ -86,6 +88,9 @@ public class MainView extends Window {
 
 		this.searchButton = new Button("Search");
 		
+		this.detailsButton = new Button("Details");
+		this.detailsButton.setEnabled(false);
+		
 		this.groupSelector = new OptionGroup("Source");
 		this.groupSelector.setNullSelectionAllowed(false);
 		this.groupSelector.setImmediate(true);
@@ -97,6 +102,7 @@ public class MainView extends Window {
 		this.searchTable = new Table();
 		this.searchTable.addContainerProperty("Date", Date.class, null);
 		this.searchTable.addContainerProperty("Keyword", String.class, null);
+		this.searchTable.addContainerProperty("N° Records", Integer.class, null);
 		this.searchTable.setSizeFull();
 		this.searchTable.setSelectable(true);
 		this.searchTable.setImmediate(true);
@@ -107,7 +113,8 @@ public class MainView extends Window {
 		this.panelLayout.addComponent(typeSelect, 1, 2);
 		this.panelLayout.addComponent(languageSelect, 2, 2);
 		this.panelLayout.addComponent(downloadable, 0, 3);	
-		this.panelLayout.addComponent(searchButton, 0, 4);	
+		this.panelLayout.addComponent(searchButton, 0, 4);
+		this.panelLayout.addComponent(detailsButton, 3, 4);
 		this.panelLayout.addComponent(searchTable, 0, 5, 3, 5);
 		
 		
@@ -216,6 +223,14 @@ public class MainView extends Window {
 
 	public void setDownloadable(CheckBox downloadable) {
 		this.downloadable = downloadable;
+	}
+
+	public Button getDetailsButton() {
+		return detailsButton;
+	}
+
+	public void setDetailsButton(Button detailsButton) {
+		this.detailsButton = detailsButton;
 	}
 
 	

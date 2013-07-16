@@ -187,7 +187,7 @@ public class DBHelper {
 			if(newDate.after(oldDate) && !(oldDate.equals(firstDate))){
 				Search newSearch = new Search(records, oldDate, keyword);
 				searches.add(newSearch);
-				records.clear();
+				records = new ArrayList<Integer>();
 			}
 			records.add(result.getInt("record"));
 			keyword = result.getString("keyword");
@@ -196,8 +196,25 @@ public class DBHelper {
 		}
 		Search newSearch = new Search(records, oldDate, keyword);
 		searches.add(newSearch);
-		
+
 		return searches;
+	}
+	
+	public static ResultSet getDetails(Date d, String k) throws SQLException{
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String date = sdf.format(d);
+		
+		String q = new String("SELECT title, type, language, url FROM record inner join " +
+				"search on record.rid = search.record inner join location on location.record = record.rid" +
+				" WHERE search.date = '" + date + "' AND search.keyword = '" + k + "' ;");
+		java.sql.PreparedStatement statement = getConnection()
+				.prepareStatement(q);
+		
+		ResultSet result = statement.executeQuery();	
+		
+		return result;
+		
 	}
 	
 
