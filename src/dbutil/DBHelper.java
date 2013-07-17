@@ -14,6 +14,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import com.mysql.jdbc.PreparedStatement;
+
 import model.Record;
 import model.Search;
 
@@ -23,7 +25,7 @@ public class DBHelper {
 	
 	public static Connection connectToDB() {
 
-		Builder.buildDB();
+//		Builder.buildDB();
 		Context initCtx;
 		try {
 			initCtx = new InitialContext();
@@ -31,7 +33,7 @@ public class DBHelper {
 
 			DataSource ds = (DataSource)
 
-			envCtx.lookup("jdbc/ElaboratoSD");
+			envCtx.lookup("jdbc/sd");
 
 			return ds.getConnection();
 
@@ -46,7 +48,7 @@ public class DBHelper {
 
 	}
 
-	private static Connection getConnection() {
+	public static Connection getConnection() {
 
 		if (connection == null)
 			connection = connectToDB();
@@ -56,7 +58,7 @@ public class DBHelper {
 	public static void saveRecords(ArrayList<Record> records, String input)
 			throws SQLException {
 
-		String query = "INSERT INTO record (type, language, link, title) VALUES ";
+		String query = "INSERT INTO record (type, language, url, title) VALUES ";
 		for (int i = 0; i < records.size(); i++) {
 			query += "(?,?,?,?)";
 			if (i < records.size() - 1)
@@ -71,13 +73,12 @@ public class DBHelper {
 		for (int i = 0; i < records.size(); i++) {
 			statement.setString(4 * i + 1, records.get(i).getType());
 			statement.setString(4 * i + 2, records.get(i).getLanguage());
-			statement.setString(4 * i + 3, records.get(i).getEuropeanaId());
+			statement.setString(4 * i + 3, records.get(i).getJSONLink());
 			statement.setString(4 * i + 4, records.get(i).getTitle());
 
 		}
 
 		statement.executeUpdate();
-		System.out.println(statement.getResultSetType());
 		
 		saveResources(records);
 		saveResearch(records, input);
@@ -150,15 +151,14 @@ public class DBHelper {
 		statement.executeUpdate();
 	}
 
-	private static int getRecordID(Record r) {
+	public static int getRecordID(Record r) {
 
-		String q = new String("SELECT rid FROM record WHERE STRCMP(link, '" + r.getEuropeanaId() + "') = 0;");
-		System.out.println(q);
+		String q = new String("SELECT id FROM record WHERE STRCMP(url, '" + r.getJSONLink() + "') = 0;");
 		try {
 			ResultSet resultSet = getConnection().createStatement().executeQuery(q);
 			int id = -1;
 			while(resultSet.next())
-				id = resultSet.getInt("rid");
+				id = resultSet.getInt("id");
 			
 			return id;
 		} catch (SQLException e) {
@@ -183,20 +183,26 @@ public class DBHelper {
 		Date oldDate = firstDate;
 		String keyword = new String();
 		
-		while (result.next()) {
-			Date newDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(result.getString("date"));
-			if(newDate.after(oldDate) && !(oldDate.equals(firstDate))){
-				Search newSearch = new Search(records, oldDate, keyword);
-				searches.add(newSearch);
-				records = new ArrayList<Integer>();
-			}
+		while(result.next()){
+
+			Search s = new Search(records, result.getDate("date"), result.getString("keyword"));
 			records.add(result.getInt("record"));
-			keyword = result.getString("keyword");
-			oldDate = newDate;
-			
+			searches.add(s);
 		}
-		Search newSearch = new Search(records, oldDate, keyword);
-		searches.add(newSearch);
+		
+//		while (result.next()) {
+//			Date newDate = (result.getDate("date"));
+//			if(newDate.after(oldDate) && !(oldDate.equals(firstDate))){
+//				Search newSearch = new Search(records, oldDate, keyword);
+//				searches.add(newSearch);
+//				records = new ArrayList<Integer>();
+//			}
+//			keyword = result.getString("keyword");
+//			oldDate = newDate;
+//			
+//		}
+//		Search newSearch = new Search(records, oldDate, keyword);
+//		searches.add(newSearch);
 
 		return searches;
 	}
@@ -215,6 +221,27 @@ public class DBHelper {
 		ResultSet result = statement.executeQuery();	
 		
 		return result;
+		
+	}
+
+	public static ResultSet executePreparedStatement(String q, String[] values) {
+
+		try {
+			java.sql.PreparedStatement stat = getConnection().prepareStatement(q);
+
+			for(int i = 0; i<values.length; i++)
+				stat.setString(i+1, values[i]);
+			
+			System.out.println(stat.toString());
+			ResultSet resultSet = stat.executeQuery();
+			return resultSet;
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 		
 	}
 	

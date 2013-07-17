@@ -1,13 +1,11 @@
 package com.example.sd;
 
 import util.Languages;
-import views.MainView;
-
+import views.LoginPage;
 import com.vaadin.Application;
 
 import com.vaadin.ui.themes.Runo;
 
-import controllers.ViewController;
 import dbutil.DBHelper;
 
 /**
@@ -27,9 +25,7 @@ public class SdApplication extends Application {
 		Languages.buildMap();	
 
 		this.setTheme(Runo.themeName());
-		MainView mainView = new MainView();
-		ViewController viewController = new ViewController(mainView);
-		this.setMainWindow(viewController.getMainView());
+		this.setMainWindow(new LoginPage());
 	}
 
 }

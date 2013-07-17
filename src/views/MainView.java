@@ -17,6 +17,8 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
+import controllers.ViewController;
+
 
 public class MainView extends Window {
 
@@ -39,11 +41,13 @@ public class MainView extends Window {
 	private CheckBox downloadable;
 	private Table searchTable;
 	private Button detailsButton;
+	private int userID;
 	
-	
-	public MainView(){
+	public MainView(int uid){
 		super("Multimedia Data Crawler");
+		userID = uid;
 		initViewComponent();
+		ViewController controller = new ViewController(this);
 		
 	}
 	
@@ -100,12 +104,18 @@ public class MainView extends Window {
 		this.downloadable.setImmediate(true);
 		
 		this.searchTable = new Table();
-		this.searchTable.addContainerProperty("Date", Date.class, null);
+
+//		this.searchTable.addContainerProperty("Date", Date.class, null);
 		this.searchTable.addContainerProperty("Keyword", String.class, null);
-		this.searchTable.addContainerProperty("N° Records", Integer.class, null);
+		this.searchTable.addContainerProperty("Provider", String.class, null);
+		this.searchTable.addContainerProperty("Type", String.class, null);
+		this.searchTable.addContainerProperty("Language", String.class, null);
+		this.searchTable.addContainerProperty("N° Results", Integer.class, null);
 		this.searchTable.setSizeFull();
 		this.searchTable.setSelectable(true);
 		this.searchTable.setImmediate(true);
+		searchTable.setPageLength(10);
+		panelLayout.setSizeFull();
 		
 		this.panelLayout.addComponent(groupSelector, 0, 0);
 		this.panelLayout.addComponent(textfield, 0, 1, 2, 1);
@@ -231,6 +241,10 @@ public class MainView extends Window {
 
 	public void setDetailsButton(Button detailsButton) {
 		this.detailsButton = detailsButton;
+	}
+
+	public int getUserID() {
+		return userID;
 	}
 
 	

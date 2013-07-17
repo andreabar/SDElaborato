@@ -2,11 +2,67 @@ package model;
 
 public class Query {
 
-	private String input;
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+
+	public String getProvider() {
+		return provider;
+	}
+
+	public void setProvider(String provider) {
+		this.provider = provider;
+	}
+
+//	public Date getDate() {
+//		return date;
+//	}
+//
+//	public void setDate(Date date) {
+//		this.date = date;
+//	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getResults() {
+		return results;
+	}
+
+	public void setResults(int results) {
+		this.results = results;
+	}
+
+	private String keyword;
 	private String iprType;
 	private String dataType;
+	private String provider;
+//	private Date date;
+	private int id;
+	
+	public Query(int id, String provider, String dataType, String keyword,
+			String language, int results) {
+		super();
+		this.id = id;
+		this.provider = provider;
+		this.dataType = dataType;
+		this.keyword = keyword;
+		this.language = language;
+//		this.date = date;
+		this.results = results;
+	}
+
 	public void setInput(String input) {
-		this.input = input;
+		this.keyword = input;
 	}
 
 	public void setDataType(String dataType) {
@@ -18,12 +74,12 @@ public class Query {
 	}
 
 	private String language;
-	private int limit;
+	private int results;
 	
 	public Query(String q) {
 	
-		input = q;
-		limit = -1;
+		keyword = q;
+		results = -1;
 		
 	}
 	
@@ -34,7 +90,7 @@ public class Query {
 	}
 
 	public int getLimit() {
-		return limit;
+		return results;
 	}
 
 	public String getLanguage() {
@@ -46,11 +102,11 @@ public class Query {
 	}
 
 	public String getInput() {
-		return input;
+		return keyword;
 	}
 
 	public void setLimit(int i) {
-		limit = i;
+		results = i;
 	}
 
 	public String getDataType() {

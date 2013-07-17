@@ -20,6 +20,8 @@ import com.vaadin.terminal.UserError;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
 
+import dbutil.DBHelper;
+
 public class ViewController {
 
 
@@ -37,22 +39,21 @@ public class ViewController {
 	
 	protected void loadSearchTable(){
 		this.mainView.getSearchTable().removeAllItems();
-		ArrayList<Search> searches = new ArrayList<Search>();
+		ArrayList<Query> searches = new ArrayList<Query>();
 		try {
-			searches = DBHelper.getSearches();
+			searches = QueryController.getSearches(mainView.getUserID());
+			if(!searches.isEmpty()){
+				for(Query q : searches){
+					Object rowItem[] = new Object[]{q.getKeyword(), q.getProvider(), q.getDataType(), q.getLanguage(), q.getResults()};
+					this.mainView.getSearchTable().addItem(rowItem, q);
+				}
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		if(!searches.isEmpty()){
-			int i = 0;
-			for(Search s : searches){
-				i++;
-				Object rowItem[] = new Object[]{s.getDate(), s.getKeyword(), s.getRecordsId().size()};
-				this.mainView.getSearchTable().addItem(rowItem, i);
-			}
-		}
+		
 	}
 
 	
@@ -112,17 +113,14 @@ class SearchListener implements Button.ClickListener{
 			
 			
 			Query query = fetcher.buildQuery(viewController.getMainView());
-
 			list = fetcher.executeQuery(query);
+			QueryController.saveQuery(query, viewController.getMainView().getUserID());
 			
-			for(Record r : list){
-				System.out.println("Title: " + r.getTitle());
-				System.out.println("Type: " + r.getType());
-				System.out.println("Resources : " + r.getWebResources());
-			}
+			for(Record r : list)
+				r.setQueryID(query.getId());
 			
+			RecordController.saveRecords(list);
 			
-		
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -205,12 +203,8 @@ class DetailsListener implements Button.ClickListener {
 	}
 
 	public void buttonClick(ClickEvent event) {
-		Object selectedId = this.viewController.getMainView().getSearchTable().getValue();
-		Date selectedDate = (Date) this.viewController.getMainView().getSearchTable().getItem(selectedId).
-				getItemProperty("Date").getValue();
-		String selectedKeyword = (String) this.viewController.getMainView().getSearchTable().getItem(selectedId).
-				getItemProperty("Keyword").getValue();
-		DetailsViewController dvc = new DetailsViewController(selectedDate, selectedKeyword);
+		Query selectedQuery = (Query)this.viewController.getMainView().getSearchTable().getValue();
+		DetailsViewController dvc = new DetailsViewController(selectedQuery);
 		this.viewController.getMainView().addWindow(dvc.getDetailsView());
 	}
 	

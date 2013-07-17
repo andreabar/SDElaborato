@@ -6,10 +6,10 @@ import controllers.RecordController;
 
 public class Record {
 	
-	private String europeanaID;
+	private String uniqueUrl;
 	private String type;
 	private int id;
-	
+	private int queryID;
 	private String title;
 	private String language;
 	private ArrayList<String> webResources;
@@ -23,7 +23,7 @@ public class Record {
 	private String guid;
 	private String link;
 	private ArrayList<String> providers;
-	private ArrayList<String> rights;
+	private String rights;
 	private ArrayList<String> dcCreator;
 	private String edmConceptLabel;
 	private String edmPreview;
@@ -75,11 +75,11 @@ public class Record {
 	public void setEuropeanaCollectionName(ArrayList<String> europeanaCollectionName) {
 		this.europeanaCollectionName = europeanaCollectionName;
 	}
-	public String getEuropeanaId() {
-		return europeanaID;
+	public String getUniqueUrl() {
+		return uniqueUrl;
 	}
-	public void setId(String id) {
-		this.europeanaID = id;
+	public void setUniqueUrl(String id) {
+		this.uniqueUrl = id;
 	}
 	public String getGuid() {
 		return guid;
@@ -100,10 +100,10 @@ public class Record {
 	public void setProvider(ArrayList<String> provider) {
 		this.providers = provider;
 	}
-	public ArrayList<String> getRights() {
+	public String getRights() {
 		return rights;
 	}
-	public void setRights(ArrayList<String> rights) {
+	public void setRights(String rights) {
 		this.rights = rights;
 	}
 	public String getType() {
@@ -179,5 +179,13 @@ public class Record {
 	
 	public int getID(){
 		return id;
+	}
+
+	public void setQueryID(int id) {
+		queryID = id;
+	}
+
+	public int getQueryID() {
+		return queryID;
 	}
 }

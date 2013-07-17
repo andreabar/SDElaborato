@@ -17,6 +17,7 @@ import org.scribe.oauth.OAuthService;
 
 import dbutil.DBHelper;
 
+import util.Languages;
 import views.MainView;
 
 import model.Query;
@@ -46,8 +47,7 @@ public class VimeoFetcher extends JSONFetcher{
 		Response response = req.send();
 	
 		ArrayList<Record> records = saveRecords(response.getBody());
-		DBHelper.saveRecords(records, q.getInput());
-		
+		q.setLimit(records.size());
 		return records;
 
 	}
@@ -78,13 +78,14 @@ public class VimeoFetcher extends JSONFetcher{
 			
 			JSONObject jsonItem = items.getJSONObject(i);
 		
-			item.setId(jsonItem.get("id").toString());
 			item.setType("VIDEO");
 			item.setTitle(jsonItem.getString("title"));
 			item.setLanguage("unknown");
+			item.setLink("http://vimeo.com/" + jsonItem.getInt("id"));
 			item.setWebResources(new ArrayList<String>());
-			item.getWebResources().add("http://vimeo.com/" + item.getEuropeanaId());
-
+			item.getWebResources().add(item.getJSONLink());
+			item.setRights("unknown");
+			
 			list.add(item);
 		}
 
@@ -112,6 +113,10 @@ public class VimeoFetcher extends JSONFetcher{
 
 		VimeoQuery q = new VimeoQuery(mainView.getTextfield().getValue().toString().trim());
 		q.setLimit((Integer)mainView.getStepper().getValue());
+		q.setDataType("VIDEO");
+		q.setLanguage("unknown");
+		q.setProvider("VIMEO");
+		
 		return q;
 	}
 	

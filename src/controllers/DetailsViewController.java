@@ -1,23 +1,25 @@
 package controllers;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
+
+import com.google.gwt.user.client.ui.CheckBox;
+
+import model.Query;
+import model.Record;
 
 import views.DetailsView;
 
 public class DetailsViewController {
 
 	private DetailsView detailsView;
-	private Date dateQuery;
-	private String keywordQuery;
+	private Query query;
 	
-	public DetailsViewController(Date d, String k){
+	public DetailsViewController(Query q){
 		this.setDetailsView(new DetailsView());
-		this.setDateQuery(d);
-		this.setKeywordQuery(k);
-		this.detailsView.getRecordsTable().setCaption("Query: " + getDateQuery().toString() +
-				" on " + getKeywordQuery());
+		query = q;
+		
+		this.detailsView.getRecordsTable().setCaption("Query: "  +
+				" on " + query.getKeyword());
 		try {
 			loadDetailsTable();
 		} catch (SQLException e) {
@@ -26,17 +28,11 @@ public class DetailsViewController {
 	}
 	
 	public void loadDetailsTable() throws SQLException{
-		ResultSet result = DBHelper.getDetails(getDateQuery(), getKeywordQuery());
-		int i = 0;
-		while(result.next()){
-			i++;
-			String title = result.getString("title");
-			String type = result.getString("type");
-			String language = result.getString("language");
-			String url = result.getString("url");
 
-			Object rowItem[] = new Object[]{title, language, type, url};
-			this.getDetailsView().getRecordsTable().addItem(rowItem, i);
+		for(Record r : QueryController.getRecords(query)){
+			
+			Object rowItem[] = new Object[]{r.getTitle(), r.getLanguage(), r.getType(), r.getRights(), new com.vaadin.ui.CheckBox()};
+			this.getDetailsView().getRecordsTable().addItem(rowItem, r);
 		}
 	}
 
@@ -48,21 +44,5 @@ public class DetailsViewController {
 		this.detailsView = detailsView;
 	}
 
-	public Date getDateQuery() {
-		return dateQuery;
-	}
-
-	public void setDateQuery(Date dateQuery) {
-		this.dateQuery = dateQuery;
-	}
-
-	public String getKeywordQuery() {
-		return keywordQuery;
-	}
-
-	public void setKeywordQuery(String keywordQuery) {
-		this.keywordQuery = keywordQuery;
-	}
 	
-
 }

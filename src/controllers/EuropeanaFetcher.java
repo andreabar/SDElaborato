@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Date;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -36,8 +37,7 @@ public class EuropeanaFetcher extends JSONFetcher {
 		if (request != null) {
 			System.out.println("Query: " + request.toString());
 			ArrayList<Record> response = fetchResponse(request);
-			DBHelper.saveRecords(response, q.getInput());
-
+			q.setLimit(response.size());
 			return response;
 		}
 
@@ -85,14 +85,13 @@ public class EuropeanaFetcher extends JSONFetcher {
 			item.setEuropeanaCollectionName(convertJSONArrayToStringArray(jsonItem
 					.getJSONArray("europeanaCollectionName")));
 			item.setGuid(jsonItem.getString("guid"));
-			item.setId(jsonItem.getString("id"));
 			item.setLink(jsonItem.getString("link"));
 			item.setProvider(convertJSONArrayToStringArray(jsonItem
 					.getJSONArray("provider")));
 			item.setType(jsonItem.getString("type"));
 			item.setTitle(jsonItem.getJSONArray("title").getString(0));
 			item.setLanguage(jsonItem.getJSONArray("language").getString(0));
-
+			item.setRights(jsonItem.getJSONArray("rights").getString(0));
 			// item.setRights(convertJSONArrayToStringArray(jsonItem
 			// .getJSONArray("rights")));
 
@@ -160,6 +159,8 @@ public class EuropeanaFetcher extends JSONFetcher {
 		query.setDataType(mainView.getTypeSelect().getValue().toString());
 		query.setPublicIpr(mainView.getDownloadable().booleanValue());
 		query.setLanguage(Languages.get(mainView.getLanguageSelect().getValue().toString()));
+		query.setProvider("EUROPEANA");
+		
 		
 		return query;
 		
