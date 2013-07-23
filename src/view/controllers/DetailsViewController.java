@@ -1,8 +1,8 @@
-package controllers;
+package view.controllers;
 
 import java.sql.SQLException;
 
-import com.google.gwt.user.client.ui.CheckBox;
+import controllers.QueryController;
 
 import model.Query;
 import model.Record;
@@ -14,8 +14,8 @@ public class DetailsViewController {
 	private DetailsView detailsView;
 	private Query query;
 	
-	public DetailsViewController(Query q){
-		this.setDetailsView(new DetailsView());
+	public DetailsViewController(Query q, int userID){
+		this.setDetailsView(new DetailsView(userID));
 		query = q;
 		
 		this.detailsView.getRecordsTable().setCaption("Query: "  +

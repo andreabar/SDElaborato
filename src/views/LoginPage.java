@@ -1,18 +1,13 @@
 package views;
 
-import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.vaadin.terminal.UserError;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.LoginForm;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.LoginForm.LoginEvent;
-
 import controllers.LoginController;
-import controllers.ViewController;
 
 public class LoginPage extends Window {
 
