@@ -1,147 +1,69 @@
 package model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import controllers.RecordController;
 
-public class Record {
-	
+public abstract class Record {
+
 	private String uniqueUrl;
 	private String type;
 	private int id;
 	private int queryID;
 	private String title;
 	private String language;
-	private ArrayList<String> webResources;
-
-	
-	
-	private Integer completeness;
-	private ArrayList<String> dataProviders;
-	
-	private ArrayList<String> europeanaCollectionName;
-	private String guid;
-	private String link;
-	private ArrayList<String> providers;
-	private String rights;
-	private ArrayList<String> dcCreator;
-	private String edmConceptLabel;
-	private String edmPreview;
-	private String edmTimespanLabel;
-	private Integer europeanaCompleteness;
+	private List<String> webResources;
 	private String year;
+	private String rights;
+	private String provider;
 	
-	public Record(){
+	public String getProvider() {
+		return provider;
+	}
+	public void setProvider(String provider) {
+		this.provider = provider;
+	}
+	public abstract void loadMoreInfo();
+	public abstract String getShownAt();
+	
+	public Record(ResultSet set){
+		
+		try {
+			setQueryID(set.getInt("query"));
+			setType(set.getString("type"));
+			setLanguage(set.getString("language"));
+			setTitle(set.getString("title"));
+			setUniqueUrl(set.getString("url"));
+			setRights(set.getString("ipr_type"));
+			setProvider(set.getString("provider"));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
-//	public String getShownLink() {
-//
-//		if(shownLink == null)
-//			try {
-//				shownLink = new EuropeanaFetcher().getRecordLink(this);
-//				return shownLink;
-//
-//			} catch (MalformedURLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (JSONException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		
-//		return shownLink;
-//	}
+	public Record() {
 
+	}
 
-	public Integer getCompleteness() {
-		return completeness;
-	}
-	public void setCompleteness(Integer completeness) {
-		this.completeness = completeness;
-	}
-	public ArrayList<String> getDataProvider() {
-		return dataProviders;
-	}
-	public void setDataProvider(ArrayList<String> dataProvider) {
-		this.dataProviders = dataProvider;
-	}
-	public ArrayList<String> getEuropeanaCollectionName() {
-		return europeanaCollectionName;
-	}
-	public void setEuropeanaCollectionName(ArrayList<String> europeanaCollectionName) {
-		this.europeanaCollectionName = europeanaCollectionName;
-	}
 	public String getUniqueUrl() {
 		return uniqueUrl;
 	}
 	public void setUniqueUrl(String id) {
 		this.uniqueUrl = id;
 	}
-	public String getGuid() {
-		return guid;
-	}
-	public void setGuid(String guid) {
-		this.guid = guid;
-	}
-	public String getJSONLink() {
-		return link;
-	}
 	
-	public void setLink(String link) {
-		this.link = link;
-	}
-	public ArrayList<String> getProvider() {
-		return providers;
-	}
-	public void setProvider(ArrayList<String> provider) {
-		this.providers = provider;
-	}
-	public String getRights() {
-		return rights;
-	}
-	public void setRights(String rights) {
-		this.rights = rights;
-	}
 	public String getType() {
 		return type;
 	}
 	public void setType(String type) {
 		this.type = type;
 	}
-	public ArrayList<String> getDcCreator() {
-		return dcCreator;
-	}
-	public void setDcCreator(ArrayList<String> dcCreator) {
-		this.dcCreator = dcCreator;
-	}
-	public String getEdmConceptLabel() {
-		return edmConceptLabel;
-	}
-	public void setEdmConceptLabel(String edmConceptLabel) {
-		this.edmConceptLabel = edmConceptLabel;
-	}
-	public String getEdmPreview() {
-		return edmPreview;
-	}
-	public void setEdmPreview(String edmPreview) {
-		this.edmPreview = edmPreview;
-	}
-	public String getEdmTimespanLabel() {
-		return edmTimespanLabel;
-	}
-	public void setEdmTimespanLabel(String edmTimespanLabel) {
-		this.edmTimespanLabel = edmTimespanLabel;
-	}
-	public Integer getEuropeanaCompleteness() {
-		return europeanaCompleteness;
-	}
-	public void setEuropeanaCompleteness(Integer europeanaCompleteness) {
-		this.europeanaCompleteness = europeanaCompleteness;
-	}
+	
 	public String getLanguage() {
 		return language;
 	}
@@ -161,16 +83,21 @@ public class Record {
 		this.year = year;
 	}
 
-	public ArrayList<String> getWebResources() {
+	public List<String> getWebResources() {
 
 		if(webResources == null)
-			webResources = RecordController.getWebResources(this);
+			try {
+				webResources = RecordController.getWebResources(this);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		return webResources;
 		
 	}
 
-	public void setWebResources(ArrayList<String> webResources) {
-		this.webResources = webResources;
+	public void setWebResources(List<String> list) {
+		this.webResources = list;
 	}
 
 	public void setID(int i) {
@@ -187,5 +114,12 @@ public class Record {
 
 	public int getQueryID() {
 		return queryID;
+	}
+	public String getRights() {
+		return rights;
+	}
+	public void setRights(String r) {
+
+			rights = r;
 	}
 }

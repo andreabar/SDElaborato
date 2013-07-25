@@ -1,22 +1,22 @@
-package controllers;
+package fetcher;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import dbutil.DBHelper;
 
 import util.Languages;
+import view.controllers.ViewController;
 import views.MainView;
 
+import model.EuropeanaRecord;
 import model.EuropenaQuery;
 import model.Query;
 import model.Record;
@@ -76,44 +76,15 @@ public class EuropeanaFetcher extends JSONFetcher {
 
 		for (int i = 0; i < items.length(); i++) {
 
-			Record item = new Record();
+			Record item = new EuropeanaRecord();
 			
 			JSONObject jsonItem = items.getJSONObject(i);
-			item.setCompleteness(jsonItem.getInt("completeness"));
-			item.setDataProvider(convertJSONArrayToStringArray(jsonItem
-					.getJSONArray("dataProvider")));
-			item.setEuropeanaCollectionName(convertJSONArrayToStringArray(jsonItem
-					.getJSONArray("europeanaCollectionName")));
-			item.setGuid(jsonItem.getString("guid"));
-			item.setLink(jsonItem.getString("link"));
-			item.setProvider(convertJSONArrayToStringArray(jsonItem
-					.getJSONArray("provider")));
+			
 			item.setType(jsonItem.getString("type"));
 			item.setTitle(jsonItem.getJSONArray("title").getString(0));
 			item.setLanguage(jsonItem.getJSONArray("language").getString(0));
 			item.setRights(jsonItem.getJSONArray("rights").getString(0));
-			// item.setRights(convertJSONArrayToStringArray(jsonItem
-			// .getJSONArray("rights")));
-
-			// item.setEdmConceptLabel(jsonItem.getString("edmConceptLabel"));
-			//
-			// item.setEdmPreview(jsonItem.getString("edmPreview"));
-			//
-			// item.setDcCreator(convertJSONArrayToStringArray(jsonItem
-			// .getJSONArray("dcCreator")));
-			// item.setDcCreator(convertJSONArrayToStringArray(null));
-			//
-			// item.setEdmTimespanLabel(jsonItem.getString("edmTimespanLabel"));
-			//
-			// item.setEuropeanaCompleteness(jsonItem
-			// .getInt("europeanaCompleteness"));
-			//
-			// item.setEuropeanaCompleteness(0);
-			// item.setLanguage(convertJSONArrayToStringArray(jsonItem
-			// .getJSONArray("language")));
-			//
-			//
-			// item.setYear(jsonItem.getString("year"));
+			item.setUniqueUrl(jsonItem.getString("link"));
 
 			list.add(item);
 		}
@@ -122,29 +93,21 @@ public class EuropeanaFetcher extends JSONFetcher {
 
 	}
 
-	private ArrayList<String> convertJSONArrayToStringArray(JSONArray jsonArray)
-			throws JSONException {
-		ArrayList<String> list = new ArrayList<String>();
-		if (jsonArray != null) {
-			int len = jsonArray.length();
-			for (int i = 0; i < len; i++) {
-				list.add(jsonArray.getString(i));
-			}
-		}
-
-		return list;
-	}
-
+	
 	private URL buildQueryRequest(Query q) throws MalformedURLException {
 
 		String urlTarget = API_URL + API_KEY + "&query=" + q.getInput();
 		if (-1 != q.getLimit())
 			urlTarget += "&rows=" + q.getLimit();
-		if (null != q.getLanguage())
+		if (q.hasLanguageFilter())
 			urlTarget += "&qf=LANGUAGE:" + q.getLanguage();
-		if (null != q.getIprType())
-			urlTarget += "&qf=RIGHTS:" + q.getIprType();
-		if (null != q.getDataType())
+		if (null != q.getIprType()){
+			for(String s : q.getIprType())
+				urlTarget += "&qf=RIGHTS:" + s;
+		
+		}
+			
+		if (q.hasDataFilter())
 			urlTarget += "&qf=TYPE:" + q.getDataType().toUpperCase();
 
 		return new URL(urlTarget.replaceAll(" ", "%20"));
@@ -152,13 +115,24 @@ public class EuropeanaFetcher extends JSONFetcher {
 	}
 
 	@Override
-	public Query buildQuery(MainView mainView) {
+	public Query buildQuery(ViewController v) {
 	
-		EuropenaQuery query = new EuropenaQuery(mainView.getTextfield().getValue().toString());
-		query.setLimit((Integer)mainView.getStepper().getValue());
-		query.setDataType(mainView.getTypeSelect().getValue().toString());
-		query.setPublicIpr(mainView.getDownloadable().booleanValue());
-		query.setLanguage(Languages.get(mainView.getLanguageSelect().getValue().toString()));
+		EuropenaQuery query = new EuropenaQuery(v.getMainView().getTextfield().getValue().toString());
+		
+		query.setLimit((Integer)v.getMainView().getStepper().getValue());
+		
+		if(v.getMainView().getIprSelector().getValue() != null )
+			query.setIprType(((Set<Object>)(v.getMainView().getIprSelector().getValue())));
+		
+		if(!v.getMainView().getTypeSelect().getValue().equals("any"))
+			query.setDataType(v.getMainView().getTypeSelect().getValue().toString());
+		else query.setDataType("any");
+
+		if(!v.getMainView().getLanguageSelect().getValue().equals("any"))
+			query.setLanguage(Languages.get(v.getMainView().getLanguageSelect().getValue().toString()));
+		else 
+			query.setLanguage("any");
+		
 		query.setProvider("EUROPEANA");
 		
 		

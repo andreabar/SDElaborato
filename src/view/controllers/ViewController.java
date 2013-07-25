@@ -1,17 +1,11 @@
-package controllers;
+package view.controllers;
 
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
-
-import model.EuropenaQuery;
 import model.Query;
 import model.Record;
-import model.Search;
-import model.VimeoQuery;
-import views.DetailsView;
 import views.MainView;
 
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -20,7 +14,12 @@ import com.vaadin.terminal.UserError;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
 
-import dbutil.DBHelper;
+import controllers.QueryController;
+import controllers.RecordController;
+
+import fetcher.EuropeanaFetcher;
+import fetcher.JSONFetcher;
+import fetcher.VimeoFetcher;
 
 public class ViewController {
 
@@ -96,7 +95,7 @@ class SearchListener implements Button.ClickListener{
 	
 		this.viewController.getMainView().getSearchButton().setEnabled(false);
 		
-		if(viewController.getMainView().getTextfield().getValue().equals(new String())){
+		if(viewController.getMainView().getTextfield().getValue().toString().isEmpty()){
 			viewController.getMainView().getTextfield().setComponentError(new UserError("required"));
 			return;
 		}
@@ -112,14 +111,21 @@ class SearchListener implements Button.ClickListener{
 		try {
 			
 			
-			Query query = fetcher.buildQuery(viewController.getMainView());
+			Query query = fetcher.buildQuery(viewController);
 			list = fetcher.executeQuery(query);
 			QueryController.saveQuery(query, viewController.getMainView().getUserID());
 			
 			for(Record r : list)
 				r.setQueryID(query.getId());
 			
+			
 			RecordController.saveRecords(list);
+			
+
+			this.viewController.getMainView().getSearchButton().setEnabled(true);
+			Object rowItem[] = new Object[]{query.getKeyword(), query.getProvider(), query.getDataType(), query.getLanguage(), query.getResults()};
+			viewController.getMainView().getSearchTable().addItem(rowItem, query);
+			viewController.getMainView().getSearchTable().select(query);
 			
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -130,8 +136,6 @@ class SearchListener implements Button.ClickListener{
 		}
 		
 		
-		this.viewController.getMainView().getSearchButton().setEnabled(true);
-		this.viewController.loadSearchTable();
 
 	}
 	
@@ -204,7 +208,7 @@ class DetailsListener implements Button.ClickListener {
 
 	public void buttonClick(ClickEvent event) {
 		Query selectedQuery = (Query)this.viewController.getMainView().getSearchTable().getValue();
-		DetailsViewController dvc = new DetailsViewController(selectedQuery);
+		DetailsViewController dvc = new DetailsViewController(selectedQuery, viewController.getMainView().getUserID());
 		this.viewController.getMainView().addWindow(dvc.getDetailsView());
 	}
 	

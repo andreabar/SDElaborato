@@ -1,5 +1,10 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.Set;
+
+import dbutil.IprType;
+
 public class Query {
 
 	public String getKeyword() {
@@ -43,7 +48,7 @@ public class Query {
 	}
 
 	private String keyword;
-	private String iprType;
+	private ArrayList<String> iprType;
 	private String dataType;
 	private String provider;
 //	private Date date;
@@ -83,10 +88,12 @@ public class Query {
 		
 	}
 	
-	public void setIprType(String type){
+	public void setIprType(Set<Object> types){
 		
-		iprType = type;
-		
+		iprType = new ArrayList<String>();
+		for(Object o : types)
+			iprType.add(IprType.getIprUrl(o.toString()));
+			
 	}
 
 	public int getLimit() {
@@ -97,7 +104,7 @@ public class Query {
 		return language;
 	}
 
-	public String getIprType() {
+	public ArrayList<String> getIprType() {
 		return iprType;
 	}
 
@@ -112,6 +119,12 @@ public class Query {
 	public String getDataType() {
 		return dataType;
 	}
-	
+
+	public boolean hasLanguageFilter() {
+		return language != null && language != "any";
+	}
+	public boolean hasDataFilter() {
+		return dataType != null && dataType != "any";
+	}
 	
 }

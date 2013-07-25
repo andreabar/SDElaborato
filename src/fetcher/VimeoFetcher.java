@@ -1,4 +1,4 @@
-package controllers;
+package fetcher;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,14 +15,12 @@ import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
-import dbutil.DBHelper;
 
-import util.Languages;
-import views.MainView;
-
+import view.controllers.ViewController;
 import model.Query;
 import model.Record;
 import model.VimeoQuery;
+import model.VimeoRecord;
 
 public class VimeoFetcher extends JSONFetcher{
 
@@ -74,17 +72,12 @@ public class VimeoFetcher extends JSONFetcher{
 
 		for (int i = 0; i < items.length(); i++) {
 
-			Record item = new Record();
+			Record item = new VimeoRecord();
 			
 			JSONObject jsonItem = items.getJSONObject(i);
 		
-			item.setType("VIDEO");
 			item.setTitle(jsonItem.getString("title"));
-			item.setLanguage("unknown");
-			item.setLink("http://vimeo.com/" + jsonItem.getInt("id"));
-			item.setWebResources(new ArrayList<String>());
-			item.getWebResources().add(item.getJSONLink());
-			item.setRights("unknown");
+			item.setUniqueUrl("http://vimeo.com/" + jsonItem.getInt("id"));
 			
 			list.add(item);
 		}
@@ -97,6 +90,7 @@ public class VimeoFetcher extends JSONFetcher{
 	private URL buildQueryRequest(Query q) throws MalformedURLException {
 
 		String urlTarget = endpoint + q.getInput();
+		
 		if (-1 != q.getLimit()){
 			urlTarget += "&page=" + ((VimeoQuery)q).getPages() + "&per_page=" + ((VimeoQuery)q).getRpp();;
 			
@@ -109,10 +103,10 @@ public class VimeoFetcher extends JSONFetcher{
 
 
 	@Override
-	public Query buildQuery(MainView mainView) {
+	public Query buildQuery(ViewController v) {
 
-		VimeoQuery q = new VimeoQuery(mainView.getTextfield().getValue().toString().trim());
-		q.setLimit((Integer)mainView.getStepper().getValue());
+		VimeoQuery q = new VimeoQuery(v.getMainView().getTextfield().getValue().toString().trim());
+		q.setLimit((Integer)v.getMainView().getStepper().getValue());
 		q.setDataType("VIDEO");
 		q.setLanguage("unknown");
 		q.setProvider("VIMEO");

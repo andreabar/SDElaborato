@@ -11,13 +11,6 @@ public class EuropenaQuery extends Query {
 
 	}
 
-	public void setPublicIpr(boolean freeAccess) {
-
-		if (freeAccess)
-			setIprType(freeAccessIPR);
-		else
-			setIprType(rightReservedIPR);
-
-	}
+	
 
 }

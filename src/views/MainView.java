@@ -1,23 +1,23 @@
 package views;
 
 import java.util.ArrayList;
-import java.util.Date;
-
 import org.vaadin.risto.stepper.IntStepper;
+
+import view.controllers.ViewController;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.Select;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-import controllers.ViewController;
+import dbutil.IprType;
 
 
 public class MainView extends Window {
@@ -37,6 +37,8 @@ public class MainView extends Window {
 	private IntStepper stepper;
 	private NativeSelect typeSelect;
 	private NativeSelect languageSelect;
+	private ListSelect iprSelector;
+	
 	private OptionGroup groupSelector;
 	private CheckBox downloadable;
 	private Table searchTable;
@@ -62,7 +64,7 @@ public class MainView extends Window {
 		this.setHeight("100%");
 		this.setScrollable(true);
 		
-		this.panelLayout = new GridLayout(5, 6);
+		this.panelLayout = new GridLayout(5, 7);
 		this.panelLayout.setSizeFull();
 		this.panelLayout.setSpacing(true);
 		this.panelLayout.setMargin(true);
@@ -81,6 +83,10 @@ public class MainView extends Window {
 		this.stepper.setMinValue(1);
 		this.stepper.setValue(1);
 		this.stepper.setImmediate(true);
+		
+		iprSelector = new ListSelect("IPR");
+		initIprSelector();
+		
 		
 		this.typeSelect = new NativeSelect("Type");
 		this.typeSelect.setNullSelectionAllowed(false);
@@ -122,53 +128,68 @@ public class MainView extends Window {
 		this.panelLayout.addComponent(stepper, 0, 2);
 		this.panelLayout.addComponent(typeSelect, 1, 2);
 		this.panelLayout.addComponent(languageSelect, 2, 2);
+		this.panelLayout.addComponent(iprSelector, 3, 2); 
 		this.panelLayout.addComponent(downloadable, 0, 3);	
 		this.panelLayout.addComponent(searchButton, 0, 4);
 		this.panelLayout.addComponent(detailsButton, 3, 4);
-		this.panelLayout.addComponent(searchTable, 0, 5, 3, 5);
+
 		
 		
 		this.mainPanel.setContent(panelLayout);
 		this.mainLayout.addComponent(mainPanel);
-		this.setContent(mainLayout);
+		addComponent(mainLayout);
+		addComponent(searchTable);
+		searchTable.setSizeFull();
 		
 	}
 	
+	private void initIprSelector() {
+
+		iprSelector.setMultiSelect(true);
+		
+		for(String k : IprType.getTypes().keySet()){
+			
+			iprSelector.addItem(k);
+			
+		}
+		
+		
+	}
+
 	private void initTypeSelect(){
-		String[] typeId = new String[3];
-		typeId[0] = "TEXT";
-		typeId[1] = "VIDEO";
-		typeId[2] = "IMAGE";
-		for(String s : typeId){
+		ArrayList<String> types = new ArrayList<String>();
+		
+		types.add("TEXT");
+		types.add("VIDEO");
+		types.add("IMAGE");
+		types.add("SOUND");
+		types.add("3D");
+		types.add("any");
+		
+		for(String s : types){
 			this.typeSelect.addItem(s);
 		}
-		this.typeSelect.setItemCaption(typeId[0], "Text");
-		this.typeSelect.setItemCaption(typeId[1], "Video");
-		this.typeSelect.setItemCaption(typeId[2], "Image");
-		this.typeSelect.setValue(typeId[0]);
+	
 	}
 	
 	private void initLanguageSelect(){
-		String[] typeId = new String[4];
-		typeId[0] = "en";
-		typeId[1] = "it";
-		typeId[2] = "fr";
-		typeId[3] = "de";
+		String[] typeId = new String[5];
+		typeId[0] = "English";
+		typeId[1] = "Italian";
+		typeId[2] = "French";
+		typeId[3] = "German";
+		typeId[4] = "any";
+
 		for(String s : typeId){
 			this.languageSelect.addItem(s);
 		}
-		this.languageSelect.setItemCaption(typeId[0], "English");
-		this.languageSelect.setItemCaption(typeId[1], "Italian");
-		this.languageSelect.setItemCaption(typeId[2], "French");
-		this.languageSelect.setItemCaption(typeId[3], "German");
-
-		this.languageSelect.setValue(typeId[0]);
+	
+		
 	}
 	
 	private void initGroupSelector(){
 		this.groupSelector.addItem("Europeana");
 		this.groupSelector.addItem("Vimeo");
-		this.groupSelector.setValue("Europeana");
 	}
 	
 	public TextField getTextfield() {
@@ -247,6 +268,6 @@ public class MainView extends Window {
 		return userID;
 	}
 
-	
-
-}
+	public ListSelect getIprSelector() {
+		return iprSelector;
+	}}

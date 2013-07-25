@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -71,7 +72,7 @@ public class DBHelper {
 		for (int i = 0; i < records.size(); i++) {
 			statement.setString(4 * i + 1, records.get(i).getType());
 			statement.setString(4 * i + 2, records.get(i).getLanguage());
-			statement.setString(4 * i + 3, records.get(i).getJSONLink());
+			statement.setString(4 * i + 3, records.get(i).getUniqueUrl());
 			statement.setString(4 * i + 4, records.get(i).getTitle());
 
 		}
@@ -90,7 +91,7 @@ public class DBHelper {
 
 		
 		for(Record r : records){
-			ArrayList<String> resources = r.getWebResources();
+			List<String> resources = r.getWebResources();
 			for(String s : resources){
 				
 				query += "(?,?),";
@@ -103,7 +104,7 @@ public class DBHelper {
 		for(Record r : records){
 			int id = getRecordID(r);
 			if(id != -1){
-			ArrayList<String> resources = r.getWebResources();
+			List<String> resources = r.getWebResources();
 			for(String s : resources){
 				statement.setInt(j, id);
 				j++;
@@ -151,7 +152,7 @@ public class DBHelper {
 
 	public static int getRecordID(Record r) {
 
-		String q = new String("SELECT id FROM record WHERE STRCMP(url, '" + r.getJSONLink() + "') = 0;");
+		String q = new String("SELECT id FROM record WHERE STRCMP(url, '" + r.getUniqueUrl() + "') = 0;");
 		try {
 			ResultSet resultSet = getConnection().createStatement().executeQuery(q);
 			int id = -1;

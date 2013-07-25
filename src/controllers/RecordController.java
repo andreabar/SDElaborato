@@ -5,9 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
+
 import model.Record;
 
 import org.json.JSONArray;
@@ -19,53 +22,86 @@ import dbutil.DBHelper;
 public class RecordController {
 
 	
-	public static ArrayList<String> getWebResources(Record r)
+	public static List<String> getWebResources(Record r) throws SQLException
 			 {
-
-		ArrayList<String> list = new ArrayList<String>();
-		BufferedReader in;
-		try {
-			in = new BufferedReader(new InputStreamReader(new URL(
-					r.getJSONLink()).openStream()));
 		
-			String inputLine = new String();
-			JSONObject o = null;
-			while ((inputLine = in.readLine()) != null) {
+		int id = DBHelper.getRecordID(r);
 
-				 o = new JSONObject(inputLine);
-				}
-			
-			JSONArray array = o.getJSONObject("object").getJSONArray(
-					"aggregations");
-			JSONArray webRes = array.getJSONObject(0).getJSONArray("webResources");
-			for (int j = 0; j < webRes.length(); j++)
-						list.add(webRes.getJSONObject(j).getString("about"));
-			
+		List<String> list = 
+
+		checkForResources(id);
+		
+		if(!list.isEmpty())
 			return list;
-			
-		
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		else
+		{
+			downloadResources(r, list);
+			return list;
+
 		}
-		return list;
 
 		
 		
 	}
 
+	private static List<String> downloadResources(Record r, List<String> list) {
+		BufferedReader in;
+		try {
+		
+		in = new BufferedReader(new InputStreamReader(new URL(
+				r.getUniqueUrl()).openStream()));
+	
+		String inputLine = new String();
+		JSONObject o = null;
+		while ((inputLine = in.readLine()) != null) {
+
+			 o = new JSONObject(inputLine);
+			}
+		
+		JSONArray array = o.getJSONObject("object").getJSONArray(
+				"aggregations");
+		JSONArray webRes = array.getJSONObject(0).getJSONArray("webResources");
+		for (int j = 0; j < webRes.length(); j++)
+					list.add(webRes.getJSONObject(j).getString("about"));
+		
+		return list;
+		
+	
+		
+	
+	} catch (MalformedURLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (JSONException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		return list;
+		
+	}
+
+	private static List<String> checkForResources(int id) throws SQLException {
+
+		List<String> resources = new ArrayList<String>();
+		String q = "SELECT url FROM resource WHERE record = " + id;
+		
+		ResultSet set = DBHelper.getConnection().createStatement().executeQuery(q);
+		while(set.next()){
+			 resources.add(set.getString("url"));
+		}
+		
+		return resources;
+	}
+
 	public static void saveRecords(ArrayList<Record> records) throws SQLException {
 
 		
-			String query = "INSERT INTO record (query, type, language, url, title, ipr_type) VALUES ";
+			String query = "INSERT INTO record (query, type, language, url, title, ipr_type, provider) VALUES ";
 			for (int i = 0; i < records.size(); i++) {
-				query += "(?,?,?,?,?,?)";
+				query += "(?,?,?,?,?,?,?)";
 				if (i < records.size() - 1)
 					query += ",";
 				else
@@ -76,12 +112,14 @@ public class RecordController {
 					.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
 			for (int i = 0; i < records.size(); i++) {
-				statement.setInt(6 * i + 1, records.get(i).getQueryID());
-				statement.setString(6 * i + 2, records.get(i).getType());
-				statement.setString(6 * i + 3, records.get(i).getLanguage());
-				statement.setString(6 * i + 4, records.get(i).getJSONLink());
-				statement.setString(6 * i + 5, records.get(i).getTitle());
-				statement.setString(6 * i + 6, records.get(i).getRights());
+				statement.setInt(7 * i + 1, records.get(i).getQueryID());
+				statement.setString(7 * i + 2, records.get(i).getType());
+				statement.setString(7 * i + 3, records.get(i).getLanguage());
+				statement.setString(7 * i + 4, records.get(i).getUniqueUrl());
+				statement.setString(7 * i + 5, records.get(i).getTitle());
+				statement.setString(7 * i + 6, records.get(i).getRights());
+				statement.setString(7 * i + 7, records.get(i).getProvider());
+
 				
 
 			}
@@ -92,7 +130,7 @@ public class RecordController {
 	}
 
 
-	private static void saveResources(ArrayList<Record> records) throws SQLException {
+	public static void saveResources(List<Record> records) throws SQLException {
 
 		
 		String query = "INSERT INTO resource (record, url) VALUES ";
@@ -100,7 +138,7 @@ public class RecordController {
 
 		
 		for(Record r : records){
-			ArrayList<String> resources = r.getWebResources();
+			List<String> resources = r.getWebResources();
 			for(String s : resources){
 				
 				query += "(?,?),";
@@ -113,7 +151,7 @@ public class RecordController {
 		for(Record r : records){
 			int id = DBHelper.getRecordID(r);
 			if(id != -1){
-			ArrayList<String> resources = r.getWebResources();
+			List<String> resources = r.getWebResources();
 			for(String s : resources){
 				statement.setInt(j, id);
 				j++;

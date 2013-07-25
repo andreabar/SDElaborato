@@ -4,15 +4,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-
 import dbutil.DBHelper;
 
+import model.EuropeanaRecord;
 import model.Query;
 import model.Record;
-import model.Search;
+import model.VimeoRecord;
 
 public class QueryController {
 
@@ -75,19 +73,14 @@ public class QueryController {
 		ArrayList<Record> list = new ArrayList<Record>();
 		
 		while(set.next()){
+			String provider = set.getString("provider");
+			Record r;
 			
-			Record r = new Record();
-			r.setQueryID(q.getId());
-			r.setType(set.getString("type"));
-			r.setLanguage(set.getString("language"));
-			r.setTitle(set.getString("title"));
-			r.setLink(set.getString("url"));
-			if(q.getProvider().equals("VIMEO")){
-				r.setWebResources(new ArrayList<String>());
-				r.getWebResources().add("http://vimeo.com/" + r.getJSONLink());
-				
-			}
-			r.setRights(set.getString("ipr_type"));
+			if(provider.equals("EUROPEANA"))
+				 r = new EuropeanaRecord(set);
+			else 
+				 r = new VimeoRecord(set);
+			
 			list.add(r);
 			
 		}
