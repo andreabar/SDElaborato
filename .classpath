@@ -12,5 +12,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="C:/Users/Andrea/Downloads/htmlunit-2.8.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

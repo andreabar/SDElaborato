@@ -31,9 +31,7 @@ public class DBHelper {
 			initCtx = new InitialContext();
 			Context envCtx = (Context) initCtx.lookup("java:comp/env");
 
-			DataSource ds = (DataSource)
-
-			envCtx.lookup("jdbc/sd");
+			DataSource ds = (DataSource) envCtx.lookup("jdbc/sd");
 
 			return ds.getConnection();
 
