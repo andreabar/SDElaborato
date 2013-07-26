@@ -28,6 +28,7 @@ public abstract class Record {
 	}
 	public abstract void loadMoreInfo();
 	public abstract String getShownAt();
+
 	
 	public Record(ResultSet set){
 		
@@ -86,12 +87,7 @@ public abstract class Record {
 	public List<String> getWebResources() {
 
 		if(webResources == null)
-			try {
-				webResources = RecordController.getWebResources(this);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				loadMoreInfo();
 		return webResources;
 		
 	}

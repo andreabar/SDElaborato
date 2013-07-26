@@ -2,6 +2,7 @@ package model;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 
 public class VimeoRecord extends Record {
 
@@ -37,6 +38,5 @@ public class VimeoRecord extends Record {
 		return getWebResources().get(0);
 	}
 
-	
 	
 }

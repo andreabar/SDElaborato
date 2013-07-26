@@ -8,6 +8,7 @@ import model.Query;
 import model.Record;
 import views.MainView;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.terminal.UserError;
@@ -118,9 +119,12 @@ class SearchListener implements Button.ClickListener{
 			for(Record r : list)
 				r.setQueryID(query.getId());
 			
-			
+			try{
 			RecordController.saveRecords(list);
-			
+			}
+			catch(MySQLIntegrityConstraintViolationException e){
+				e.printStackTrace();
+			}
 
 			this.viewController.getMainView().getSearchButton().setEnabled(true);
 			Object rowItem[] = new Object[]{query.getKeyword(), query.getProvider(), query.getDataType(), query.getLanguage(), query.getResults()};
