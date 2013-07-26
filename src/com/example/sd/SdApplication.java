@@ -6,6 +6,8 @@ import com.vaadin.Application;
 
 import com.vaadin.ui.themes.Runo;
 
+import controllers.LoginController;
+
 import dbutil.DBHelper;
 import dbutil.IprType;
 
@@ -21,14 +23,21 @@ public class SdApplication extends Application {
 
 	@Override
 	public void init() {
-		
+
 		DBHelper.connectToDB();
 		Languages.buildMap();
 		IprType.build();
 
+		LoginController lc = new LoginController(new LoginPage());
+
 		this.setTheme(Runo.themeName());
-		this.setMainWindow(new LoginPage());
+		this.setMainWindow(lc.getLoginPage());
+
+
+		
 	}
+
+	
 
 }
 
