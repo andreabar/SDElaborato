@@ -90,4 +90,12 @@ public class QueryController {
 
 	}
 	
+	public static void deleteSearch(Query q) throws SQLException{
+		String s = "DELETE FROM query WHERE id = " + q.getId() +";";
+		
+		Statement statement = DBHelper.getConnection().createStatement();
+
+		statement.executeUpdate(s);
+	}
+	
 }

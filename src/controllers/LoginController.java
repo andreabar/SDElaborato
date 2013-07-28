@@ -3,8 +3,11 @@ package controllers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import util.AppData;
+import view.controllers.TabViewController;
 import views.LoginPage;
 import views.MainView;
+import views.TabSheetView;
 
 import com.vaadin.terminal.UserError;
 import com.vaadin.ui.Button;
@@ -76,7 +79,9 @@ class LoginButtonListener implements Button.ClickListener {
 			int loginResult = LoginController.handleLogin(loginController.getLoginPage().getUsername().getValue().toString(), 
 					loginController.getLoginPage().getPass().getValue().toString());
 			if(loginResult != -1){
-				Window main = new MainView(loginResult);
+				AppData.userID = loginResult;
+				TabViewController tvc = new TabViewController();
+				Window main = tvc.getTabSheetView();
 				
 				this.loginController.getLoginPage().getApplication().addWindow(main);
 				this.loginController.getLoginPage().getApplication().setMainWindow(main);

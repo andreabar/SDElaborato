@@ -20,7 +20,7 @@ import com.vaadin.ui.Window;
 import dbutil.IprType;
 
 
-public class MainView extends Window {
+public class MainView extends VerticalLayout {
 
 	/**
 	 * 
@@ -29,7 +29,7 @@ public class MainView extends Window {
 
 	
 
-	private VerticalLayout mainLayout;
+	private TabSheetView parentView;
 	private Panel mainPanel;
 	private GridLayout panelLayout;
 	private TextField textfield;
@@ -40,31 +40,25 @@ public class MainView extends Window {
 	private ListSelect iprSelector;
 	
 	private OptionGroup groupSelector;
-	private CheckBox downloadable;
 	private Table searchTable;
 	private Button detailsButton;
-	private int userID;
+	private Button deleteButton;
 	
-	public MainView(int uid){
-		super("Multimedia Data Crawler");
-		userID = uid;
-		initViewComponent();
-		ViewController controller = new ViewController(this);
-		
+	
+	public MainView(TabSheetView parent){
+		setParentView(parent);
+		initViewComponent();		
 	}
 	
 	private void initViewComponent(){
 		
-		this.mainLayout = new VerticalLayout();
-		this.mainLayout.setWidth("100%");
-		this.mainLayout.setHeight("100%");
-		
-		this.mainPanel = new Panel("Multimedia Data Crawler");
 		this.setWidth("100%");
 		this.setHeight("100%");
-		this.setScrollable(true);
 		
-		this.panelLayout = new GridLayout(5, 7);
+		this.mainPanel = new Panel("Multimedia Data Crawler");
+		
+		
+		this.panelLayout = new GridLayout(5, 6);
 		this.panelLayout.setSizeFull();
 		this.panelLayout.setSpacing(true);
 		this.panelLayout.setMargin(true);
@@ -97,17 +91,18 @@ public class MainView extends Window {
 		initLanguageSelect();
 
 		this.searchButton = new Button("Search");
+		this.searchButton.setEnabled(false);
 		
 		this.detailsButton = new Button("Details");
 		this.detailsButton.setEnabled(false);
+		
+		this.deleteButton = new Button("Delete");
+		this.deleteButton.setEnabled(false);
 		
 		this.groupSelector = new OptionGroup("Source");
 		this.groupSelector.setNullSelectionAllowed(false);
 		this.groupSelector.setImmediate(true);
 		initGroupSelector();
-		
-		this.downloadable = new CheckBox("Downloadable Content");
-		this.downloadable.setImmediate(true);
 		
 		this.searchTable = new Table();
 
@@ -129,17 +124,15 @@ public class MainView extends Window {
 		this.panelLayout.addComponent(typeSelect, 1, 2);
 		this.panelLayout.addComponent(languageSelect, 2, 2);
 		this.panelLayout.addComponent(iprSelector, 3, 2); 
-		this.panelLayout.addComponent(downloadable, 0, 3);	
-		this.panelLayout.addComponent(searchButton, 0, 4);
-		this.panelLayout.addComponent(detailsButton, 3, 4);
+		this.panelLayout.addComponent(searchButton, 0, 3);
+		this.panelLayout.addComponent(detailsButton, 2, 3);
+		this.panelLayout.addComponent(deleteButton, 3, 3);
 
 		
 		
 		this.mainPanel.setContent(panelLayout);
-		this.mainLayout.addComponent(mainPanel);
-		addComponent(mainLayout);
-		addComponent(searchTable);
-		searchTable.setSizeFull();
+		this.addComponent(mainPanel);
+		this.addComponent(searchTable);
 		
 	}
 	
@@ -248,14 +241,6 @@ public class MainView extends Window {
 		this.searchTable = searchTable;
 	}
 
-	public CheckBox getDownloadable() {
-		return downloadable;
-	}
-
-	public void setDownloadable(CheckBox downloadable) {
-		this.downloadable = downloadable;
-	}
-
 	public Button getDetailsButton() {
 		return detailsButton;
 	}
@@ -264,10 +249,22 @@ public class MainView extends Window {
 		this.detailsButton = detailsButton;
 	}
 
-	public int getUserID() {
-		return userID;
-	}
-
 	public ListSelect getIprSelector() {
 		return iprSelector;
+	}
+
+	public Button getDeleteButton() {
+		return deleteButton;
+	}
+
+	public void setDeleteButton(Button deleteButton) {
+		this.deleteButton = deleteButton;
+	}
+
+	public TabSheetView getParentView() {
+		return parentView;
+	}
+
+	public void setParentView(TabSheetView parentView) {
+		this.parentView = parentView;
 	}}

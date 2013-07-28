@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import model.Query;
 import model.Record;
+import util.AppData;
 import views.MainView;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -34,6 +35,7 @@ public class ViewController {
 		this.mainView.getGroupSelector().addListener(new GroupSelectorListener(this));
 		this.mainView.getSearchTable().addListener(new TableClickListener(this));
 		this.mainView.getDetailsButton().addListener(new DetailsListener(this));
+		this.mainView.getDeleteButton().addListener(new DeleteListener(this));
 		loadSearchTable();
 	}
 	
@@ -41,7 +43,7 @@ public class ViewController {
 		this.mainView.getSearchTable().removeAllItems();
 		ArrayList<Query> searches = new ArrayList<Query>();
 		try {
-			searches = QueryController.getSearches(mainView.getUserID());
+			searches = QueryController.getSearches(AppData.userID);
 			if(!searches.isEmpty()){
 				for(Query q : searches){
 					Object rowItem[] = new Object[]{q.getKeyword(), q.getProvider(), q.getDataType(), q.getLanguage(), q.getResults()};
@@ -98,6 +100,7 @@ class SearchListener implements Button.ClickListener{
 		
 		if(viewController.getMainView().getTextfield().getValue().toString().isEmpty()){
 			viewController.getMainView().getTextfield().setComponentError(new UserError("required"));
+			viewController.getMainView().getSearchButton().setEnabled(true);
 			return;
 		}
 	
@@ -114,7 +117,7 @@ class SearchListener implements Button.ClickListener{
 			
 			Query query = fetcher.buildQuery(viewController);
 			list = fetcher.executeQuery(query);
-			QueryController.saveQuery(query, viewController.getMainView().getUserID());
+			QueryController.saveQuery(query, AppData.userID);
 			
 			for(Record r : list)
 				r.setQueryID(query.getId());
@@ -135,11 +138,11 @@ class SearchListener implements Button.ClickListener{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.viewController.getMainView().getParentView().getWindow().showNotification("No result found!");
 		}
 		
 		
+		this.viewController.getMainView().getSearchButton().setEnabled(true);
 
 	}
 	
@@ -171,6 +174,33 @@ class GroupSelectorListener implements ValueChangeListener{
 			viewController.getMainView().getTypeSelect().setEnabled(false);
 			viewController.getMainView().getLanguageSelect().setEnabled(false);
 		}
+		viewController.getMainView().getSearchButton().setEnabled(true);
+	}
+	
+}
+
+class DeleteListener implements Button.ClickListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3956959737914558552L;
+	
+	private ViewController viewController;
+	
+	public DeleteListener(ViewController viewController){
+		this.viewController = viewController;
+	}
+
+	public void buttonClick(ClickEvent event) {
+		Query q = (Query) this.viewController.getMainView().getSearchTable().getValue();
+		try {
+			QueryController.deleteSearch(q);
+			this.viewController.loadSearchTable();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 }
@@ -191,8 +221,10 @@ class TableClickListener implements ValueChangeListener {
 	public void valueChange(ValueChangeEvent event) {
 		if(null != this.viewController.getMainView().getSearchTable().getValue()){
 			this.viewController.getMainView().getDetailsButton().setEnabled(true);
+			this.viewController.getMainView().getDeleteButton().setEnabled(true);
 		} else {
 			this.viewController.getMainView().getDetailsButton().setEnabled(false);
+			this.viewController.getMainView().getDeleteButton().setEnabled(false);
 		}
 	}
 	
@@ -212,8 +244,8 @@ class DetailsListener implements Button.ClickListener {
 
 	public void buttonClick(ClickEvent event) {
 		Query selectedQuery = (Query)this.viewController.getMainView().getSearchTable().getValue();
-		DetailsViewController dvc = new DetailsViewController(selectedQuery, viewController.getMainView().getUserID());
-		this.viewController.getMainView().addWindow(dvc.getDetailsView());
+		DetailsViewController dvc = new DetailsViewController(selectedQuery, AppData.userID);
+		this.viewController.getMainView().getParentView().addWindow(dvc.getDetailsView());
 	}
 	
 }
