@@ -56,7 +56,11 @@ public class DetailsView extends Window {
 			public void buttonClick(ClickEvent event) {
 				
 				Record selected = ((Record)recordsTable.getValue());
-				DetailsView.this.open(new ExternalResource(selected.getShownAt()), "_blank");
+				try {
+					DetailsView.this.open(new ExternalResource(selected.getShownAt()), "_blank");
+				} catch (Exception e) {
+					getApplication().getMainWindow().showNotification("Server Error", Window.Notification.TYPE_ERROR_MESSAGE);
+				}
 				
 				
 			}
@@ -109,9 +113,10 @@ public class DetailsView extends Window {
 					removeAllComponents();
 					addComponent(new Label("Your request is being processed"));
 					
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
+				} catch (Exception e) {
 					e.printStackTrace();
+					getApplication().getMainWindow().showNotification("Server Error", Window.Notification.TYPE_ERROR_MESSAGE);
+					return;
 				}
 				
 			}

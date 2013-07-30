@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import model.Query;
 import model.Record;
 import util.AppData;
+import views.LoginPage;
 import views.MainView;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -16,8 +17,10 @@ import com.vaadin.terminal.UserError;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
 
+import controllers.LoginController;
 import controllers.QueryController;
 import controllers.RecordController;
+import dbutil.DBHelper;
 
 import fetcher.EuropeanaFetcher;
 import fetcher.JSONFetcher;
@@ -31,6 +34,8 @@ public class ViewController {
 	
 	public ViewController(MainView m){
 		this.setMainView(m);
+		this.mainView.getLogged().setValue("Logged as : " + DBHelper.getUserName(AppData.userID));
+		this.mainView.getLogoutButton().addListener(new LogoutListener(this));
 		this.mainView.getSearchButton().addListener(new SearchListener(this));
 		this.mainView.getGroupSelector().addListener(new GroupSelectorListener(this));
 		this.mainView.getSearchTable().addListener(new TableClickListener(this));
@@ -138,6 +143,7 @@ class SearchListener implements Button.ClickListener{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
+			e.printStackTrace();
 			this.viewController.getMainView().getParentView().getWindow().showNotification("No result found!");
 		}
 		
@@ -246,6 +252,29 @@ class DetailsListener implements Button.ClickListener {
 		Query selectedQuery = (Query)this.viewController.getMainView().getSearchTable().getValue();
 		DetailsViewController dvc = new DetailsViewController(selectedQuery, AppData.userID);
 		this.viewController.getMainView().getParentView().addWindow(dvc.getDetailsView());
+	}
+	
+}
+
+class LogoutListener implements Button.ClickListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5508313346827627646L;
+	private ViewController viewController;
+	
+	public LogoutListener(ViewController c){
+		this.viewController = c;
+	}
+	
+	public void buttonClick(ClickEvent event) {
+		AppData.userID = -1;
+		LoginController lc = new LoginController(new LoginPage());
+		this.viewController.getMainView().getApplication().setMainWindow(lc.getLoginPage());
+		this.viewController.getMainView().getApplication().removeWindow
+		(this.viewController.getMainView().getParentView());
+		
 	}
 	
 }

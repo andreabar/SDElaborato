@@ -55,7 +55,7 @@ public class DBHelper {
 	}
 
 	public static void saveRecords(ArrayList<Record> records, String input)
-			throws SQLException {
+			throws Exception {
 
 		String query = "INSERT INTO record (type, language, url, title) VALUES ";
 		for (int i = 0; i < records.size(); i++) {
@@ -84,7 +84,7 @@ public class DBHelper {
 		
 	}
 
-	private static void saveResources(ArrayList<Record> records) throws SQLException {
+	private static void saveResources(ArrayList<Record> records) throws Exception {
 
 		String query = "INSERT INTO location (record, url) VALUES ";
 		int j = 1;
@@ -242,6 +242,27 @@ public class DBHelper {
 		}
 		return null;
 		
+	}
+	
+	public static String getUserName(int uid){
+		String q = "SELECT username FROM user WHERE id = " + uid + ";";
+		
+		String name = null;
+		java.sql.PreparedStatement statement;
+		try {
+			statement = getConnection()
+					.prepareStatement(q);
+			ResultSet result = statement.executeQuery();	
+
+			if(result.next()){
+				name = result.getString("username");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return name;
 	}
 	
 

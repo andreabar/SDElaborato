@@ -18,15 +18,19 @@ public class TaskController {
 		int j = 1;
 
 		for (Record r : records) {
-			for (String res : r.getWebResources()) {
-				query += "(?,?,?,?,?)";
+			try {
+				for (String res : r.getWebResources()) {
+					query += "(?,?,?,?,?)";
 
-				if (records.indexOf(r) == records.size() - 1
-						&& r.getWebResources().indexOf(res) == r
-								.getWebResources().size() - 1)
-					query += ";";
-				else
-					query += ",";
+					if (records.indexOf(r) == records.size() - 1
+							&& r.getWebResources().indexOf(res) == r
+									.getWebResources().size() - 1)
+						query += ";";
+					else
+						query += ",";
+				}
+			} catch (Exception e) {
+				return;
 			}
 
 		}
@@ -37,19 +41,23 @@ public class TaskController {
 			int id = DBHelper.getRecordID(r);
 			if (id != -1) {
 
-				for (String s : r.getWebResources()) {
-					statement.setDate(j,
-							new java.sql.Date(((new Date()).getTime())));
-					j++;
-					statement.setInt(j, userID);
-					j++;
-					statement.setInt(j, id);
-					j++;
-					statement.setString(j, s);
-					j++;
-					statement.setString(j, r.getType());
-					j++;
+				try {
+					for (String s : r.getWebResources()) {
+						statement.setDate(j,
+								new java.sql.Date(((new Date()).getTime())));
+						j++;
+						statement.setInt(j, userID);
+						j++;
+						statement.setInt(j, id);
+						j++;
+						statement.setString(j, s);
+						j++;
+						statement.setString(j, r.getType());
+						j++;
 
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 
 			}

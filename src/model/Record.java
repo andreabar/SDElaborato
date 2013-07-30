@@ -26,8 +26,8 @@ public abstract class Record {
 	public void setProvider(String provider) {
 		this.provider = provider;
 	}
-	public abstract void loadMoreInfo();
-	public abstract String getShownAt();
+	public abstract void loadMoreInfo() throws Exception;
+	public abstract String getShownAt() throws Exception;
 
 	
 	public Record(ResultSet set){
@@ -84,7 +84,7 @@ public abstract class Record {
 		this.year = year;
 	}
 
-	public List<String> getWebResources() {
+	public List<String> getWebResources() throws Exception {
 
 		if(webResources == null)
 				loadMoreInfo();

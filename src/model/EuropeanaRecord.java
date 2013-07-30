@@ -18,7 +18,7 @@ public class EuropeanaRecord extends Record {
 	}
 	
 	@Override
-	public void loadMoreInfo() {
+	public void loadMoreInfo() throws Exception {
 
 		try {
 			setWebResources(RecordController.getWebResources(this));
@@ -31,7 +31,7 @@ public class EuropeanaRecord extends Record {
 	}
 
 	@Override
-	public String getShownAt() {
+	public String getShownAt() throws Exception {
 
 		if(getWebResources().isEmpty())
 			loadMoreInfo();

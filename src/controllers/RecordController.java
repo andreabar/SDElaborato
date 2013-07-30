@@ -17,12 +17,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.vaadin.Application;
+
 import dbutil.DBHelper;
 
 public class RecordController {
 
 	
-	public static List<String> getWebResources(Record r) throws SQLException
+	public static List<String> getWebResources(Record r) throws Exception
 			 {
 		
 		int id = DBHelper.getRecordID(r);
@@ -44,9 +46,8 @@ public class RecordController {
 		
 	}
 
-	private static List<String> downloadResources(Record r, List<String> list) {
+	private static List<String> downloadResources(Record r, List<String> list) throws Exception {
 		BufferedReader in;
-		try {
 		
 		in = new BufferedReader(new InputStreamReader(new URL(
 				r.getUniqueUrl()).openStream()));
@@ -66,20 +67,6 @@ public class RecordController {
 		
 		return list;
 		
-	
-		
-	
-	} catch (MalformedURLException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (JSONException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-		return list;
 		
 	}
 
@@ -130,7 +117,7 @@ public class RecordController {
 	}
 
 
-	public static void saveResources(List<Record> records) throws SQLException {
+	public static void saveResources(List<Record> records) throws Exception {
 
 		
 		String query = "INSERT INTO resource (record, url) VALUES ";

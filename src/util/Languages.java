@@ -9,11 +9,11 @@ public class Languages {
 	
 	public static void buildMap(){
 		
-		map.put("Italian", "IT");
-		map.put("French", "FR");
-		map.put("German", "DE");
-		map.put("English", "EN");
-		map.put("any", "MUL");
+		map.put("Italian", "it");
+		map.put("French", "fr");
+		map.put("German", "de");
+		map.put("English", "en");
+		map.put("any", "mul");
 		
 	}
 	

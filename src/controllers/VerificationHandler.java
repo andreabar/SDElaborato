@@ -19,7 +19,7 @@ public class VerificationHandler {
 		
 	}
 
-	public void initializeResources() throws SQLException {
+	public void initializeResources() throws Exception {
 
 		RecordController.saveResources(records);
 		TaskController.addTasks(records, userID);

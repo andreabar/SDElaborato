@@ -8,6 +8,7 @@ import view.controllers.ViewController;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.OptionGroup;
@@ -43,6 +44,8 @@ public class MainView extends VerticalLayout {
 	private Table searchTable;
 	private Button detailsButton;
 	private Button deleteButton;
+	private Button logoutButton;
+	private Label logged;
 	
 	
 	public MainView(TabSheetView parent){
@@ -89,6 +92,7 @@ public class MainView extends VerticalLayout {
 		this.languageSelect = new NativeSelect("Language");
 		this.languageSelect.setNullSelectionAllowed(false);
 		initLanguageSelect();
+		this.languageSelect.setValue("any");
 
 		this.searchButton = new Button("Search");
 		this.searchButton.setEnabled(false);
@@ -99,10 +103,16 @@ public class MainView extends VerticalLayout {
 		this.deleteButton = new Button("Delete");
 		this.deleteButton.setEnabled(false);
 		
+		this.logoutButton = new Button("Logout");
+		this.logoutButton.setStyleName(Button.STYLE_LINK);
+		
+		this.logged = new Label();
+		
 		this.groupSelector = new OptionGroup("Source");
 		this.groupSelector.setNullSelectionAllowed(false);
 		this.groupSelector.setImmediate(true);
 		initGroupSelector();
+		
 		
 		this.searchTable = new Table();
 
@@ -119,6 +129,8 @@ public class MainView extends VerticalLayout {
 		panelLayout.setSizeFull();
 		
 		this.panelLayout.addComponent(groupSelector, 0, 0);
+		this.panelLayout.addComponent(logged, 3, 0);
+		this.panelLayout.addComponent(logoutButton, 4, 0);
 		this.panelLayout.addComponent(textfield, 0, 1, 2, 1);
 		this.panelLayout.addComponent(stepper, 0, 2);
 		this.panelLayout.addComponent(typeSelect, 1, 2);
@@ -267,4 +279,20 @@ public class MainView extends VerticalLayout {
 
 	public void setParentView(TabSheetView parentView) {
 		this.parentView = parentView;
+	}
+
+	public Button getLogoutButton() {
+		return logoutButton;
+	}
+
+	public void setLogoutButton(Button logoutButton) {
+		this.logoutButton = logoutButton;
+	}
+
+	public Label getLogged() {
+		return logged;
+	}
+
+	public void setLogged(Label logged) {
+		this.logged = logged;
 	}}

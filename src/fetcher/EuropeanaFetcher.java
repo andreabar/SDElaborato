@@ -83,7 +83,11 @@ public class EuropeanaFetcher extends JSONFetcher {
 			item.setType(jsonItem.getString("type"));
 			item.setTitle(jsonItem.getJSONArray("title").getString(0));
 			item.setLanguage(jsonItem.getJSONArray("language").getString(0));
+			try{
 			item.setRights(jsonItem.getJSONArray("rights").getString(0));
+			} catch(JSONException e){
+				item.setRights("unknown");
+			}
 			item.setUniqueUrl(jsonItem.getString("link"));
 
 			list.add(item);

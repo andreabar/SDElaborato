@@ -30,7 +30,7 @@ public class VimeoRecord extends Record {
 	}
 
 	@Override
-	public String getShownAt() {
+	public String getShownAt() throws Exception {
 
 		if(getWebResources().isEmpty())
 			loadMoreInfo();
