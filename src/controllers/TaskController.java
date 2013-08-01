@@ -68,7 +68,7 @@ public class TaskController {
 	}
 	
 	public static ResultSet getResults(int userID) throws SQLException{
-		String q = "SELECT record.title, record.type, scheduled_task.status, scheduled_task.id FROM scheduled_task inner join " +
+		String q = "SELECT scheduled_task.resource, record.title, record.type, scheduled_task.status, scheduled_task.id, scheduled_task.date FROM scheduled_task inner join " +
 				"record on scheduled_task.record = record.id WHERE scheduled_task.user = " + userID + ";";
 		
 		java.sql.PreparedStatement statement = DBHelper.getConnection()
@@ -77,6 +77,23 @@ public class TaskController {
 		ResultSet result = statement.executeQuery();
 		
 		return result;
+	}
+
+	public static ResultSet getDownload(int taskId) {
+
+		try {
+			System.out.println("SELECT * FROM sd.download WHERE task = " + taskId + ";");
+			ResultSet set = DBHelper.getConnection().createStatement().executeQuery("SELECT * FROM sd.download WHERE task = " + taskId + ";");
+			return set;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+		
+		
 	}
 
 }
