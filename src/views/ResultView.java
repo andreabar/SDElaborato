@@ -1,6 +1,9 @@
 package views;
 
+import java.util.Date;
+
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -36,10 +39,12 @@ public class ResultView extends VerticalLayout {
 		this.deleteButton = new Button("Delete");
 		this.deleteButton.setEnabled(false);
 		
-		this.fileTable = new Table("ATTENTION: Delete a row will not delete the file from your disk");
+		this.fileTable = new Table("ATTENTION: Deleting a row will not delete the file from your disk");
 		this.fileTable.addContainerProperty("Title", String.class, null);
 		this.fileTable.addContainerProperty("Type", String.class, null);
-		this.fileTable.addContainerProperty("Status", String.class, null);
+		this.fileTable.addContainerProperty("Status", Component.class, null);
+		this.fileTable.addContainerProperty("Date", Date.class, null);
+
 		this.fileTable.setSizeFull();
 		this.fileTable.setSelectable(true);
 		this.fileTable.setImmediate(true);

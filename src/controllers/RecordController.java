@@ -59,14 +59,24 @@ public class RecordController {
 			 o = new JSONObject(inputLine);
 			}
 		
+		
 		JSONArray array = o.getJSONObject("object").getJSONArray(
 				"aggregations");
+		
+		try{
+			String shownBy = array.getJSONObject(0).getString("edmIsShownBy");
+			list.add(shownBy);
+		}
+		
+		catch(JSONException e){
+		
 		JSONArray webRes = array.getJSONObject(0).getJSONArray("webResources");
 		for (int j = 0; j < webRes.length(); j++)
 					list.add(webRes.getJSONObject(j).getString("about"));
 		
+		}
 		return list;
-		
+
 		
 	}
 

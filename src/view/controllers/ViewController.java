@@ -1,5 +1,6 @@
 package view.controllers;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -26,9 +27,13 @@ import fetcher.EuropeanaFetcher;
 import fetcher.JSONFetcher;
 import fetcher.VimeoFetcher;
 
-public class ViewController {
+public class ViewController implements Serializable{
 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2186091527455914268L;
 	private MainView mainView;
 	private Integer sourceSelected;
 	
