@@ -31,7 +31,9 @@ public class MainView extends VerticalLayout {
 	
 
 	private TabSheetView parentView;
-	private Panel mainPanel;
+	private Panel mainPanel, europeanaPanel;
+	
+
 	private GridLayout panelLayout;
 	private TextField textfield;
 	private Button searchButton;
@@ -45,7 +47,7 @@ public class MainView extends VerticalLayout {
 	private Button detailsButton;
 	private Button deleteButton;
 	private Button logoutButton;
-	private Label logged;
+	private Label logged, eu;
 	
 	
 	public MainView(TabSheetView parent){
@@ -55,10 +57,14 @@ public class MainView extends VerticalLayout {
 	
 	private void initViewComponent(){
 		
+		this.setCaption("Search");
+		
 		this.setWidth("100%");
 		this.setHeight("100%");
 		
 		this.mainPanel = new Panel("Multimedia Data Crawler");
+		
+		this.europeanaPanel = new Panel();
 		
 		
 		this.panelLayout = new GridLayout(5, 6);
@@ -107,6 +113,8 @@ public class MainView extends VerticalLayout {
 		this.logoutButton.setStyleName(Button.STYLE_LINK);
 		
 		this.logged = new Label();
+		this.eu = new Label("Europeana only");
+	
 		
 		this.groupSelector = new OptionGroup("Source");
 		this.groupSelector.setNullSelectionAllowed(false);
@@ -128,17 +136,20 @@ public class MainView extends VerticalLayout {
 		searchTable.setPageLength(10);
 		panelLayout.setSizeFull();
 		
+		this.europeanaPanel.addComponent(eu);
+		this.europeanaPanel.addComponent(typeSelect);
+		this.europeanaPanel.addComponent(languageSelect);
+		this.europeanaPanel.addComponent(iprSelector);
+		
 		this.panelLayout.addComponent(groupSelector, 0, 0);
 		this.panelLayout.addComponent(logged, 3, 0);
 		this.panelLayout.addComponent(logoutButton, 4, 0);
 		this.panelLayout.addComponent(textfield, 0, 1, 2, 1);
 		this.panelLayout.addComponent(stepper, 0, 2);
-		this.panelLayout.addComponent(typeSelect, 1, 2);
-		this.panelLayout.addComponent(languageSelect, 2, 2);
-		this.panelLayout.addComponent(iprSelector, 3, 2); 
+		this.panelLayout.addComponent(europeanaPanel, 1, 2, 3, 2);
 		this.panelLayout.addComponent(searchButton, 0, 3);
 		this.panelLayout.addComponent(detailsButton, 2, 3);
-		this.panelLayout.addComponent(deleteButton, 3, 3);
+//		this.panelLayout.addComponent(deleteButton, 3, 3);
 
 		
 		
@@ -295,4 +306,15 @@ public class MainView extends VerticalLayout {
 
 	public void setLogged(Label logged) {
 		this.logged = logged;
-	}}
+	}
+	
+	public Panel getEuropeanaPanel() {
+		return europeanaPanel;
+	}
+
+	public void setEuropeanaPanel(Panel europeanaPanel) {
+		this.europeanaPanel = europeanaPanel;
+	}
+	
+}
+

@@ -17,12 +17,11 @@ public class ResultView extends VerticalLayout {
 	 */
 	private static final long serialVersionUID = 5094527720364475453L;
 	
+	private VerticalLayout vertical;
 	private Panel mainPanel;
 	private GridLayout panelLayout;
 	private Label info;
 	private Table fileTable;
-	private Button refreshButton;
-	private Button deleteButton;
 	
 	public ResultView(){
 		initViewComponents();
@@ -30,27 +29,30 @@ public class ResultView extends VerticalLayout {
 	
 	private void initViewComponents(){
 		
+		this.setCaption("My Result");
+
+		
+		this.vertical = new VerticalLayout();
+		
 		this.mainPanel = new Panel("Multimedia Data Crawler");
 		
 		this.info = new Label("Here you find the data you requested.");
-		
-		this.refreshButton = new Button("Refresh Table");
-		
-		this.deleteButton = new Button("Delete");
-		this.deleteButton.setEnabled(false);
-		
+				
 		this.fileTable = new Table("ATTENTION: Deleting a row will not delete the file from your disk");
 		this.fileTable.addContainerProperty("Title", String.class, null);
 		this.fileTable.addContainerProperty("Type", String.class, null);
+		this.fileTable.addContainerProperty("Keyword", String.class, null);
+		this.fileTable.addContainerProperty("Provider", String.class, null);
 		this.fileTable.addContainerProperty("Status", Component.class, null);
-		this.fileTable.addContainerProperty("Date", Date.class, null);
+		this.fileTable.addContainerProperty("Date Query", Date.class, null);
+		this.fileTable.addContainerProperty("Date Download", Date.class, null);
 
 		this.fileTable.setSizeFull();
 		this.fileTable.setSelectable(true);
 		this.fileTable.setImmediate(true);
-		this.fileTable.setPageLength(10);
+		this.fileTable.setPageLength(12);
 		
-		this.panelLayout = new GridLayout(4, 3);
+		this.panelLayout = new GridLayout(4, 1);
 		this.panelLayout.setSizeFull();
 		this.panelLayout.setSpacing(true);
 		this.panelLayout.setMargin(true);
@@ -61,12 +63,13 @@ public class ResultView extends VerticalLayout {
 		this.panelLayout.setSizeFull();
 		
 		this.panelLayout.addComponent(info, 0, 0, 3, 0);
-		this.panelLayout.addComponent(refreshButton, 0, 1);
-		this.panelLayout.addComponent(deleteButton, 1, 1);
 		
 		this.mainPanel.setContent(panelLayout);
-		this.addComponent(mainPanel);
-		this.addComponent(fileTable);
+		
+		this.vertical.addComponent(mainPanel);
+		this.vertical.addComponent(fileTable);
+
+		this.addComponent(vertical);
 		
 	}
 	
@@ -91,12 +94,12 @@ public class ResultView extends VerticalLayout {
 		this.fileTable = fileTable;
 	}
 
-	public Button getRefreshButton() {
-		return refreshButton;
+	public VerticalLayout getVertical() {
+		return vertical;
 	}
 
-	public void setRefreshButton(Button refreshButton) {
-		this.refreshButton = refreshButton;
+	public void setVertical(VerticalLayout vertical) {
+		this.vertical = vertical;
 	}
 
 }

@@ -5,6 +5,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -13,6 +15,8 @@ import controllers.TaskController;
 import util.AppData;
 import views.ResultView;
 
+import com.github.wolfie.refresher.Refresher;
+import com.github.wolfie.refresher.Refresher.RefreshListener;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
@@ -31,11 +35,11 @@ public class ResultViewController implements Serializable{
 	 */
 	private static final long serialVersionUID = -5972665301072207312L;
 	private ResultView resultView;
+	private Refresher refresher;
 	
 	public ResultViewController(ResultView r){
 		setResultView(r);
-		this.getResultView().getRefreshButton().addListener(new RefreshButtonListener(this));
-		loadResultTable();
+		
 	}
 	
 	public void loadResultTable(){
@@ -45,8 +49,19 @@ public class ResultViewController implements Serializable{
 			while(result.next()){
 				String title = result.getString("title");
 				String type = result.getString("type");
+				String keyword = result.getString("keyword");
+				String provider = result.getString("provider");
 				String status = result.getString("status");
-				Date date = result.getDate("date");
+				String sDateQuery = result.getString("date");
+				String sDateDownload = result.getString("date_download");
+				Date dateQuery = null;
+				Date dateDownload = null;
+				try {
+					dateQuery = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateQuery);
+					dateDownload = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateDownload);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 				Integer scheduledTaskId = result.getInt("id");
 
 				Component c = null;
@@ -74,7 +89,7 @@ public class ResultViewController implements Serializable{
 					
 				}
 				
-				Object rowItem[] = new Object[]{title, type, c, date};
+				Object rowItem[] = new Object[]{title, type, keyword, provider, c, dateQuery, dateDownload};
 				
 				this.resultView.getFileTable().addItem(rowItem, scheduledTaskId);
 				
@@ -125,24 +140,17 @@ public class ResultViewController implements Serializable{
 		this.resultView = resultView;
 	}
 
-}
-
-class RefreshButtonListener implements Button.ClickListener {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6367448598090263990L;
-	private ResultViewController resultViewController;
-	
-	public RefreshButtonListener(ResultViewController rvc){
-		this.resultViewController = rvc;
+	public Refresher getRefresher() {
+		return refresher;
 	}
 
-	public void buttonClick(ClickEvent event) {
-		this.resultViewController.loadResultTable();
+	public void setRefresher(Refresher refresher) {
+		this.refresher = refresher;
 	}
-	
+
 }
+
+
+
 
 

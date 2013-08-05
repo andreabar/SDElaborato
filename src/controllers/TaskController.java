@@ -2,6 +2,7 @@ package controllers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -43,8 +44,10 @@ public class TaskController {
 
 				try {
 					for (String s : r.getWebResources()) {
-						statement.setDate(j,
-								new java.sql.Date(((new Date()).getTime())));
+						Date dt = new Date();
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						String currentTime = sdf.format(dt);
+						statement.setString(j, currentTime);
 						j++;
 						statement.setInt(j, userID);
 						j++;
@@ -68,8 +71,9 @@ public class TaskController {
 	}
 	
 	public static ResultSet getResults(int userID) throws SQLException{
-		String q = "SELECT scheduled_task.resource, record.title, record.type, scheduled_task.status, scheduled_task.id, scheduled_task.date FROM scheduled_task inner join " +
-				"record on scheduled_task.record = record.id WHERE scheduled_task.user = " + userID + ";";
+		String q = "SELECT scheduled_task.resource, record.title, record.type, scheduled_task.status, scheduled_task.id, scheduled_task.date_download, record.provider, query.keyword, query.date FROM scheduled_task inner join " +
+				"record on scheduled_task.record = record.id inner join query on " +
+				"record.query = query.id WHERE scheduled_task.user = " + userID + ";";
 		
 		java.sql.PreparedStatement statement = DBHelper.getConnection()
 				.prepareStatement(q);

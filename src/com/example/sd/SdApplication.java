@@ -1,12 +1,12 @@
 package com.example.sd;
 
 import util.Languages;
+import view.controllers.LoginController;
 import views.LoginPage;
 import com.vaadin.Application;
 
 import com.vaadin.ui.themes.Runo;
 
-import controllers.LoginController;
 
 import dbutil.DBHelper;
 import dbutil.IprType;

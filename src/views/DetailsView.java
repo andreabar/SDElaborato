@@ -1,24 +1,13 @@
 package views;
 
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-
-import model.Record;
-
-import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
-
-import controllers.VerificationHandler;
 
 public class DetailsView extends Window {
 
@@ -29,12 +18,10 @@ public class DetailsView extends Window {
 
 	private VerticalLayout layout;
 	private Table recordsTable;
-	private Button seeOnline, verify;
-	private int userID;
+	private Button keepAll, seeOnline, verify;
 	
-	public DetailsView(int userID){
+	public DetailsView(){
 		initViewComponent();
-		this.userID = userID;
 	}
 	
 	private void initViewComponent(){
@@ -44,36 +31,19 @@ public class DetailsView extends Window {
 		this.layout = new VerticalLayout();
 		
 		
-		
+		keepAll = new Button("Keep All");
 		verify = new Button("Verify & Download");
 		seeOnline = new Button("See Online");
-		seeOnline.addListener(new Button.ClickListener() {
-			
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
 
-			public void buttonClick(ClickEvent event) {
-				
-				Record selected = ((Record)recordsTable.getValue());
-				try {
-			
-					DetailsView.this.open(new ExternalResource(selected.getShownAt()), "_blank");
-				} catch (Exception e) {
-					getApplication().getMainWindow().showNotification("Server Error", Window.Notification.TYPE_ERROR_MESSAGE);
-				}
-				
-				
-			}
-		});
+		
+		
 		this.recordsTable = new Table();
 		recordsTable.setPageLength(10);
 		this.recordsTable.addContainerProperty("Title", String.class, null);
 		this.recordsTable.addContainerProperty("Language", String.class, null);
 		this.recordsTable.addContainerProperty("Type", String.class, null);
 		this.recordsTable.addContainerProperty("IPR", String.class, null);
-		this.recordsTable.addContainerProperty("Keep", CheckBox.class, new CheckBox(null, false));
+		this.recordsTable.addContainerProperty("Keep", CheckBox.class, null);
 		
 		
 		this.recordsTable.setSelectable(true);
@@ -82,47 +52,13 @@ public class DetailsView extends Window {
 		this.layout.addComponent(recordsTable);
 		
 		HorizontalLayout hl = new HorizontalLayout();
+		hl.addComponent(keepAll);
 		hl.addComponent(seeOnline);
 		hl.addComponent(verify);
 		
-		hl.setComponentAlignment(seeOnline, Alignment.BOTTOM_LEFT);
+		hl.setComponentAlignment(keepAll, Alignment.BOTTOM_LEFT);
+		hl.setComponentAlignment(seeOnline, Alignment.BOTTOM_CENTER);
 		hl.setComponentAlignment(verify, Alignment.BOTTOM_RIGHT);
-		
-		verify.addListener(new Button.ClickListener() {
-			
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -1533022295485889710L;
-
-			public void buttonClick(ClickEvent event) {
-				
-				ArrayList<Record> toKeep = new ArrayList<Record>();
-				for(Object row : recordsTable.getItemIds()){
-					
-					if(((CheckBox)recordsTable.getItem(row).getItemProperty("Keep").getValue()).booleanValue())
-						toKeep.add((Record)row);
-					
-				}
-					
-				if(toKeep.isEmpty())
-					return;
-				
-				try {
-					VerificationHandler handler = new VerificationHandler(toKeep, userID);
-					handler.initializeResources();
-					
-					removeAllComponents();
-					addComponent(new Label("Your request is being processed"));
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-					getApplication().getMainWindow().showNotification("Server Error", Window.Notification.TYPE_ERROR_MESSAGE);
-					return;
-				}
-				
-			}
-		});
 		
 		layout.addComponent(hl);
 		hl.setSpacing(true);
@@ -145,6 +81,30 @@ public class DetailsView extends Window {
 
 	public void setRecordsTable(Table recordsTable) {
 		this.recordsTable = recordsTable;
+	}
+
+	public Button getSeeOnline() {
+		return seeOnline;
+	}
+
+	public void setSeeOnline(Button seeOnline) {
+		this.seeOnline = seeOnline;
+	}
+
+	public Button getVerify() {
+		return verify;
+	}
+
+	public void setVerify(Button verify) {
+		this.verify = verify;
+	}
+
+	public Button getKeepAll() {
+		return keepAll;
+	}
+
+	public void setKeepAll(Button keepAll) {
+		this.keepAll = keepAll;
 	}
 	
 }

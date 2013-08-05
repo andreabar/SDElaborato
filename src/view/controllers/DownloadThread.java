@@ -6,6 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.github.wolfie.refresher.Refresher;
+import com.github.wolfie.refresher.Refresher.RefreshListener;
+import com.vaadin.event.LayoutEvents.LayoutClickEvent;
+import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
@@ -52,11 +56,12 @@ public class DownloadThread extends Thread{
 				((ProgressIndicator) progressBar).setValue(new Float((float)temp/(float)total));
 				 
 			 }
+			 
+			 
 			
 			Thread.sleep(1000);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -65,9 +70,10 @@ public class DownloadThread extends Thread{
 				progressBar = view.buildLinkFile(result, progressBar);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 
 		 }
 	 }
 }
+
+
