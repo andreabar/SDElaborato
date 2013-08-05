@@ -23,142 +23,163 @@ import dbutil.DBHelper;
 
 public class RecordController {
 
-	
-	public static List<String> getWebResources(Record r) throws Exception
-			 {
-		
+	public static List<String> getWebResources(Record r) throws Exception {
+
 		int id = DBHelper.getRecordID(r);
 
-		List<String> list = 
+		List<String> list =
 
 		checkForResources(id);
-		
-		if(!list.isEmpty())
+
+		if (!list.isEmpty())
 			return list;
-		else
-		{
+		else {
 			downloadResources(r, list);
 			return list;
 
 		}
 
-		
-		
 	}
 
-	private static List<String> downloadResources(Record r, List<String> list) throws Exception {
-		BufferedReader in;
+	private static List<String> downloadResources(Record r, List<String> list)
+			throws Exception {
 		
-		in = new BufferedReader(new InputStreamReader(new URL(
+		BufferedReader in = new BufferedReader(new InputStreamReader(new URL(
 				r.getUniqueUrl()).openStream()));
-	
+
 		String inputLine = new String();
 		JSONObject o = null;
-		while ((inputLine = in.readLine()) != null) {
+		while ((inputLine = in.readLine()) != null) 
+			o = new JSONObject(inputLine);
 
-			 o = new JSONObject(inputLine);
-			}
-		
-		
-		JSONArray array = o.getJSONObject("object").getJSONArray(
-				"aggregations");
-		
-		try{
+		JSONArray array = o.getJSONObject("object")
+				.getJSONArray("aggregations");
+
+		try {
 			String shownBy = array.getJSONObject(0).getString("edmIsShownBy");
 			list.add(shownBy);
 		}
-		
-		catch(JSONException e){
-		
-		JSONArray webRes = array.getJSONObject(0).getJSONArray("webResources");
-		for (int j = 0; j < webRes.length(); j++)
-					list.add(webRes.getJSONObject(j).getString("about"));
-		
+
+		catch (JSONException e) {
+
+			JSONArray webRes = array.getJSONObject(0).getJSONArray(
+					"webResources");
+			for (int j = 0; j < webRes.length(); j++)
+				list.add(webRes.getJSONObject(j).getString("about"));
+
 		}
 		return list;
 
-		
 	}
 
 	private static List<String> checkForResources(int id) throws SQLException {
 
 		List<String> resources = new ArrayList<String>();
 		String q = "SELECT url FROM resource WHERE record = " + id;
-		
-		ResultSet set = DBHelper.getConnection().createStatement().executeQuery(q);
-		while(set.next()){
-			 resources.add(set.getString("url"));
+
+		ResultSet set = DBHelper.getConnection().createStatement()
+				.executeQuery(q);
+		while (set.next()) {
+			resources.add(set.getString("url"));
 		}
-		
+
 		return resources;
 	}
 
-	public static void saveRecords(ArrayList<Record> records) throws SQLException {
+	public static List<Record> saveRecords(ArrayList<Record> records) {
 
-		
-			String query = "INSERT INTO record (query, type, language, url, title, ipr_type, provider) VALUES ";
-			for (int i = 0; i < records.size(); i++) {
-				query += "(?,?,?,?,?,?,?)";
-				if (i < records.size() - 1)
-					query += ",";
-				else
-					query += ";";
-			}
+		for (Record r : records) {
+			String query = "INSERT INTO record (type, language, url, title, ipr_type, provider) VALUES "
+					+ "(?,?,?,?,?,?);";
+			java.sql.PreparedStatement statement;
+			try {
+				statement = DBHelper.getConnection().prepareStatement(query,
+						Statement.RETURN_GENERATED_KEYS);
 
-			java.sql.PreparedStatement statement = DBHelper.getConnection()
-					.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+				statement.setString(1, r.getType());
+				statement.setString(2, r.getLanguage());
+				statement.setString(3, r.getUniqueUrl());
+				statement.setString(4, r.getTitle());
+				statement.setString(5, r.getRights());
+				statement.setString(6, r.getProvider());
 
-			for (int i = 0; i < records.size(); i++) {
-				statement.setInt(7 * i + 1, records.get(i).getQueryID());
-				statement.setString(7 * i + 2, records.get(i).getType());
-				statement.setString(7 * i + 3, records.get(i).getLanguage());
-				statement.setString(7 * i + 4, records.get(i).getUniqueUrl());
-				statement.setString(7 * i + 5, records.get(i).getTitle());
-				statement.setString(7 * i + 6, records.get(i).getRights());
-				statement.setString(7 * i + 7, records.get(i).getProvider());
-
+				statement.executeUpdate();
 				
+				ResultSet keys = statement.getGeneratedKeys();
+				
+				if(keys.next())
+					r.setID(keys.getInt(1));
+					
+			} catch (SQLException e) {
 
+				e.printStackTrace(); // FIXME: catch the exception and do
+										// nothing (don't save)
 			}
-
-			statement.executeUpdate();
 			
-//			saveResources(records);
-	}
+		}
+		return records;
 
+		//
+		//
+		// for (int i = 0; i < records.size(); i++) {
+		// query += "(?,?,?,?,?,?,?)";
+		// if (i < records.size() - 1)
+		// query += ",";
+		// else
+		// query += ";";
+		// }
+		//
+		// java.sql.PreparedStatement statement = DBHelper.getConnection()
+		// .prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+		//
+		// for (int i = 0; i < records.size(); i++) {
+		// statement.setInt(7 * i + 1, records.get(i).getQueryID());
+		// statement.setString(7 * i + 2, records.get(i).getType());
+		// statement.setString(7 * i + 3, records.get(i).getLanguage());
+		// statement.setString(7 * i + 4, records.get(i).getUniqueUrl());
+		// statement.setString(7 * i + 5, records.get(i).getTitle());
+		// statement.setString(7 * i + 6, records.get(i).getRights());
+		// statement.setString(7 * i + 7, records.get(i).getProvider());
+		//
+		//
+		//
+		// }
+		//
+		// statement.executeUpdate();
+		//
+		// saveResources(records);
+	}
 
 	public static void saveResources(List<Record> records) throws Exception {
 
-		
 		String query = "INSERT INTO resource (record, url) VALUES ";
 		int j = 1;
 
-		
-		for(Record r : records){
+		for (Record r : records) {
 			List<String> resources = r.getWebResources();
-			for(String s : resources){
-				
+			for (String s : resources) {
+
 				query += "(?,?),";
 			}
 		}
-		
-		String update = query.substring(0, query.length()-1) + ";";
+
+		String update = query.substring(0, query.length() - 1) + ";";
 		java.sql.PreparedStatement statement = DBHelper.getConnection()
 				.prepareStatement(update);
-		for(Record r : records){
+		for (Record r : records) {
 			int id = DBHelper.getRecordID(r);
-			if(id != -1){
-			List<String> resources = r.getWebResources();
-			for(String s : resources){
-				statement.setInt(j, id);
-				j++;
-				statement.setString(j, s);
-				j++;			}
+			if (id != -1) {
+				List<String> resources = r.getWebResources();
+				for (String s : resources) {
+					statement.setInt(j, id);
+					j++;
+					statement.setString(j, s);
+					j++;
+				}
 			}
 		}
-			statement.executeUpdate();
+		statement.executeUpdate();
 
-		}
+	}
 
-	
 }

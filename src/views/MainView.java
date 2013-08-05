@@ -17,6 +17,7 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.BaseTheme;
 
 import dbutil.IprType;
 
@@ -104,13 +105,14 @@ public class MainView extends VerticalLayout {
 		this.deleteButton.setEnabled(false);
 		
 		this.logoutButton = new Button("Logout");
-		this.logoutButton.setStyleName(Button.STYLE_LINK);
+		this.logoutButton.setStyleName(BaseTheme.BUTTON_LINK);
 		
 		this.logged = new Label();
 		
 		this.groupSelector = new OptionGroup("Source");
 		this.groupSelector.setNullSelectionAllowed(false);
 		this.groupSelector.setImmediate(true);
+		groupSelector.setMultiSelect(true);
 		initGroupSelector();
 		
 		
@@ -175,6 +177,7 @@ public class MainView extends VerticalLayout {
 			this.typeSelect.addItem(s);
 		}
 	
+		typeSelect.setValue("any");
 	}
 	
 	private void initLanguageSelect(){
@@ -189,7 +192,8 @@ public class MainView extends VerticalLayout {
 			this.languageSelect.addItem(s);
 		}
 	
-		
+		languageSelect.setValue("any");
+
 	}
 	
 	private void initGroupSelector(){

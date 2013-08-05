@@ -14,8 +14,12 @@ public abstract class JSONFetcher {
 	public String API_KEY;
 	public String API_URL;
 	
-	public abstract ArrayList<Record> executeQuery(Query q) throws MalformedURLException, Exception;
+	public abstract ArrayList<Record> executeQuery(Query v) throws MalformedURLException, Exception;
 
-	public abstract Query buildQuery(ViewController v); 
+	public abstract Query buildQuery(ViewController v);
+
+
+
+	public abstract String getProvider();
 	
 }

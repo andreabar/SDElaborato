@@ -1,12 +1,15 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Set;
 
 import dbutil.IprType;
 
-public class Query {
+public class Query implements Serializable {
 
+
+	
 	public String getKeyword() {
 		return keyword;
 	}

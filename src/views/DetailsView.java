@@ -37,8 +37,8 @@ public class DetailsView extends Window {
 	}
 	
 	private void initViewComponent(){
-		this.setWidth("50%");
-		this.setHeight("50%");
+
+		setSizeFull();
 		
 		this.layout = new VerticalLayout();
 		
@@ -108,10 +108,11 @@ public class DetailsView extends Window {
 				
 				try {
 					VerificationHandler handler = new VerificationHandler(toKeep, userID);
-					handler.initializeResources();
+					handler.initializeResources(); //TODO: ligthen up 
+
+					getApplication().getMainWindow().showNotification("Your request will be processed.", Notification.TYPE_HUMANIZED_MESSAGE);
+					getApplication().getMainWindow().removeWindow(DetailsView.this);
 					
-					removeAllComponents();
-					addComponent(new Label("Your request is being processed"));
 					
 				} catch (Exception e) {
 					e.printStackTrace();

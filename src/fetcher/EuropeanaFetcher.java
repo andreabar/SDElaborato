@@ -11,7 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import controllers.QueryController;
 
+
+import util.AppData;
 import util.Languages;
 import view.controllers.ViewController;
 import views.MainView;
@@ -25,19 +28,19 @@ public class EuropeanaFetcher extends JSONFetcher {
 
 	private static final String API_KEY = "NFUAy4RDa";
 	private static final String API_URL = "http://europeana.eu/api//v2/search.json?wskey=";
-
+	private static String provider = "EUROPEANA";
 	public EuropeanaFetcher() {
 
 	}
 
 	@Override
-	public ArrayList<Record> executeQuery(Query q) throws Exception {
+	public ArrayList<Record> executeQuery(Query v) throws Exception {
 
-		URL request = buildQueryRequest(q);
+		URL request = buildQueryRequest(v);
 		if (request != null) {
 			System.out.println("Query: " + request.toString());
 			ArrayList<Record> response = fetchResponse(request);
-			q.setLimit(response.size());
+			v.setLimit(response.size());
 			return response;
 		}
 
@@ -118,6 +121,7 @@ public class EuropeanaFetcher extends JSONFetcher {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Query buildQuery(ViewController v) {
 	
@@ -137,11 +141,17 @@ public class EuropeanaFetcher extends JSONFetcher {
 		else 
 			query.setLanguage("any");
 		
-		query.setProvider("EUROPEANA");
+		query.setProvider(getProvider());
 		
 		
 		return query;
 		
+	}
+
+	@Override
+	public String getProvider() {
+		
+		return "EUROPEANA";
 	}
 
 	

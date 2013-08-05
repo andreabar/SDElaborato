@@ -13,6 +13,8 @@ import controllers.TaskController;
 import util.AppData;
 import views.ResultView;
 
+import com.vaadin.event.LayoutEvents.LayoutClickEvent;
+import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
@@ -36,6 +38,10 @@ public class ResultViewController implements Serializable{
 		setResultView(r);
 		this.getResultView().getRefreshButton().addListener(new RefreshButtonListener(this));
 		loadResultTable();
+		resultView
+		.setImmediate(true);
+	
+		
 	}
 	
 	public void loadResultTable(){
@@ -64,7 +70,7 @@ public class ResultViewController implements Serializable{
 				else if(status.equals("downloading")){
 					c = new ProgressIndicator();
 				
-					DownloadThread d = new DownloadThread(this, result, (ProgressIndicator) c, scheduledTaskId);
+					DownloadThread d = new DownloadThread(this, (ProgressIndicator) c, scheduledTaskId);
 					d.start();
 				}
 				
@@ -79,7 +85,7 @@ public class ResultViewController implements Serializable{
 				this.resultView.getFileTable().addItem(rowItem, scheduledTaskId);
 				
 				resultView.getFileTable().setSortContainerPropertyId("Date");
-				resultView.getFileTable().setSortAscending(true);
+				resultView.getFileTable().setSortAscending(false);
 				resultView.getFileTable().sort();
 			}
 		} catch (SQLException e) {

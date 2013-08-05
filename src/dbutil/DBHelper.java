@@ -37,10 +37,8 @@ public class DBHelper {
 			return ds.getConnection();
 
 		} catch (NamingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -161,7 +159,6 @@ public class DBHelper {
 			
 			return id;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return -1;
 		}
@@ -237,7 +234,6 @@ public class DBHelper {
 			
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

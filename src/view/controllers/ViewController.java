@@ -5,13 +5,16 @@ import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import model.Query;
 import model.Record;
 import util.AppData;
+import util.FetcherFactory;
 import views.LoginPage;
 import views.MainView;
 
-import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.terminal.UserError;
@@ -25,6 +28,7 @@ import dbutil.DBHelper;
 
 import fetcher.EuropeanaFetcher;
 import fetcher.JSONFetcher;
+import fetcher.MultipleFetcher;
 import fetcher.VimeoFetcher;
 
 public class ViewController implements Serializable{
@@ -35,7 +39,6 @@ public class ViewController implements Serializable{
 	 */
 	private static final long serialVersionUID = 2186091527455914268L;
 	private MainView mainView;
-	private Integer sourceSelected;
 	
 	public ViewController(MainView m){
 		this.setMainView(m);
@@ -79,14 +82,13 @@ public class ViewController implements Serializable{
 	}
 
 
-	public Integer getSourceSelected() {
-		return sourceSelected;
+	@SuppressWarnings("unchecked")
+	public Set<Object> getSourceSelected() {
+		return ((Set<Object>)getMainView().getGroupSelector().getValue());
 	}
 
 
-	public void setSourceSelected(Integer sourceSelected) {
-		this.sourceSelected = sourceSelected;
-	}
+	
 	
 	
 
@@ -99,6 +101,7 @@ class SearchListener implements Button.ClickListener{
 	 */
 	private static final long serialVersionUID = 8226238264247152044L;
 	private ViewController viewController;
+	private FetcherFactory factory = FetcherFactory.getFetcherFactory();
 	
 	public SearchListener(ViewController viewController){
 		this.viewController = viewController;
@@ -116,33 +119,38 @@ class SearchListener implements Button.ClickListener{
 	
 		JSONFetcher fetcher = null;
 		
-		if(viewController.getSourceSelected() == 0)
-			fetcher = new EuropeanaFetcher();
-		else
-			fetcher = new VimeoFetcher();
 		
-		ArrayList<Record> list;
+		if(viewController.getSourceSelected().size() > 1){
+			fetcher = new MultipleFetcher();
+			for(Object o : viewController.getSourceSelected())
+				((MultipleFetcher)fetcher).addFetcher(factory.getFetcher(o.toString()));
+			
+			
+		}
+		else 
+			fetcher = factory.getFetcher(viewController.getSourceSelected().iterator().next().toString());
+			
 		try {
 			
-			
 			Query query = fetcher.buildQuery(viewController);
-			list = fetcher.executeQuery(query);
-			QueryController.saveQuery(query, AppData.userID);
+			ArrayList<Record> list = fetcher.executeQuery(query);
 			
-			for(Record r : list)
-				r.setQueryID(query.getId());
-			
-			try{
-			RecordController.saveRecords(list);
-			}
-			catch(MySQLIntegrityConstraintViolationException e){
-				e.printStackTrace();
-			}
+			Query updated = QueryController.saveQuery(query, AppData.userID);
 
+//			for(Record r : list)	//FIXME togliere QueryID dai record (altrimenti non recuperabili) e recuperare record di una query con join su keyword
+//				r.setQueryID(query.getId()); //FIXME aggiungere 'keyword' a record // meglio una tabella di binding result(query, record) 
+												//così se un record appartiene a query con keyword diversa è comunque recuperabile
+			
+			List<Record> records = RecordController.saveRecords(list);
+			
+			QueryController.addQueryResult(records, updated);
+			
+			
 			this.viewController.getMainView().getSearchButton().setEnabled(true);
 			Object rowItem[] = new Object[]{query.getKeyword(), query.getProvider(), query.getDataType(), query.getLanguage(), query.getResults()};
 			viewController.getMainView().getSearchTable().addItem(rowItem, query);
 			viewController.getMainView().getSearchTable().select(query);
+			viewController.getMainView().getDetailsButton().click();
 			
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -171,20 +179,30 @@ class GroupSelectorListener implements ValueChangeListener{
 	
 	public GroupSelectorListener(ViewController viewController){
 		this.viewController = viewController;
-		viewController.setSourceSelected(0);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void valueChange(ValueChangeEvent event) {
-		if(viewController.getMainView().getGroupSelector().getValue().equals("Europeana")){
-			viewController.setSourceSelected(0);
+		
+		Set<Object> value = ((Set<Object>)viewController.getMainView().getGroupSelector().getValue());
+		
+		if(value.contains("Europeana")){
+			
 			viewController.getMainView().getTypeSelect().setEnabled(true);
 			viewController.getMainView().getLanguageSelect().setEnabled(true);
-		} else if(viewController.getMainView().getGroupSelector().getValue().equals("Vimeo")){
-			viewController.setSourceSelected(1);
+			viewController.getMainView().getIprSelector().setEnabled(true);
+			
+		}
+		
+		else {
+			
 			viewController.getMainView().getTypeSelect().setValue("VIDEO");
 			viewController.getMainView().getTypeSelect().setEnabled(false);
 			viewController.getMainView().getLanguageSelect().setEnabled(false);
+			viewController.getMainView().getIprSelector().setEnabled(false);
+			
 		}
+	
 		viewController.getMainView().getSearchButton().setEnabled(true);
 	}
 	

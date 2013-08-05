@@ -15,7 +15,10 @@ import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
+import controllers.QueryController;
 
+
+import util.AppData;
 import view.controllers.ViewController;
 import model.Query;
 import model.Record;
@@ -27,25 +30,27 @@ public class VimeoFetcher extends JSONFetcher{
 	private String token = "1353bf8aabd8b200d0e4b9d7a9a2b514";
 	private String token_secret = "eac01f5d3305858b2f4e1a93a5bc77b0fe54d7f6";
 	private String endpoint = "http://vimeo.com/api/rest/v2?format=json&method=vimeo.videos.search&query=";
-	
+	private String apiKey = "815936f63c257234e191aba5e70304abe4c3ac8c";
+	private String apiSecret = "294e76518159aa7017f610dbd0922f0cf9f17643";
 	
 	private OAuthService service = new ServiceBuilder()
-	.apiKey("815936f63c257234e191aba5e70304abe4c3ac8c")
-	.apiSecret("294e76518159aa7017f610dbd0922f0cf9f17643")
+	.apiKey(apiKey)
+	.apiSecret(apiSecret)
 	.provider(VimeoApi.class)
 	.build();
 	
 	@Override
-	public ArrayList<Record> executeQuery(Query q)
+	public ArrayList<Record> executeQuery(Query v)
 			throws MalformedURLException, Exception {
 
-		URL query = buildQueryRequest(q);
-		OAuthRequest req = new OAuthRequest(Verb.POST, query.toString());
+
+		URL url = buildQueryRequest(v);
+		OAuthRequest req = new OAuthRequest(Verb.POST, url.toString());
 		service.signRequest(new Token(token, token_secret), req);
 		Response response = req.send();
 	
 		ArrayList<Record> records = saveRecords(response.getBody());
-		q.setLimit(records.size());
+		v.setLimit(records.size());
 		return records;
 
 	}
@@ -91,10 +96,13 @@ public class VimeoFetcher extends JSONFetcher{
 
 		String urlTarget = endpoint + q.getInput();
 		
-		if (-1 != q.getLimit()){
-			urlTarget += "&page=" + ((VimeoQuery)q).getPages() + "&per_page=" + ((VimeoQuery)q).getRpp();;
-			
-		}
+//		if (-1 != q.getLimit()){
+//			urlTarget += "&page=" + ((VimeoQuery)q).getPages() + "&per_page=" + ((VimeoQuery)q).getRpp();;
+//			
+//		}
+		
+		if(-1 != q.getLimit())
+			urlTarget += "&per_page=" + q.getLimit();
 		
 		System.out.println("QUERY: " + urlTarget);
 		return new URL(urlTarget.replaceAll(" ", "%20"));
@@ -109,9 +117,16 @@ public class VimeoFetcher extends JSONFetcher{
 		q.setLimit((Integer)v.getMainView().getStepper().getValue());
 		q.setDataType("VIDEO");
 		q.setLanguage("unknown");
-		q.setProvider("VIMEO");
+		q.setProvider(getProvider());
 		
 		return q;
+	}
+
+
+	@Override
+	public String getProvider() {
+		
+		return "VIMEO";
 	}
 	
 	

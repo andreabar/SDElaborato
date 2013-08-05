@@ -18,12 +18,11 @@ public class EuropeanaRecord extends Record {
 	}
 	
 	@Override
-	public void loadMoreInfo() throws Exception {
+	public void loadMoreInfo() throws Exception { //FIXME: moved to BackgroundApp, so just save the .json URL as resource
 
 		try {
 			setWebResources(RecordController.getWebResources(this));
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

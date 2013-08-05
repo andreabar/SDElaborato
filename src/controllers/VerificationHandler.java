@@ -1,9 +1,6 @@
 package controllers;
 
-import java.sql.SQLException;
 import java.util.List;
-
-import dbutil.DBHelper;
 
 import model.Record;
 
@@ -21,7 +18,7 @@ public class VerificationHandler {
 
 	public void initializeResources() throws Exception {
 
-		RecordController.saveResources(records);
+//		RecordController.saveResources(records);
 		TaskController.addTasks(records, userID);
 	}
 	

@@ -12,7 +12,6 @@ public abstract class Record {
 	private String uniqueUrl;
 	private String type;
 	private int id;
-	private int queryID;
 	private String title;
 	private String language;
 	private List<String> webResources;
@@ -33,7 +32,6 @@ public abstract class Record {
 	public Record(ResultSet set){
 		
 		try {
-			setQueryID(set.getInt("query"));
 			setType(set.getString("type"));
 			setLanguage(set.getString("language"));
 			setTitle(set.getString("title"));
@@ -104,13 +102,7 @@ public abstract class Record {
 		return id;
 	}
 
-	public void setQueryID(int id) {
-		queryID = id;
-	}
 
-	public int getQueryID() {
-		return queryID;
-	}
 	public String getRights() {
 		return rights;
 	}

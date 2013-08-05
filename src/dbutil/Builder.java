@@ -16,24 +16,15 @@ public class Builder {
 		      Class.forName("com.mysql.jdbc.Driver");
 			Connection c = DriverManager.getConnection("jdbc:mysql://localhost?user=root&password=-36degrees-");
 			
-			c.createStatement().executeUpdate("CREATE SCHEMA elab;");
-			c.createStatement().execute("CREATE TABLE elab.record(" +
-					"" +
-					"" +
-					"");
-			
-			//ETC ETC
+			//TODO: call generator script
 			
 			
 			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		} catch (SQLException | ClassNotFoundException e) {
+
+			System.out.println("UNABLE TO CONNECT TO DB");
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		} 
 	}
 
 }
