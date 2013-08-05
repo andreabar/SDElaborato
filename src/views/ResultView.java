@@ -22,6 +22,7 @@ public class ResultView extends VerticalLayout {
 	private GridLayout panelLayout;
 	private Label info;
 	private Table fileTable;
+	private Button clear;
 	
 	public ResultView(){
 		initViewComponents();
@@ -37,8 +38,12 @@ public class ResultView extends VerticalLayout {
 		this.mainPanel = new Panel("Multimedia Data Crawler");
 		
 		this.info = new Label("Here you find the data you requested.");
+		
+		this.clear = new Button("Clear");
+		this.clear.setDescription("Remove from the table all not downloadble data");
+		this.clear.setEnabled(false);
 				
-		this.fileTable = new Table("ATTENTION: Deleting a row will not delete the file from your disk");
+		this.fileTable = new Table();
 		this.fileTable.addContainerProperty("Title", String.class, null);
 		this.fileTable.addContainerProperty("Type", String.class, null);
 		this.fileTable.addContainerProperty("Keyword", String.class, null);
@@ -52,7 +57,7 @@ public class ResultView extends VerticalLayout {
 		this.fileTable.setImmediate(true);
 		this.fileTable.setPageLength(12);
 		
-		this.panelLayout = new GridLayout(4, 1);
+		this.panelLayout = new GridLayout(4, 2);
 		this.panelLayout.setSizeFull();
 		this.panelLayout.setSpacing(true);
 		this.panelLayout.setMargin(true);
@@ -63,6 +68,7 @@ public class ResultView extends VerticalLayout {
 		this.panelLayout.setSizeFull();
 		
 		this.panelLayout.addComponent(info, 0, 0, 3, 0);
+		this.panelLayout.addComponent(clear, 0, 1);
 		
 		this.mainPanel.setContent(panelLayout);
 		
@@ -100,6 +106,14 @@ public class ResultView extends VerticalLayout {
 
 	public void setVertical(VerticalLayout vertical) {
 		this.vertical = vertical;
+	}
+
+	public Button getClear() {
+		return clear;
+	}
+
+	public void setClear(Button clear) {
+		this.clear = clear;
 	}
 
 }

@@ -109,11 +109,14 @@ public class RecordController {
 					.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
 			for (int i = 0; i < records.size(); i++) {
+				String title = records.get(i).getTitle();
+				title = title.replaceAll("'", " ");
+				title = title.replaceAll("/", "");
 				statement.setInt(7 * i + 1, records.get(i).getQueryID());
 				statement.setString(7 * i + 2, records.get(i).getType());
 				statement.setString(7 * i + 3, records.get(i).getLanguage());
 				statement.setString(7 * i + 4, records.get(i).getUniqueUrl());
-				statement.setString(7 * i + 5, records.get(i).getTitle());
+				statement.setString(7 * i + 5, title);
 				statement.setString(7 * i + 6, records.get(i).getRights());
 				statement.setString(7 * i + 7, records.get(i).getProvider());
 

@@ -6,6 +6,8 @@ import javax.swing.ButtonModel;
 
 import util.AppData;
 import views.LoginPage;
+import views.RegisterPopUp;
+
 import com.vaadin.terminal.UserError;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Window;
@@ -93,30 +95,52 @@ class RegisterListener implements Button.ClickListener {
 
 	@Override
 	public void buttonClick(ClickEvent event) {
-		//System.out.print(loginController.getLoginPage().getUsername().getValue().toString());
-		if(null == loginController.getLoginPage().getUsername().getValue()){
-			loginController.getLoginPage().getUsername().setComponentError(new UserError("Field Required"));
-			return;
-		}
 		
-		if(null == loginController.getLoginPage().getPass().getValue()){
-			loginController.getLoginPage().getPass().setComponentError(new UserError("Field Required"));
-			return;
-		}
+		final RegisterPopUp popUp = new RegisterPopUp();
 		
-		try {
-			if(DBHelper.newUser(loginController.getLoginPage().getUsername().getValue().toString(), 
-					loginController.getLoginPage().getPass().getValue().toString())){
-				loginController.getLoginPage().getApplication().getMainWindow().
-				showNotification("Registration completed", Notification.TYPE_HUMANIZED_MESSAGE);
-			} else {
-				loginController.getLoginPage().getUsername().setComponentError(new UserError("Email is not valid"));
+		popUp.getSubmit().addListener(new Button.ClickListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -3249151581808613975L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				if(popUp.getUsername().getValue().toString().equals("")){
+					popUp.getUsername().setComponentError(new UserError("Field Required"));
+					return;
+				}
+				
+				if(popUp.getPass().getValue().toString().equals("")){
+					popUp.getPass().setComponentError(new UserError("Field Required"));
+					return;
+				}
+				
+				if(!popUp.getPass().getValue().toString().equals(popUp.getConfirmPass().getValue().toString())){
+					popUp.getConfirmPass().setComponentError(new UserError("Password do not match"));
+					return;
+				}
+				
+				try {
+					if(DBHelper.newUser(popUp.getUsername().getValue().toString(), 
+							popUp.getPass().getValue().toString())){
+						loginController.getLoginPage().getApplication().getMainWindow().
+						showNotification("Registration completed", Notification.TYPE_HUMANIZED_MESSAGE);
+					} else {
+						popUp.getUsername().setComponentError(new UserError("Email is not valid"));
+					}
+				} catch (SQLException e) {
+					loginController.getLoginPage().getApplication().getMainWindow().
+					showNotification("User already exists", Notification.TYPE_ERROR_MESSAGE);
+					e.printStackTrace();
+				}
+				
 			}
-		} catch (SQLException e) {
-			loginController.getLoginPage().getApplication().getMainWindow().
-			showNotification("User already exists", Notification.TYPE_ERROR_MESSAGE);
-			e.printStackTrace();
-		}
+		});
+
+		loginController.getLoginPage().addWindow(popUp);
+		
 		
 	}
 	

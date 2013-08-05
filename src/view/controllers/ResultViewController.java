@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import controllers.TaskController;
@@ -39,7 +40,7 @@ public class ResultViewController implements Serializable{
 	
 	public ResultViewController(ResultView r){
 		setResultView(r);
-		
+		resultView.getClear().addListener(new ClearListener(this));
 	}
 	
 	public void loadResultTable(){
@@ -101,6 +102,17 @@ public class ResultViewController implements Serializable{
 			e.printStackTrace();
 		}
 	}
+	
+	public boolean isJunkDataInTable(){
+		@SuppressWarnings("unchecked")
+		Collection<Integer> ids = (Collection<Integer>) resultView.getFileTable().getItemIds();
+		for(Integer i : ids){
+			if(TaskController.isNotDownloadable(i)){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public Component buildLinkFile(ResultSet result, Component c)
 			throws SQLException {
@@ -150,6 +162,27 @@ public class ResultViewController implements Serializable{
 
 }
 
+class ClearListener implements Button.ClickListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8248905226288671342L;
+	
+	private ResultViewController rvc;
+
+	public ClearListener(ResultViewController rvc){
+		this.rvc = rvc;
+	}
+	
+	@Override
+	public void buttonClick(ClickEvent event) {
+		TaskController.removeJunkTask(AppData.userID);
+		rvc.loadResultTable();
+		rvc.getResultView().getClear().setEnabled(false);
+	}
+	
+}
 
 
 

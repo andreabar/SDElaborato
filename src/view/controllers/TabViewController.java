@@ -77,6 +77,9 @@ class RefreshTableListener implements RefreshListener{
 	public void refresh(Refresher source) {
 		source.setRefreshInterval(20000);
 		rvc.loadResultTable();
+		if(rvc.isJunkDataInTable()){
+			rvc.getResultView().getClear().setEnabled(true);
+		}
 	}
 
 

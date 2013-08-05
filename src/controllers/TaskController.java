@@ -99,5 +99,44 @@ public class TaskController {
 		
 		
 	}
+	
+	public static void removeJunkTask(int userID){
+		String s = "DELETE FROM scheduled_task WHERE user = " + userID + " AND status = 'Not downloadable';"; 
+		
+		java.sql.PreparedStatement statement;
+		try {
+			statement = DBHelper.getConnection()
+					.prepareStatement(s);
+			statement.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static boolean isNotDownloadable(int scheduledTaskId){
+		String q = "SELECT status FROM scheduled_task WHERE id = " + scheduledTaskId + ";";
+		
+		java.sql.PreparedStatement statement;
+		try {
+			statement = DBHelper.getConnection()
+					.prepareStatement(q);
+			ResultSet result = statement.executeQuery(q);
+			if(result.next()){
+				if(result.getString("status").equals("Not downloadable")){
+					return true;
+				} else {
+					return false;
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+		}
+		return false;
+		
+	}
 
 }
