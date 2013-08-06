@@ -11,24 +11,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import controllers.QueryController;
-
-
-import util.AppData;
 import util.Languages;
 import view.controllers.ViewController;
-import views.MainView;
-
 import model.EuropeanaRecord;
-import model.EuropenaQuery;
+import model.EuropeanaQuery;
 import model.Query;
 import model.Record;
 
-public class EuropeanaFetcher extends JSONFetcher {
+public class EuropeanaFetcher implements JSONFetcher {
 
 	private static final String API_KEY = "NFUAy4RDa";
-	private static final String API_URL = "http://europeana.eu/api//v2/search.json?wskey=";
-	private static String provider = "EUROPEANA";
+	private static final String API_ACCESS_POINT = "http://europeana.eu/api//v2/search.json?wskey=";
+	public static final String PROVIDER = "EUROPEANA";
 	public EuropeanaFetcher() {
 
 	}
@@ -103,7 +97,7 @@ public class EuropeanaFetcher extends JSONFetcher {
 	
 	private URL buildQueryRequest(Query q) throws MalformedURLException {
 
-		String urlTarget = API_URL + API_KEY + "&query=" + q.getInput();
+		String urlTarget = API_ACCESS_POINT + API_KEY + "&query=" + q.getInput();
 		if (-1 != q.getLimit())
 			urlTarget += "&rows=" + q.getLimit();
 		if (q.hasLanguageFilter())
@@ -125,7 +119,7 @@ public class EuropeanaFetcher extends JSONFetcher {
 	@Override
 	public Query buildQuery(ViewController v) {
 	
-		EuropenaQuery query = new EuropenaQuery(v.getMainView().getTextfield().getValue().toString());
+		EuropeanaQuery query = new EuropeanaQuery(v.getMainView().getTextfield().getValue().toString());
 		
 		query.setLimit((Integer)v.getMainView().getStepper().getValue());
 		
@@ -151,7 +145,7 @@ public class EuropeanaFetcher extends JSONFetcher {
 	@Override
 	public String getProvider() {
 		
-		return "EUROPEANA";
+		return PROVIDER;
 	}
 
 	

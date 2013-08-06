@@ -3,8 +3,13 @@ package model;
 public class VimeoQuery extends Query {
 
 	
-	int rpp;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4028550003367033935L;
 	int pages;
+	public static final int MAXIMUM_RPP = 50;
+
 	
 	public VimeoQuery(String input) {
 
@@ -13,10 +18,6 @@ public class VimeoQuery extends Query {
 
 	}
 	
-	public void setResultsPerPage(int i){
-		rpp = i;
-		
-	}
 	
 	public void setPages(int i){
 		pages = i;
@@ -26,20 +27,16 @@ public class VimeoQuery extends Query {
 	public void setLimit(int i){
 		
 		super.setLimit(i);
+		
 		if(i <= 50){
 			setPages(1);
-			setResultsPerPage(i);
 		}
 		else{
 			setPages((int) Math.ceil(i/50)); //TODO: per non multipli di 50
-			setResultsPerPage(50);
 		}
 		
 	}
 
-	public int getRpp() {
-		return rpp;
-	}
 
 	public int getPages() {
 		return pages;

@@ -4,15 +4,14 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Set;
 
-import com.google.gwt.dev.util.collect.HashMap;
-
 import model.MultiQuery;
 import model.Query;
 import model.Record;
 import util.Languages;
 import view.controllers.ViewController;
 
-public class MultipleFetcher extends JSONFetcher{
+
+public class MultipleFetcher implements JSONFetcher{
 
 	private ArrayList<JSONFetcher> fetchers = new ArrayList<>();
 

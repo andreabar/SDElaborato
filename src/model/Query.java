@@ -8,8 +8,6 @@ import dbutil.IprType;
 
 public class Query implements Serializable {
 
-
-	
 	public String getKeyword() {
 		return keyword;
 	}
@@ -25,14 +23,6 @@ public class Query implements Serializable {
 	public void setProvider(String provider) {
 		this.provider = provider;
 	}
-
-//	public Date getDate() {
-//		return date;
-//	}
-//
-//	public void setDate(Date date) {
-//		this.date = date;
-//	}
 
 	public int getId() {
 		return id;
@@ -54,9 +44,9 @@ public class Query implements Serializable {
 	private ArrayList<String> iprType;
 	private String dataType;
 	private String provider;
-//	private Date date;
+	// private Date date;
 	private int id;
-	
+
 	public Query(int id, String provider, String dataType, String keyword,
 			String language, int results) {
 		super();
@@ -65,7 +55,7 @@ public class Query implements Serializable {
 		this.dataType = dataType;
 		this.keyword = keyword;
 		this.language = language;
-//		this.date = date;
+		// this.date = date;
 		this.results = results;
 	}
 
@@ -83,20 +73,20 @@ public class Query implements Serializable {
 
 	private String language;
 	private int results;
-	
+
 	public Query(String q) {
-	
+
 		keyword = q;
 		results = -1;
-		
+
 	}
-	
-	public void setIprType(Set<Object> types){
-		
+
+	public void setIprType(Set<Object> types) {
+
 		iprType = new ArrayList<String>();
-		for(Object o : types)
+		for (Object o : types)
 			iprType.add(IprType.getIprUrl(o.toString()));
-			
+
 	}
 
 	public int getLimit() {
@@ -126,8 +116,9 @@ public class Query implements Serializable {
 	public boolean hasLanguageFilter() {
 		return language != null && language != "any";
 	}
+
 	public boolean hasDataFilter() {
 		return dataType != null && dataType != "any";
 	}
-	
+
 }

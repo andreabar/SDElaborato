@@ -154,7 +154,7 @@ public class MainView extends VerticalLayout {
 
 		iprSelector.setMultiSelect(true);
 		
-		for(String k : IprType.getTypes().keySet()){
+		for(String k : IprType.getTypes()){
 			
 			iprSelector.addItem(k);
 			

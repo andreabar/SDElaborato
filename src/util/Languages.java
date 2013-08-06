@@ -1,25 +1,44 @@
 package util;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
+
+import dbutil.DBHelper;
 
 
 public class Languages {
 
-	public static HashMap<String, String> map = new HashMap<String, String>();
 	
 	public static void buildMap(){
 		
-		map.put("Italian", "it");
-		map.put("French", "fr");
-		map.put("German", "de");
-		map.put("English", "en");
-		map.put("any", "mul");
+		String sql = "INSERT INTO language(id, full_language) VALUES " +
+		"('it', 'Italian'),('fr','French'),('de','German'),('en','English'),('mul','any');";
+		
+		try {
+			DBHelper.getConnection().createStatement().execute(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
 	public static String get(String language){
 		
-		return map.get(language);
+		String sql = "SELECT id FROM language WHERE full_language = " + language + ";";
+		
+		ResultSet set;
+		try {
+			set = DBHelper.getConnection().createStatement().executeQuery(sql);
+			if(set.next())
+				return set.getString("id");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	

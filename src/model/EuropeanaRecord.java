@@ -4,11 +4,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import controllers.RecordController;
+import fetcher.EuropeanaFetcher;
 
 public class EuropeanaRecord extends Record {
 
 	public EuropeanaRecord() {
-		setProvider("EUROPEANA");
+		setProvider(EuropeanaFetcher.PROVIDER);
 	
 	}
 	

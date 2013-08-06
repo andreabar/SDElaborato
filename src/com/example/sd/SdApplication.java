@@ -1,5 +1,7 @@
 package com.example.sd;
 
+import java.sql.SQLException;
+
 import util.Languages;
 import views.LoginPage;
 import com.vaadin.Application;
@@ -25,9 +27,7 @@ public class SdApplication extends Application {
 	public void init() {
 
 		DBHelper.connectToDB();
-		Languages.buildMap();
-		IprType.build();
-
+	
 		LoginController lc = new LoginController(new LoginPage());
 
 		this.setTheme(Runo.themeName());

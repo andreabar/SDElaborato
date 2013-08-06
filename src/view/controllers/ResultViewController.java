@@ -56,31 +56,34 @@ public class ResultViewController implements Serializable{
 				Integer scheduledTaskId = result.getInt("id");
 
 				Component c = null;
+				String statusCol = null;
 				
 				if(status.equals("scheduled")){
 					
-					c = new Label("Processing url..");
+					c = new Label("");
+					statusCol = "Processing url..";
 				}
 				
 				else if(status.equals("downloaded")) {
 					
 					c = buildLinkFile(result, c);
+					statusCol = "Downloaded";
 					
 				}
 				else if(status.equals("downloading")){
 					c = new ProgressIndicator();
-				
+					statusCol = "Downloading..";
 					DownloadThread d = new DownloadThread(this, (ProgressIndicator) c, scheduledTaskId);
 					d.start();
 				}
 				
 				
 				else if (status.equals("Not downloadable")) {
-					c = new Link(status + ": click to see online", new ExternalResource(result.getString("resource")));
-					
+					c = new Link("Click to see online", new ExternalResource(result.getString("resource")));
+					statusCol = "Not downloadable";
 				}
 				
-				Object rowItem[] = new Object[]{title, type, c, date};
+				Object rowItem[] = new Object[]{title, type, statusCol, c, date};
 				
 				this.resultView.getFileTable().addItem(rowItem, scheduledTaskId);
 				
@@ -99,7 +102,7 @@ public class ResultViewController implements Serializable{
 			ArrayList<URL> urls = getFileLink(result.getInt("id"));
 			if(urls.size()>0){
 				System.out.println(urls.get(0).toString().replace(" ", "%20"));
-				c = new Link("Downloaded: click to open", new ExternalResource(
+				c = new Link("Click to open", new ExternalResource(
 						urls.get(0).toString()));
 			}
 		} catch (MalformedURLException e) {

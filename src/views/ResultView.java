@@ -42,7 +42,8 @@ public class ResultView extends VerticalLayout {
 		this.fileTable = new Table("ATTENTION: Deleting a row will not delete the file from your disk");
 		this.fileTable.addContainerProperty("Title", String.class, null);
 		this.fileTable.addContainerProperty("Type", String.class, null);
-		this.fileTable.addContainerProperty("Status", Component.class, null);
+		fileTable.addContainerProperty("Status", String.class, null);
+		this.fileTable.addContainerProperty("Progress", Component.class, null);
 		this.fileTable.addContainerProperty("Date", Date.class, null);
 
 		this.fileTable.setSizeFull();
