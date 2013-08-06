@@ -5,7 +5,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import controllers.TaskController;
@@ -13,8 +16,9 @@ import controllers.TaskController;
 import util.AppData;
 import views.ResultView;
 
-import com.vaadin.event.LayoutEvents.LayoutClickEvent;
-import com.vaadin.event.LayoutEvents.LayoutClickListener;
+
+import com.github.wolfie.refresher.Refresher;
+import com.github.wolfie.refresher.Refresher.RefreshListener;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
@@ -33,15 +37,12 @@ public class ResultViewController implements Serializable{
 	 */
 	private static final long serialVersionUID = -5972665301072207312L;
 	private ResultView resultView;
+	private Refresher refresher;
 	
 	public ResultViewController(ResultView r){
 		setResultView(r);
-		this.getResultView().getRefreshButton().addListener(new RefreshButtonListener(this));
-		loadResultTable();
-		resultView
-		.setImmediate(true);
-	
-		
+
+		resultView.getClear().addListener(new ClearListener(this));
 	}
 	
 	public void loadResultTable(){
@@ -51,17 +52,28 @@ public class ResultViewController implements Serializable{
 			while(result.next()){
 				String title = result.getString("title");
 				String type = result.getString("type");
+				String keyword = result.getString("keyword");
+				String provider = result.getString("provider");
 				String status = result.getString("status");
-				Date date = result.getDate("date");
+				String sDateQuery = result.getString("date");
+				String sDateDownload = result.getString("date_download");
+				Date dateQuery = null;
+				Date dateDownload = null;
+				try {
+					dateQuery = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateQuery);
+					dateDownload = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateDownload);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 				Integer scheduledTaskId = result.getInt("id");
 
 				Component c = null;
 				String statusCol = null;
 				
-				if(status.equals("scheduled")){
+				if(status.equals("scheduled") || status.equals("processing")){
 					
 					c = new Label("");
-					statusCol = "Processing url..";
+					statusCol = status;
 				}
 				
 				else if(status.equals("downloaded")) {
@@ -83,17 +95,29 @@ public class ResultViewController implements Serializable{
 					statusCol = "Not downloadable";
 				}
 				
-				Object rowItem[] = new Object[]{title, type, statusCol, c, date};
+
+				Object rowItem[] = new Object[]{title, type, keyword, provider, statusCol, c, dateQuery, dateDownload};
 				
 				this.resultView.getFileTable().addItem(rowItem, scheduledTaskId);
 				
-				resultView.getFileTable().setSortContainerPropertyId("Date");
-				resultView.getFileTable().setSortAscending(false);
+				resultView.getFileTable().setSortContainerPropertyId("Status");
+				resultView.getFileTable().setSortAscending(true);
 				resultView.getFileTable().sort();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean isJunkDataInTable(){
+		@SuppressWarnings("unchecked")
+		Collection<Integer> ids = (Collection<Integer>) resultView.getFileTable().getItemIds();
+		for(Integer i : ids){
+			if(TaskController.isNotDownloadable(i)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public Component buildLinkFile(ResultSet result, Component c)
@@ -134,24 +158,38 @@ public class ResultViewController implements Serializable{
 		this.resultView = resultView;
 	}
 
+	public Refresher getRefresher() {
+		return refresher;
+	}
+
+	public void setRefresher(Refresher refresher) {
+		this.refresher = refresher;
+	}
+
 }
 
-class RefreshButtonListener implements Button.ClickListener {
+class ClearListener implements Button.ClickListener {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6367448598090263990L;
-	private ResultViewController resultViewController;
+	private static final long serialVersionUID = 8248905226288671342L;
 	
-	public RefreshButtonListener(ResultViewController rvc){
-		this.resultViewController = rvc;
-	}
+	private ResultViewController rvc;
 
+	public ClearListener(ResultViewController rvc){
+		this.rvc = rvc;
+	}
+	
+	@Override
 	public void buttonClick(ClickEvent event) {
-		this.resultViewController.loadResultTable();
+		TaskController.removeJunkTask(AppData.userID);
+		rvc.loadResultTable();
+		rvc.getResultView().getClear().setEnabled(false);
 	}
 	
 }
+
+
 
 

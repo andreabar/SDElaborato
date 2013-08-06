@@ -14,6 +14,8 @@ public class VimeoQuery extends Query {
 	public VimeoQuery(String input) {
 
 		super(input);
+		setDataType("VIDEO");
+		setLanguage("unknown");
 		pages = 1;
 
 	}
@@ -32,7 +34,8 @@ public class VimeoQuery extends Query {
 			setPages(1);
 		}
 		else{
-			setPages((int) Math.ceil(i/50)); //TODO: per non multipli di 50
+			setPages((int) Math.ceil((double)i/(double)50));
+			System.out.println("PAGES: " + pages);//TODO: per non multipli di 50
 		}
 		
 	}

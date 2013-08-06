@@ -16,6 +16,9 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import com.mysql.jdbc.PreparedStatement;
+import com.vaadin.data.validator.EmailValidator;
+
+import org.apache.commons.validator.routines.*;
 
 import model.Record;
 import model.Search;
@@ -259,6 +262,42 @@ public class DBHelper {
 		}
 		
 		return name;
+	}
+	
+	public static int handleLogin(String u, String p) {
+
+		String q = "SELECT id FROM user WHERE username = ? and password = ?";
+		
+		ResultSet set = DBHelper.executePreparedStatement(q, new String[]{u,p});
+		
+		if(set == null)
+			return -1;
+		
+		try {
+			if(set.next())
+				return set.getInt("id");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+		
+		
+		
+	}
+	
+	public static boolean newUser(String email, String pass) throws SQLException{
+		if(!org.apache.commons.validator.routines.EmailValidator.getInstance().isValid(email)){
+			return false;
+		}
+		
+		String s = "INSERT INTO user (username, password) VALUES ('" + email + "', '" + pass + "');";
+		
+		java.sql.PreparedStatement stat = getConnection().prepareStatement(s);
+		
+		stat.executeUpdate();
+		
+		return true;
 	}
 	
 

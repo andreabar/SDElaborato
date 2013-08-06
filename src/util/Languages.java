@@ -26,7 +26,7 @@ public class Languages {
 	
 	public static String get(String language){
 		
-		String sql = "SELECT id FROM language WHERE full_language = " + language + ";";
+		String sql = "SELECT id FROM language WHERE full_language = '" + language + "';";
 		
 		ResultSet set;
 		try {

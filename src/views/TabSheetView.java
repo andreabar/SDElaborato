@@ -13,6 +13,8 @@ public class TabSheetView extends Window {
 	 */
 	private static final long serialVersionUID = 2610695989741893779L;
 	private TabSheet tabSheet;
+	private ViewController mainViewController;
+	private ResultViewController resultViewController;
 
 	
 	
@@ -28,11 +30,11 @@ public class TabSheetView extends Window {
 		
 		this.tabSheet = new TabSheet();
 		
-		ViewController mvc = new ViewController(new MainView(this));
-		this.tabSheet.addTab(mvc.getMainView(), "Search");
+		this.mainViewController = new ViewController(new MainView(this));
+		this.tabSheet.addTab(mainViewController.getMainView(), mainViewController.getMainView().getCaption());
 		
-		ResultViewController rsv = new ResultViewController(new ResultView());
-		this.tabSheet.addTab(rsv.getResultView(), "My Result");
+		this.resultViewController = new ResultViewController(new ResultView());
+		this.tabSheet.addTab(resultViewController.getResultView(), resultViewController.getResultView().getCaption());
 		
 		this.addComponent(tabSheet);
 	}
@@ -42,6 +44,22 @@ public class TabSheetView extends Window {
 	}
 	public void setTabSheet(TabSheet tabSheet) {
 		this.tabSheet = tabSheet;
+	}
+
+	public ViewController getMainViewController() {
+		return mainViewController;
+	}
+
+	public void setMainViewController(ViewController mainViewController) {
+		this.mainViewController = mainViewController;
+	}
+
+	public ResultViewController getResultViewController() {
+		return resultViewController;
+	}
+
+	public void setResultViewController(ResultViewController resultViewController) {
+		this.resultViewController = resultViewController;
 	}
 	
 

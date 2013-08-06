@@ -68,7 +68,7 @@ public class IprType {
 
 	public static String getIprUrl(String k) {
 
-		String sql = "SELECT url FROM ipr WHERE description = " + k + ";";
+		String sql = "SELECT url FROM ipr WHERE description = '" + k + "';";
 
 		ResultSet set;
 		try {

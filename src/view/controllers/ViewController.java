@@ -21,7 +21,6 @@ import com.vaadin.terminal.UserError;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
 
-import controllers.LoginController;
 import controllers.QueryController;
 import controllers.RecordController;
 import dbutil.DBHelper;
@@ -194,15 +193,13 @@ class GroupSelectorListener implements ValueChangeListener{
 			
 		}
 		
-		else {
-			
-			viewController.getMainView().getTypeSelect().setValue("VIDEO");
+		 else if(viewController.getMainView().getGroupSelector().getValue().equals("Vimeo")){
+
+			 viewController.getMainView().getTypeSelect().setValue("VIDEO");
 			viewController.getMainView().getTypeSelect().setEnabled(false);
 			viewController.getMainView().getLanguageSelect().setEnabled(false);
 			viewController.getMainView().getIprSelector().setEnabled(false);
-			
-		}
-	
+		 }	
 		viewController.getMainView().getSearchButton().setEnabled(true);
 	}
 	
@@ -273,7 +270,7 @@ class DetailsListener implements Button.ClickListener {
 
 	public void buttonClick(ClickEvent event) {
 		Query selectedQuery = (Query)this.viewController.getMainView().getSearchTable().getValue();
-		DetailsViewController dvc = new DetailsViewController(selectedQuery, AppData.userID);
+		DetailsViewController dvc = new DetailsViewController(selectedQuery);
 		this.viewController.getMainView().getParentView().addWindow(dvc.getDetailsView());
 	}
 	

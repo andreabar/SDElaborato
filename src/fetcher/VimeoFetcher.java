@@ -30,7 +30,7 @@ public class VimeoFetcher implements JSONFetcher {
 	private static final String  API_ACCESS_POINT = "http://vimeo.com/api/rest/v2?format=json&method=vimeo.videos.search&query=";
 	private static final String API_KEY = "815936f63c257234e191aba5e70304abe4c3ac8c";
 	private static final String  API_SECRET = "294e76518159aa7017f610dbd0922f0cf9f17643";
-
+	
 	private OAuthService service = new ServiceBuilder().apiKey(API_KEY)
 			.apiSecret(API_SECRET).provider(VimeoApi.class).build();
 
@@ -39,16 +39,17 @@ public class VimeoFetcher implements JSONFetcher {
 			throws MalformedURLException, Exception {
 
 		ArrayList<Record> records = new ArrayList<>();
-
-		for (int i = 1; i <= ((VimeoQuery) v).getPages(); i++) {
+		
+		VimeoQuery q = new VimeoQuery(v.getInput());
+		q.setLimit(v.getLimit());
+		for (int i = 1; i <= q.getPages(); i++) {
 			
-			URL url = buildQueryRequest(v, i);
+			URL url = buildQueryRequest(q, i);
 			OAuthRequest req = new OAuthRequest(Verb.POST, url.toString());
 			service.signRequest(new Token(TOKEN, TOKEN_SECRET), req);
 			Response response = req.send();
 
 			records.addAll(saveRecords(response.getBody()));
-			v.setLimit(records.size());
 
 		}
 		return records;
@@ -97,7 +98,7 @@ public class VimeoFetcher implements JSONFetcher {
 		String urlTarget = API_ACCESS_POINT + q.getInput();
 		
 		int total = q.getLimit();
-		int missingResults = total - page*VimeoQuery
+		int missingResults = total - (page-1)*VimeoQuery
 				.MAXIMUM_RPP;
 		
 		if (q.getLimit() > 50) {
@@ -108,7 +109,7 @@ public class VimeoFetcher implements JSONFetcher {
 		}
 		
 		else 
-			urlTarget += "per_page=" + q.getLimit();
+			urlTarget += "&per_page=" + q.getLimit();
 
 		System.out.println("QUERY: " + urlTarget);
 		return new URL(urlTarget.replaceAll(" ", "%20"));
@@ -121,8 +122,7 @@ public class VimeoFetcher implements JSONFetcher {
 		VimeoQuery q = new VimeoQuery(v.getMainView().getTextfield().getValue()
 				.toString().trim());
 		q.setLimit((Integer) v.getMainView().getStepper().getValue());
-		q.setDataType("VIDEO");
-		q.setLanguage("unknown");
+		
 		q.setProvider(getProvider());
 
 		return q;

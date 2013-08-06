@@ -2,6 +2,7 @@ package controllers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -52,9 +53,11 @@ public class TaskController {
 			if (id != -1) {
 
 				try {
-//					for (String s : r.getWebResources()) {
-						statement.setDate(j,
-								new java.sql.Date(((new Date()).getTime())));
+
+						Date dt = new Date();
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						String currentTime = sdf.format(dt);
+						statement.setString(j, currentTime);
 						j++;
 						statement.setInt(j, userID);
 						j++;
@@ -108,8 +111,11 @@ public class TaskController {
 	}
 	
 	public static ResultSet getResults(int userID) throws SQLException{
-		String q = "SELECT scheduled_task.resource, record.title, record.type, scheduled_task.status, scheduled_task.id, scheduled_task.date FROM scheduled_task inner join " +
-				"record on scheduled_task.record = record.id WHERE scheduled_task.user = " + userID + ";";
+		
+		String q = "select * from scheduled_task, record, result, query where user = " + userID + 
+				" AND scheduled_task.record = record.id AND record.id IN (select record from result" + 
+						" where query IN (select query from user_history where user = " + userID + ")) AND result.query = query.id AND result.record = record.id";
+
 		
 		java.sql.PreparedStatement statement = DBHelper.getConnection()
 				.prepareStatement(q);
@@ -133,6 +139,45 @@ public class TaskController {
 		return null;
 		
 		
+		
+	}
+	
+	public static void removeJunkTask(int userID){
+		String s = "DELETE FROM scheduled_task WHERE user = " + userID + " AND status = 'Not downloadable';"; 
+		
+		java.sql.PreparedStatement statement;
+		try {
+			statement = DBHelper.getConnection()
+					.prepareStatement(s);
+			statement.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static boolean isNotDownloadable(int scheduledTaskId){
+		String q = "SELECT status FROM scheduled_task WHERE id = " + scheduledTaskId + ";";
+		
+		java.sql.PreparedStatement statement;
+		try {
+			statement = DBHelper.getConnection()
+					.prepareStatement(q);
+			ResultSet result = statement.executeQuery(q);
+			if(result.next()){
+				if(result.getString("status").equals("Not downloadable")){
+					return true;
+				} else {
+					return false;
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+		}
+		return false;
 		
 	}
 

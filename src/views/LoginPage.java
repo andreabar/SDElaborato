@@ -1,6 +1,8 @@
 package views;
 
 import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
@@ -17,7 +19,8 @@ public class LoginPage extends Window {
 	private VerticalLayout loginLayout;
 	private TextField username;
 	private PasswordField pass;
-	private Button login;
+	private Button login, register;
+	private Label l1, l2;
 	
 	public LoginPage() {
 		initViewComponents();
@@ -31,14 +34,28 @@ public class LoginPage extends Window {
 		loginLayout = new VerticalLayout();
 		loginLayout.setSizeFull();
 		loginLayout.setSpacing(true);
-		username = new TextField("Username: ");
+		username = new TextField("Email: ");
 		pass = new PasswordField("Password: ");
 		
 		login = new Button("Login");
 		
+		HorizontalLayout hl = new HorizontalLayout();
+		hl.setSpacing(true);
+		
+		l1 = new Label(" Or ");
+		l2 = new Label(" if you don't have any account yet.");
+		
+		register = new Button("Register");
+		register.setStyleName(Button.STYLE_LINK);
+		
+		hl.addComponent(login);
+		hl.addComponent(l1);
+		hl.addComponent(register);
+		hl.addComponent(l2);
+		
 		loginLayout.addComponent(username);
 		loginLayout.addComponent(pass);
-		loginLayout.addComponent(login);
+		loginLayout.addComponent(hl);
 		
 		loginPanel.addComponent(loginLayout);
 		
@@ -83,6 +100,14 @@ public class LoginPage extends Window {
 
 	public void setLoginPanel(Panel loginPanel) {
 		this.loginPanel = loginPanel;
+	}
+
+	public Button getRegister() {
+		return register;
+	}
+
+	public void setRegister(Button register) {
+		this.register = register;
 	}
 	
 }

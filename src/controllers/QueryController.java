@@ -4,9 +4,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 
 import dbutil.DBHelper;
 
@@ -48,24 +50,22 @@ public class QueryController {
 		try {
 			Statement statement = DBHelper.getConnection().createStatement();
 
-			String i = "INSERT INTO query(provider, type, language, keyword, results) VALUES ( '"
-					+ query.getProvider()
-					+ "','"
-					+ query.getDataType()
-					+ "','"
-					+ query.getLanguage()
-					+ "','"
-					+ query.getKeyword()
-					+ "', "
-					+ query.getResults() + ");";
+
+			Date dt = new Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String currentTime = sdf.format(dt);
+
+			String i = "INSERT INTO query(date, provider, type, language, keyword, results) VALUES ('" +currentTime+ "','" + query.getProvider() + "','" + query.getDataType() + "','" +
+					query.getLanguage() + "','" + query.getKeyword() + "', " + query.getResults() + ");";
 
 			statement.executeUpdate(i, Statement.RETURN_GENERATED_KEYS);
 			ResultSet keys = statement.getGeneratedKeys();
-			if (keys.next()) {
+			if(keys.next()){
 				query.setId(keys.getInt(1));
 
-				String uh = "INSERT INTO user_history(user, query) VALUES ("
-						+ uid + ", " + query.getId() + ");";
+				String uh = "INSERT INTO user_history(user, query) VALUES (" + uid +", " +  
+						query.getId() +");";
+
 				statement.executeUpdate(uh);
 
 			}

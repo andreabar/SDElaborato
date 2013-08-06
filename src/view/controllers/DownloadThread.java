@@ -2,6 +2,7 @@ package view.controllers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.ProgressIndicator;
@@ -43,16 +44,19 @@ public class DownloadThread extends Thread{
 				((ProgressIndicator) progressBar).setValue(new Float((float)temp/(float)total));
 				 
 			 }
+			 
+			 
 			
 			Thread.sleep(1000);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			
+
 		 }
 	 }
 }
+
+

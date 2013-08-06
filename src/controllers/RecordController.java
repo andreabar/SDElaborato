@@ -103,6 +103,7 @@ public class RecordController {
 				statement.setString(5, r.getRights());
 				statement.setString(6, r.getProvider());
 
+
 				statement.executeUpdate();
 				
 				ResultSet keys = statement.getGeneratedKeys();
