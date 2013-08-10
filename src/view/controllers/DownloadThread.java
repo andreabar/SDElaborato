@@ -49,9 +49,8 @@ public class DownloadThread extends Thread{
 			
 			Thread.sleep(1000);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

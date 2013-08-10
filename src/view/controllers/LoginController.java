@@ -2,11 +2,9 @@ package view.controllers;
 
 import java.sql.SQLException;
 
-import javax.swing.ButtonModel;
-
 import util.AppData;
-import views.LoginPage;
-import views.RegisterPopUp;
+import view.views.LoginPage;
+import view.views.RegisterPopUp;
 
 import com.vaadin.terminal.UserError;
 import com.vaadin.ui.Button;
@@ -118,7 +116,7 @@ class RegisterListener implements Button.ClickListener {
 				}
 				
 				if(!popUp.getPass().getValue().toString().equals(popUp.getConfirmPass().getValue().toString())){
-					popUp.getConfirmPass().setComponentError(new UserError("Password do not match"));
+					popUp.getConfirmPass().setComponentError(new UserError("Passwords do not match"));
 					return;
 				}
 				

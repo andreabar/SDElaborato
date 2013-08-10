@@ -1,5 +1,7 @@
 package model;
 
+import util.AppData;
+
 public class VimeoQuery extends Query {
 
 	
@@ -14,7 +16,7 @@ public class VimeoQuery extends Query {
 	public VimeoQuery(String input) {
 
 		super(input);
-		setDataType("VIDEO");
+		setDataType(AppData.VIDEO);
 		setLanguage("unknown");
 		pages = 1;
 
@@ -35,7 +37,6 @@ public class VimeoQuery extends Query {
 		}
 		else{
 			setPages((int) Math.ceil((double)i/(double)50));
-			System.out.println("PAGES: " + pages);//TODO: per non multipli di 50
 		}
 		
 	}

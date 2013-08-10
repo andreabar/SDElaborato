@@ -2,10 +2,7 @@ package model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-
-import controllers.RecordController;
 
 public abstract class Record {
 
@@ -39,7 +36,6 @@ public abstract class Record {
 			setRights(set.getString("ipr_type"));
 			setProvider(set.getString("provider"));
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

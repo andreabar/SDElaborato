@@ -3,13 +3,15 @@ package model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import util.AppData;
+
 import controllers.RecordController;
 import fetcher.EuropeanaFetcher;
 
 public class EuropeanaRecord extends Record {
 
 	public EuropeanaRecord() {
-		setProvider(EuropeanaFetcher.PROVIDER);
+		setProvider(AppData.EUROPEANA);
 	
 	}
 	
@@ -19,7 +21,7 @@ public class EuropeanaRecord extends Record {
 	}
 	
 	@Override
-	public void loadMoreInfo() throws Exception { //FIXME: moved to BackgroundApp, so just save the .json URL as resource
+	public void loadMoreInfo() throws Exception { 
 
 		try {
 			setWebResources(RecordController.getWebResources(this));

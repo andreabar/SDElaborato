@@ -3,17 +3,14 @@ package view.controllers;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-
-
 import controllers.QueryController;
-import controllers.VerificationHandler;
+import controllers.TaskController;
 
 import model.Query;
 import model.Record;
 
 import util.AppData;
-import views.DetailsView;
+import view.views.DetailsView;
 
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Button;
@@ -119,11 +116,13 @@ class VerifyListener implements Button.ClickListener {
 			return;
 		
 		try {
-			VerificationHandler handler = new VerificationHandler(toKeep, AppData.userID);
-			handler.initializeResources();
 			
+			TaskController.addTasks(toKeep, AppData.userID);
 			dvc.getDetailsView().getApplication().getMainWindow().showNotification
 			("Your request is being processed", Window.Notification.TYPE_HUMANIZED_MESSAGE);
+			
+			dvc.getDetailsView().getApplication().getMainWindow().removeWindow(dvc.getDetailsView());
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -6,7 +6,7 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 
-import views.TabSheetView;
+import view.views.TabSheetView;
 
 public class TabViewController {
 	
@@ -45,7 +45,7 @@ class AddRefreshListener implements SelectedTabChangeListener {
 	public void selectedTabChange(SelectedTabChangeEvent event) {
 		final TabSheet source = (TabSheet) event.getSource();
 		
-		if(source.getSelectedTab().getCaption().equals("My Result")){
+		if(source.getSelectedTab().getCaption().equals("My Results")){
 			tbc.getTabSheetView().getResultViewController().setRefresher(new Refresher());
 			tbc.getTabSheetView().getResultViewController().getRefresher().
 			addListener(new RefreshTableListener(tbc.getTabSheetView().getResultViewController()));

@@ -11,8 +11,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import util.AppData;
 import util.Languages;
-import view.controllers.ViewController;
+import view.controllers.SearchTabController;
 import model.EuropeanaRecord;
 import model.EuropeanaQuery;
 import model.Query;
@@ -22,10 +23,7 @@ public class EuropeanaFetcher implements JSONFetcher {
 
 	private static final String API_KEY = "NFUAy4RDa";
 	private static final String API_ACCESS_POINT = "http://europeana.eu/api//v2/search.json?wskey=";
-	public static final String PROVIDER = "EUROPEANA";
-	public EuropeanaFetcher() {
-
-	}
+	
 
 	@Override
 	public ArrayList<Record> executeQuery(Query v) throws Exception {
@@ -117,7 +115,7 @@ public class EuropeanaFetcher implements JSONFetcher {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Query buildQuery(ViewController v) {
+	public Query buildQuery(SearchTabController v) {
 	
 		EuropeanaQuery query = new EuropeanaQuery(v.getMainView().getTextfield().getValue().toString());
 		
@@ -126,14 +124,14 @@ public class EuropeanaFetcher implements JSONFetcher {
 		if(v.getMainView().getIprSelector().getValue() != null )
 			query.setIprType(((Set<Object>)(v.getMainView().getIprSelector().getValue())));
 		
-		if(!v.getMainView().getTypeSelect().getValue().equals("any"))
+		if(!v.getMainView().getTypeSelect().getValue().equals(AppData.ANY_TYPE))
 			query.setDataType(v.getMainView().getTypeSelect().getValue().toString());
-		else query.setDataType("any");
+		else query.setDataType(AppData.ANY_TYPE);
 
-		if(!v.getMainView().getLanguageSelect().getValue().equals("any"))
+		if(!v.getMainView().getLanguageSelect().getValue().equals(AppData.ANY_TYPE))
 			query.setLanguage(Languages.get(v.getMainView().getLanguageSelect().getValue().toString()));
 		else 
-			query.setLanguage("any");
+			query.setLanguage(AppData.ANY_TYPE);
 		
 		query.setProvider(getProvider());
 		
@@ -145,7 +143,7 @@ public class EuropeanaFetcher implements JSONFetcher {
 	@Override
 	public String getProvider() {
 		
-		return PROVIDER;
+		return AppData.EUROPEANA;
 	}
 
 	

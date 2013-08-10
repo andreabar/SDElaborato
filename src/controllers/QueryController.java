@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import util.AppData;
+
 
 import dbutil.DBHelper;
 
@@ -19,7 +21,7 @@ import model.VimeoRecord;
 
 public class QueryController {
 
-	public static ArrayList<Query> getSearches(int uid) throws SQLException,
+	public static ArrayList<Query> getQueries(int uid) throws SQLException,
 			ParseException {
 		ArrayList<Query> searches = new ArrayList<Query>();
 
@@ -71,7 +73,6 @@ public class QueryController {
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -84,7 +85,6 @@ public class QueryController {
 		String sql = "SELECT record.* FROM result, record WHERE result.record = record.id AND result.query = " + q.getId() + ";";
 		
 		
-//		String s = "SELECT * FROM record WHERE query = " + q.getId() + ";";
 
 		Statement statement = DBHelper.getConnection().createStatement();
 
@@ -95,9 +95,9 @@ public class QueryController {
 			String provider = set.getString("provider");
 			Record r;
 
-			if (provider.equals("EUROPEANA"))
+			if (provider.equals(AppData.EUROPEANA))
 				r = new EuropeanaRecord(set);
-			else
+			else 
 				r = new VimeoRecord(set);
 
 			list.add(r);

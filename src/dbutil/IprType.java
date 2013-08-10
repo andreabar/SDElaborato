@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import com.mysql.jdbc.PreparedStatement;
-
 public class IprType {
 
 	public static HashMap<String, String> types;
@@ -42,8 +40,8 @@ public class IprType {
 		Iterator<String> it = types.keySet().iterator();
 		while (it.hasNext()) {
 
-			sql += "(?,?)";
-			it.next();
+			String current = it.next();
+			sql += "('" + types.get(current) + "','" + current + "')";
 			if (it.hasNext())
 				sql += ",";
 			else
@@ -51,19 +49,8 @@ public class IprType {
 
 		}
 
-		int j = 1;
-		java.sql.PreparedStatement st = DBHelper.getConnection()
-				.prepareStatement(sql);
-		for (String t : types.keySet()) {
-
-			st.setString(j, types.get(t));
-			j++;
-			st.setString(j, t);
-			j++;
-
-		}
-
-		st.execute();
+	System.out.println(sql);
+		
 	}
 
 	public static String getIprUrl(String k) {

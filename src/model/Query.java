@@ -4,9 +4,41 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Set;
 
+import util.AppData;
+
 import dbutil.IprType;
 
 public class Query implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1122930428045851922L;
+
+
+	private String keyword;
+	private ArrayList<String> iprType;
+	private String dataType;
+	private String provider;
+	private int id;
+
+	public Query(int id, String provider, String dataType, String keyword,
+			String language, int results) {
+		super();
+		this.id = id;
+		this.provider = provider;
+		this.dataType = dataType;
+		this.keyword = keyword;
+		this.language = language;
+		this.results = results;
+	}
+	
+	public Query(String q) {
+
+		keyword = q;
+		results = -1;
+
+	}
 
 	public String getKeyword() {
 		return keyword;
@@ -40,24 +72,6 @@ public class Query implements Serializable {
 		this.results = results;
 	}
 
-	private String keyword;
-	private ArrayList<String> iprType;
-	private String dataType;
-	private String provider;
-	// private Date date;
-	private int id;
-
-	public Query(int id, String provider, String dataType, String keyword,
-			String language, int results) {
-		super();
-		this.id = id;
-		this.provider = provider;
-		this.dataType = dataType;
-		this.keyword = keyword;
-		this.language = language;
-		// this.date = date;
-		this.results = results;
-	}
 
 	public void setInput(String input) {
 		this.keyword = input;
@@ -74,13 +88,7 @@ public class Query implements Serializable {
 	private String language;
 	private int results;
 
-	public Query(String q) {
-
-		keyword = q;
-		results = -1;
-
-	}
-
+	
 	public void setIprType(Set<Object> types) {
 
 		iprType = new ArrayList<String>();
@@ -114,11 +122,11 @@ public class Query implements Serializable {
 	}
 
 	public boolean hasLanguageFilter() {
-		return language != null && language != "any";
+		return language != null && language != AppData.ANY_TYPE;
 	}
 
 	public boolean hasDataFilter() {
-		return dataType != null && dataType != "any";
+		return dataType != null && dataType != AppData.ANY_TYPE;
 	}
 
 }

@@ -11,14 +11,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import model.Status;
+
 import controllers.TaskController;
 
 import util.AppData;
-import views.ResultView;
+import view.views.ResultTab;
 
 
 import com.github.wolfie.refresher.Refresher;
-import com.github.wolfie.refresher.Refresher.RefreshListener;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
@@ -36,10 +37,10 @@ public class ResultViewController implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -5972665301072207312L;
-	private ResultView resultView;
+	private ResultTab resultView;
 	private Refresher refresher;
 	
-	public ResultViewController(ResultView r){
+	public ResultViewController(ResultTab r){
 		setResultView(r);
 
 		resultView.getClear().addListener(new ClearListener(this));
@@ -70,19 +71,19 @@ public class ResultViewController implements Serializable{
 				Component c = null;
 				String statusCol = null;
 				
-				if(status.equals("scheduled") || status.equals("processing")){
+				if(status.equals(Status.SCHEDULED) || status.equals(Status.PROCESSING)){
 					
 					c = new Label("");
 					statusCol = status;
 				}
 				
-				else if(status.equals("downloaded")) {
+				else if(status.equals(Status.DOWNLOADED)) {
 					
 					c = buildLinkFile(result, c);
 					statusCol = "Downloaded";
 					
 				}
-				else if(status.equals("downloading")){
+				else if(status.equals(Status.DOWNLOADING)){
 					c = new ProgressIndicator();
 					statusCol = "Downloading..";
 					DownloadThread d = new DownloadThread(this, (ProgressIndicator) c, scheduledTaskId);
@@ -90,7 +91,7 @@ public class ResultViewController implements Serializable{
 				}
 				
 				
-				else if (status.equals("Not downloadable")) {
+				else if (status.equals(Status.NOT_DOWNLOADABLE)) {
 					c = new Link("Click to see online", new ExternalResource(result.getString("resource")));
 					statusCol = "Not downloadable";
 				}
@@ -137,7 +138,7 @@ public class ResultViewController implements Serializable{
 
 	private ArrayList<URL> getFileLink(int id) throws SQLException, MalformedURLException {
 
-		String sql = "SELECT * from sd.file WHERE scheduled_task = " + id + ";";
+		String sql = "SELECT * from file WHERE scheduled_task = " + id + ";";
 		ArrayList<URL> urls = new ArrayList<>();
 		System.out.println(sql);
 			ResultSet query = DBHelper.getConnection().createStatement().executeQuery(sql);
@@ -150,11 +151,11 @@ public class ResultViewController implements Serializable{
 		
 	}
 
-	public ResultView getResultView() {
+	public ResultTab getResultView() {
 		return resultView;
 	}
 
-	public void setResultView(ResultView resultView) {
+	public void setResultView(ResultTab resultView) {
 		this.resultView = resultView;
 	}
 
@@ -183,7 +184,7 @@ class ClearListener implements Button.ClickListener {
 	
 	@Override
 	public void buttonClick(ClickEvent event) {
-		TaskController.removeJunkTask(AppData.userID);
+		TaskController.removeNotDownloadableTask(AppData.userID);
 		rvc.loadResultTable();
 		rvc.getResultView().getClear().setEnabled(false);
 	}

@@ -1,47 +1,56 @@
 package dbutil;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import com.mysql.jdbc.PreparedStatement;
-import com.vaadin.data.validator.EmailValidator;
-
-import org.apache.commons.validator.routines.*;
+import util.AppData;
 
 import model.Record;
-import model.Search;
 
 public class DBHelper {
 
 	private static Connection connection;
 	
-	public static Connection connectToDB() {
+	public static Connection connectToDB(File properties) {
 
-//		Builder.buildDB();
-		Context initCtx;
+
+		
 		try {
+
+		Properties p = new Properties();
+		p.load(new FileInputStream(properties));
+		
+		Context initCtx;
 			initCtx = new InitialContext();
 			Context envCtx = (Context) initCtx.lookup("java:comp/env");
 
-			DataSource ds = (DataSource) envCtx.lookup("jdbc/sd");
+			DataSource ds = (DataSource) envCtx.lookup("jdbc/" + p.getProperty("dbName"));
 
-			return ds.getConnection();
+			connection =  ds.getConnection();
+			return connection;
 
 		} catch (NamingException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -50,106 +59,12 @@ public class DBHelper {
 
 	public static Connection getConnection() {
 
-		if (connection == null)
-			connection = connectToDB();
 		return connection;
 	}
 
-	public static void saveRecords(ArrayList<Record> records, String input)
-			throws Exception {
-
-		String query = "INSERT INTO record (type, language, url, title) VALUES ";
-		for (int i = 0; i < records.size(); i++) {
-			query += "(?,?,?,?)";
-			if (i < records.size() - 1)
-				query += ",";
-			else
-				query += ";";
-		}
-
-		java.sql.PreparedStatement statement = getConnection()
-				.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-
-		for (int i = 0; i < records.size(); i++) {
-			statement.setString(4 * i + 1, records.get(i).getType());
-			statement.setString(4 * i + 2, records.get(i).getLanguage());
-			statement.setString(4 * i + 3, records.get(i).getUniqueUrl());
-			statement.setString(4 * i + 4, records.get(i).getTitle());
-
-		}
-
-		statement.executeUpdate();
-		
-		saveResources(records);
-		saveResearch(records, input);
-		
-	}
-
-	private static void saveResources(ArrayList<Record> records) throws Exception {
-
-		String query = "INSERT INTO location (record, url) VALUES ";
-		int j = 1;
-
-		
-		for(Record r : records){
-			List<String> resources = r.getWebResources();
-			for(String s : resources){
-				
-				query += "(?,?),";
-			}
-		}
-		
-		String update = query.substring(0, query.length()-1) + ";";
-		java.sql.PreparedStatement statement = getConnection()
-				.prepareStatement(update);
-		for(Record r : records){
-			int id = getRecordID(r);
-			if(id != -1){
-			List<String> resources = r.getWebResources();
-			for(String s : resources){
-				statement.setInt(j, id);
-				j++;
-				statement.setString(j, s);
-				j++;			}
-			}
-		}
-			statement.executeUpdate();
-
-		}
 	
-	private static void saveResearch (ArrayList<Record> records, String input) throws SQLException {
-		Date now = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String currentTime = sdf.format(now);
-		String query = "INSERT INTO search (record, date, keyword) VALUES ";
-
-		for (int i = 0; i < records.size(); i++) {
-			query += "(?,?,?)";
-			if (i < records.size() - 1)
-				query += ",";
-			else
-				query += ";";
-		}
-
-		java.sql.PreparedStatement statement = getConnection()
-				.prepareStatement(query);
-
-		int j = 1;
-
-		for(Record r : records){
-			int id = getRecordID(r);
-			if(id != -1){
-				statement.setInt(j, id);
-				j++;
-				statement.setString(j, currentTime);
-				j++;
-				statement.setString(j, input);
-				j++;
-			}
-
-		}
-		statement.executeUpdate();
-	}
+	
+	
 
 	public static int getRecordID(Record r) {
 
@@ -168,43 +83,7 @@ public class DBHelper {
 		
 	}
 			
-	public static ArrayList<Search> getSearches() throws SQLException, ParseException{
-		ArrayList<Search> searches = new ArrayList<Search>();
-		ArrayList<Integer> records = new ArrayList<Integer>();
-		
-		String q = new String("SELECT * FROM search");
-		
-		java.sql.PreparedStatement statement = getConnection()
-				.prepareStatement(q);
-		
-		ResultSet result = statement.executeQuery();
-		Date firstDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("1970-01-01 00:00:00");
-		Date oldDate = firstDate;
-		String keyword = new String();
-		
-		while(result.next()){
-
-			Search s = new Search(records, result.getDate("date"), result.getString("keyword"));
-			records.add(result.getInt("record"));
-			searches.add(s);
-		}
-		
-//		while (result.next()) {
-//			Date newDate = (result.getDate("date"));
-//			if(newDate.after(oldDate) && !(oldDate.equals(firstDate))){
-//				Search newSearch = new Search(records, oldDate, keyword);
-//				searches.add(newSearch);
-//				records = new ArrayList<Integer>();
-//			}
-//			keyword = result.getString("keyword");
-//			oldDate = newDate;
-//			
-//		}
-//		Search newSearch = new Search(records, oldDate, keyword);
-//		searches.add(newSearch);
-
-		return searches;
-	}
+	
 	
 	public static ResultSet getDetails(Date d, String k) throws SQLException{
 		
@@ -257,7 +136,6 @@ public class DBHelper {
 				name = result.getString("username");
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -277,7 +155,6 @@ public class DBHelper {
 			if(set.next())
 				return set.getInt("id");
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return -1;

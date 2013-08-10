@@ -1,7 +1,7 @@
-package views;
+package view.views;
 
 import view.controllers.ResultViewController;
-import view.controllers.ViewController;
+import view.controllers.SearchTabController;
 
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Window;
@@ -13,7 +13,7 @@ public class TabSheetView extends Window {
 	 */
 	private static final long serialVersionUID = 2610695989741893779L;
 	private TabSheet tabSheet;
-	private ViewController mainViewController;
+	private SearchTabController mainViewController;
 	private ResultViewController resultViewController;
 
 	
@@ -30,10 +30,10 @@ public class TabSheetView extends Window {
 		
 		this.tabSheet = new TabSheet();
 		
-		this.mainViewController = new ViewController(new MainView(this));
+		this.mainViewController = new SearchTabController(new SearchTab(this));
 		this.tabSheet.addTab(mainViewController.getMainView(), mainViewController.getMainView().getCaption());
 		
-		this.resultViewController = new ResultViewController(new ResultView());
+		this.resultViewController = new ResultViewController(new ResultTab());
 		this.tabSheet.addTab(resultViewController.getResultView(), resultViewController.getResultView().getCaption());
 		
 		this.addComponent(tabSheet);
@@ -46,11 +46,11 @@ public class TabSheetView extends Window {
 		this.tabSheet = tabSheet;
 	}
 
-	public ViewController getMainViewController() {
+	public SearchTabController getMainViewController() {
 		return mainViewController;
 	}
 
-	public void setMainViewController(ViewController mainViewController) {
+	public void setMainViewController(SearchTabController mainViewController) {
 		this.mainViewController = mainViewController;
 	}
 

@@ -9,6 +9,7 @@ import java.util.List;
 import dbutil.DBHelper;
 
 import model.Record;
+import model.Status;
 
 public class TaskController {
 
@@ -128,12 +129,11 @@ public class TaskController {
 	public static ResultSet getDownload(int taskId) {
 
 		try {
-			System.out.println("SELECT * FROM sd.download WHERE task = " + taskId + ";");
-			ResultSet set = DBHelper.getConnection().createStatement().executeQuery("SELECT * FROM sd.download WHERE task = " + taskId + ";");
+			System.out.println("SELECT * FROM download WHERE task = " + taskId + ";");
+			ResultSet set = DBHelper.getConnection().createStatement().executeQuery("SELECT * FROM download WHERE task = " + taskId + ";");
 			return set;
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -142,8 +142,8 @@ public class TaskController {
 		
 	}
 	
-	public static void removeJunkTask(int userID){
-		String s = "DELETE FROM scheduled_task WHERE user = " + userID + " AND status = 'Not downloadable';"; 
+	public static void removeNotDownloadableTask(int userID){
+		String s = "DELETE FROM scheduled_task WHERE user = " + userID + " AND status = '" + Status.NOT_DOWNLOADABLE + "';"; 
 		
 		java.sql.PreparedStatement statement;
 		try {
@@ -151,7 +151,6 @@ public class TaskController {
 					.prepareStatement(s);
 			statement.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -166,14 +165,13 @@ public class TaskController {
 					.prepareStatement(q);
 			ResultSet result = statement.executeQuery(q);
 			if(result.next()){
-				if(result.getString("status").equals("Not downloadable")){
+				if(result.getString("status").equals(Status.NOT_DOWNLOADABLE)){
 					return true;
 				} else {
 					return false;
 				}
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
 		}

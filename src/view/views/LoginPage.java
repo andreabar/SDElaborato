@@ -1,4 +1,4 @@
-package views;
+package view.views;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -8,6 +8,7 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.BaseTheme;
 
 public class LoginPage extends Window {
 
@@ -46,7 +47,7 @@ public class LoginPage extends Window {
 		l2 = new Label(" if you don't have any account yet.");
 		
 		register = new Button("Register");
-		register.setStyleName(Button.STYLE_LINK);
+		register.setStyleName(BaseTheme.BUTTON_LINK);
 		
 		hl.addComponent(login);
 		hl.addComponent(l1);

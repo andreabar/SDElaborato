@@ -1,4 +1,4 @@
-package views;
+package view.views;
 
 import java.util.Date;
 
@@ -10,7 +10,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 
-public class ResultView extends VerticalLayout {
+public class ResultTab extends VerticalLayout {
 
 	/**
 	 * 
@@ -24,23 +24,23 @@ public class ResultView extends VerticalLayout {
 	private Table fileTable;
 	private Button clear;
 	
-	public ResultView(){
+	public ResultTab(){
 		initViewComponents();
 	}
 	
 	private void initViewComponents(){
 		
-		this.setCaption("My Result");
+		this.setCaption("My Results");
 
 		
 		this.vertical = new VerticalLayout();
 		
 		this.mainPanel = new Panel("Multimedia Data Crawler");
 		
-		this.info = new Label("Here you find the data you requested.");
+		this.info = new Label("Here you can check out the progess of the data you requested.");
 		
 		this.clear = new Button("Clear");
-		this.clear.setDescription("Remove from the table all not downloadble data");
+		this.clear.setDescription("Remove from the table all 'Not downloadable' files.");
 		this.clear.setEnabled(false);
 				
 		this.fileTable = new Table();

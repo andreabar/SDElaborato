@@ -2,16 +2,17 @@ package model;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import fetcher.VimeoFetcher;
+
+import util.AppData;
 
 public class VimeoRecord extends Record {
 
 	public VimeoRecord() {
 
-		setType("VIDEO");
+		setType(AppData.VIDEO);
 		setLanguage("unknown");
 		setRights("unknown");
-		setProvider(VimeoFetcher.PROVIDER);
+		setProvider(AppData.VIMEO);
 	}
 
 	public VimeoRecord(ResultSet set) {

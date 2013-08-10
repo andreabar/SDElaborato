@@ -10,9 +10,9 @@ public class FetcherFactory {
 	private static FetcherFactory factory = null;
 	public JSONFetcher getFetcher(String provider){
 		
-		if(provider.equals("Europeana"))
+		if(provider.equals(AppData.EUROPEANA))
 			return new EuropeanaFetcher();
-		else if (provider.equals("Vimeo"))
+		else if (provider.equals(AppData.VIMEO))
 			return new VimeoFetcher();
 		
 		return null;
@@ -20,7 +20,6 @@ public class FetcherFactory {
 	}
 
 	public static FetcherFactory getFetcherFactory() {
-		// TODO Auto-generated method stub
 		if(factory == null)
 			factory = new FetcherFactory();
 		return factory;

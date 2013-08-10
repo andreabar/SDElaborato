@@ -15,7 +15,8 @@ import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
-import view.controllers.ViewController;
+import util.AppData;
+import view.controllers.SearchTabController;
 import model.Query;
 import model.Record;
 import model.VimeoQuery;
@@ -23,8 +24,6 @@ import model.VimeoRecord;
 
 public class VimeoFetcher implements JSONFetcher {
 
-	public static final String PROVIDER = "VIMEO";
-	private static final String VIMEO_URL = "http://vimeo.com/";
 	private static final String TOKEN = "1353bf8aabd8b200d0e4b9d7a9a2b514";
 	private static final String  TOKEN_SECRET = "eac01f5d3305858b2f4e1a93a5bc77b0fe54d7f6";
 	private static final String  API_ACCESS_POINT = "http://vimeo.com/api/rest/v2?format=json&method=vimeo.videos.search&query=";
@@ -83,7 +82,7 @@ public class VimeoFetcher implements JSONFetcher {
 			JSONObject jsonItem = items.getJSONObject(i);
 
 			item.setTitle(jsonItem.getString("title"));
-			item.setUniqueUrl(VIMEO_URL + jsonItem.getInt("id"));
+			item.setUniqueUrl(AppData.VIMEO_URL + jsonItem.getInt("id"));
 
 			list.add(item);
 		}
@@ -117,7 +116,7 @@ public class VimeoFetcher implements JSONFetcher {
 	}
 
 	@Override
-	public Query buildQuery(ViewController v) {
+	public Query buildQuery(SearchTabController v) {
 
 		VimeoQuery q = new VimeoQuery(v.getMainView().getTextfield().getValue()
 				.toString().trim());
@@ -130,7 +129,7 @@ public class VimeoFetcher implements JSONFetcher {
 
 	@Override
 	public String getProvider() {
-		return PROVIDER;
+		return AppData.VIMEO;
 	}
 
 

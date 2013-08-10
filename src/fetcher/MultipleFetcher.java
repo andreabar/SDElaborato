@@ -7,8 +7,9 @@ import java.util.Set;
 import model.MultiQuery;
 import model.Query;
 import model.Record;
+import util.AppData;
 import util.Languages;
-import view.controllers.ViewController;
+import view.controllers.SearchTabController;
 
 
 public class MultipleFetcher implements JSONFetcher{
@@ -26,15 +27,27 @@ public class MultipleFetcher implements JSONFetcher{
 
 		ArrayList<Record> records = new ArrayList<>();
 
-		for(JSONFetcher f : fetchers)
+		for(JSONFetcher f : fetchers){
+		
+			try{
 			records.addAll(f.executeQuery(v));
+			} catch(Exception e){
+				
+				//thrown if one fetcher finds no results
+				
+			}
+			
+		}
 	
+		if(records.isEmpty())
+			throw new Exception("No result found");
+		
 		return records;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Query buildQuery(ViewController v) {
+	public Query buildQuery(SearchTabController v) {
 			
 		Query query = new MultiQuery(v.getMainView().getTextfield().getValue().toString());
 		query.setLimit((Integer)v.getMainView().getStepper().getValue());
@@ -42,14 +55,14 @@ public class MultipleFetcher implements JSONFetcher{
 		if(v.getMainView().getIprSelector().getValue() != null )
 			query.setIprType(((Set<Object>)(v.getMainView().getIprSelector().getValue())));
 		
-		if(!v.getMainView().getTypeSelect().getValue().equals("any"))
+		if(!v.getMainView().getTypeSelect().getValue().equals(AppData.ANY_TYPE))
 			query.setDataType(v.getMainView().getTypeSelect().getValue().toString());
 		else query.setDataType("any");
 
-		if(!v.getMainView().getLanguageSelect().getValue().equals("any"))
+		if(!v.getMainView().getLanguageSelect().getValue().equals(AppData.ANY_TYPE))
 			query.setLanguage(Languages.get(v.getMainView().getLanguageSelect().getValue().toString()));
 		else 
-			query.setLanguage("any");
+			query.setLanguage(AppData.ANY_TYPE);
 		
 		String provider = new String();
 		for(JSONFetcher f : fetchers){
@@ -67,6 +80,7 @@ public class MultipleFetcher implements JSONFetcher{
 
 	@Override
 	public String getProvider() {
+		
 		return null;
 	}
 

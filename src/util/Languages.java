@@ -2,8 +2,6 @@ package util;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-
 import dbutil.DBHelper;
 
 
@@ -13,12 +11,11 @@ public class Languages {
 	public static void buildMap(){
 		
 		String sql = "INSERT INTO language(id, full_language) VALUES " +
-		"('it', 'Italian'),('fr','French'),('de','German'),('en','English'),('mul','any');";
+		"('it', 'Italian'),('fr','French'),('de','German'),('en','English'),('mul','Multi-Language');";
 		
 		try {
 			DBHelper.getConnection().createStatement().execute(sql);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -39,6 +36,20 @@ public class Languages {
 		}
 		
 		return null;
+	}
+	
+	public static ResultSet getAll(){
+		String sql = "SELECT * FROM language;";
+		try {
+			return DBHelper.getConnection().createStatement().executeQuery(sql);
+
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+		
 	}
 	
 	
