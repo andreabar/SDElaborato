@@ -2,6 +2,7 @@ package view.controllers;
 
 import com.github.wolfie.refresher.Refresher;
 import com.github.wolfie.refresher.Refresher.RefreshListener;
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
@@ -46,6 +47,9 @@ class AddRefreshListener implements SelectedTabChangeListener {
 		final TabSheet source = (TabSheet) event.getSource();
 		
 		if(source.getSelectedTab().getCaption().equals("My Results")){
+			tbc.getTabSheetView().getMainViewController().getMainView().getSearchButton().removeClickShortcut();
+			tbc.getTabSheetView().getResultViewController().loadResultTable();
+			tbc.getTabSheetView().getResultViewController().loadDownloadedFileTable();
 			tbc.getTabSheetView().getResultViewController().setRefresher(new Refresher());
 			tbc.getTabSheetView().getResultViewController().getRefresher().
 			addListener(new RefreshTableListener(tbc.getTabSheetView().getResultViewController()));
@@ -54,6 +58,8 @@ class AddRefreshListener implements SelectedTabChangeListener {
 		} else {
 			tbc.getTabSheetView().getResultViewController().getResultView().
 			removeComponent(tbc.getTabSheetView().getResultViewController().getRefresher());
+			tbc.getTabSheetView().getMainViewController().getMainView().
+			getSearchButton().setClickShortcut(KeyCode.ENTER);
 		}
 		
 	}
@@ -75,8 +81,9 @@ class RefreshTableListener implements RefreshListener{
 
 	@Override
 	public void refresh(Refresher source) {
-		source.setRefreshInterval(20000);
+		source.setRefreshInterval(10000);
 		rvc.loadResultTable();
+		rvc.loadDownloadedFileTable();
 		if(rvc.isJunkDataInTable()){
 			rvc.getResultView().getClear().setEnabled(true);
 		}

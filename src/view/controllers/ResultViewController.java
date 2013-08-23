@@ -71,39 +71,84 @@ public class ResultViewController implements Serializable{
 				Component c = null;
 				String statusCol = null;
 				
-				if(status.equals(Status.SCHEDULED) || status.equals(Status.PROCESSING)){
+				if(!status.equals(Status.DOWNLOADED)){
+					if(status.equals(Status.SCHEDULED) || status.equals(Status.PROCESSING)){
+						
+						c = new Label("");
+						statusCol = status;
+					}
 					
-					c = new Label("");
-					statusCol = status;
-				}
-				
-				else if(status.equals(Status.DOWNLOADED)) {
+//					else if(status.equals(Status.DOWNLOADED)) {
+//						
+//						c = buildLinkFile(result, c);
+//						statusCol = "Downloaded";
+//						
+//					}
+					else if(status.equals(Status.DOWNLOADING)){
+						c = new ProgressIndicator();
+						statusCol = "Downloading..";
+						DownloadThread d = new DownloadThread(this, (ProgressIndicator) c, scheduledTaskId);
+						d.start();
+					}
 					
-					c = buildLinkFile(result, c);
-					statusCol = "Downloaded";
 					
-				}
-				else if(status.equals(Status.DOWNLOADING)){
-					c = new ProgressIndicator();
-					statusCol = "Downloading..";
-					DownloadThread d = new DownloadThread(this, (ProgressIndicator) c, scheduledTaskId);
-					d.start();
-				}
-				
-				
-				else if (status.equals(Status.NOT_DOWNLOADABLE)) {
-					c = new Link("Click to see online", new ExternalResource(result.getString("resource")));
-					statusCol = "Not downloadable";
-				}
-				
+					else if (status.equals(Status.NOT_DOWNLOADABLE)) {
+						c = new Link("Click to see online", new ExternalResource(result.getString("resource")));
+						statusCol = "Not downloadable";
+					}
+					
 
-				Object rowItem[] = new Object[]{title, type, keyword, provider, statusCol, c, dateQuery, dateDownload};
+					Object rowItem[] = new Object[]{title, type, keyword, provider, statusCol, c, dateQuery, dateDownload};
+					
+					this.resultView.getFileTable().addItem(rowItem, scheduledTaskId);
+					
+					resultView.getFileTable().setSortContainerPropertyId("Status");
+					resultView.getFileTable().setSortAscending(true);
+					resultView.getFileTable().sort();
+				}
 				
-				this.resultView.getFileTable().addItem(rowItem, scheduledTaskId);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void loadDownloadedFileTable(){
+		this.resultView.getDownloadedFileTable().removeAllItems();
+		try {
+			ResultSet result = TaskController.getResults(AppData.userID);
+			while(result.next()){
+				String title = result.getString("title");
+				String type = result.getString("type");
+				String keyword = result.getString("keyword");
+				String provider = result.getString("provider");
+				String status = result.getString("status");
+				String sDateQuery = result.getString("date");
+				String sDateDownload = result.getString("date_download");
+				Date dateQuery = null;
+				Date dateDownload = null;
+				try {
+					dateQuery = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateQuery);
+					dateDownload = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateDownload);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				Integer scheduledTaskId = result.getInt("id");
+
+				Component c = null;
 				
-				resultView.getFileTable().setSortContainerPropertyId("Status");
-				resultView.getFileTable().setSortAscending(true);
-				resultView.getFileTable().sort();
+				if(status.equals(Status.DOWNLOADED)){
+					c = buildLinkFile(result, c);
+
+					Object rowItem[] = new Object[]{title, type, keyword, provider, c, dateQuery, dateDownload};
+					
+					this.resultView.getDownloadedFileTable().addItem(rowItem, scheduledTaskId);
+					
+					resultView.getDownloadedFileTable().setSortContainerPropertyId("Title");
+					resultView.getDownloadedFileTable().setSortAscending(true);
+					resultView.getDownloadedFileTable().sort();
+				}
+				
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -126,7 +171,6 @@ public class ResultViewController implements Serializable{
 		try {
 			ArrayList<URL> urls = getFileLink(result.getInt("id"));
 			if(urls.size()>0){
-				System.out.println(urls.get(0).toString().replace(" ", "%20"));
 				c = new Link("Click to open", new ExternalResource(
 						urls.get(0).toString()));
 			}
@@ -140,8 +184,7 @@ public class ResultViewController implements Serializable{
 
 		String sql = "SELECT * from file WHERE scheduled_task = " + id + ";";
 		ArrayList<URL> urls = new ArrayList<>();
-		System.out.println(sql);
-			ResultSet query = DBHelper.getConnection().createStatement().executeQuery(sql);
+		ResultSet query = DBHelper.getConnection().createStatement().executeQuery(sql);
 			while(query.next()){
 				urls.add(new URL("http://" + downloadHost +  "/" + query.getString("path").replace(" ", "%20")));
 			}

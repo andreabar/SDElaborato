@@ -17,6 +17,7 @@ import view.views.SearchTab;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.terminal.UserError;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
@@ -42,6 +43,7 @@ public class SearchTabController implements Serializable{
 		this.mainView.getLogged().setValue("Logged as : " + DBHelper.getUserName(AppData.userID));
 		this.mainView.getLogoutButton().addListener(new LogoutListener(this));
 		this.mainView.getSearchButton().addListener(new SearchListener(this));
+		this.mainView.getSearchButton().setClickShortcut(KeyCode.ENTER);
 		this.mainView.getGroupSelector().addListener(new GroupSelectorListener(this));
 		this.mainView.getSearchTable().addListener(new TableClickListener(this));
 		this.mainView.getDetailsButton().addListener(new DetailsListener(this));

@@ -50,7 +50,12 @@ public class IprType {
 		}
 
 	System.out.println(sql);
-		
+	try {
+		DBHelper.getConnection().createStatement().execute(sql);
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+
 	}
 
 	public static String getIprUrl(String k) {

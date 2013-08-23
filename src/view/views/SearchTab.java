@@ -202,8 +202,8 @@ public class SearchTab extends VerticalLayout {
 		this.groupSelector.addItem(AppData.EUROPEANA);
 		this.groupSelector.addItem(AppData.VIMEO);
 
-		groupSelector.select(AppData.EUROPEANA);
-		groupSelector.select(AppData.VIMEO);
+		this.groupSelector.select(AppData.EUROPEANA);
+		this.groupSelector.select(AppData.VIMEO);
 
 	}
 

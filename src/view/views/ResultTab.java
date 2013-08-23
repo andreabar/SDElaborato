@@ -21,7 +21,8 @@ public class ResultTab extends VerticalLayout {
 	private Panel mainPanel;
 	private GridLayout panelLayout;
 	private Label info;
-	private Table fileTable;
+	private Table fileProgressTable;
+	private Table downloadedFileTable;
 	private Button clear;
 	
 	public ResultTab(){
@@ -43,20 +44,34 @@ public class ResultTab extends VerticalLayout {
 		this.clear.setDescription("Remove from the table all 'Not downloadable' files.");
 		this.clear.setEnabled(false);
 				
-		this.fileTable = new Table();
-		this.fileTable.addContainerProperty("Title", String.class, null);
-		this.fileTable.addContainerProperty("Type", String.class, null);
-		this.fileTable.addContainerProperty("Keyword", String.class, null);
-		this.fileTable.addContainerProperty("Provider", String.class, null);
-		this.fileTable.addContainerProperty("Status", String.class, null);
-		this.fileTable.addContainerProperty("Progress", Component.class, null);
-		this.fileTable.addContainerProperty("Date Query", Date.class, null);
-		this.fileTable.addContainerProperty("Date Download", Date.class, null);
+		this.fileProgressTable = new Table("Files in Download");
+		this.fileProgressTable.addContainerProperty("Title", String.class, null);
+		this.fileProgressTable.addContainerProperty("Type", String.class, null);
+		this.fileProgressTable.addContainerProperty("Keyword", String.class, null);
+		this.fileProgressTable.addContainerProperty("Provider", String.class, null);
+		this.fileProgressTable.addContainerProperty("Status", String.class, null);
+		this.fileProgressTable.addContainerProperty("Progress", Component.class, null);
+		this.fileProgressTable.addContainerProperty("Date Query", Date.class, null);
+		this.fileProgressTable.addContainerProperty("Date Download", Date.class, null);
 
-		this.fileTable.setSizeFull();
-		this.fileTable.setSelectable(true);
-		this.fileTable.setImmediate(true);
-		this.fileTable.setPageLength(12);
+		this.fileProgressTable.setSizeFull();
+		this.fileProgressTable.setSelectable(true);
+		this.fileProgressTable.setImmediate(true);
+		this.fileProgressTable.setPageLength(12);
+		
+		this.downloadedFileTable = new Table("Downloaded Files");
+		this.downloadedFileTable.addContainerProperty("Title", String.class, null);
+		this.downloadedFileTable.addContainerProperty("Type", String.class, null);
+		this.downloadedFileTable.addContainerProperty("Keyword", String.class, null);
+		this.downloadedFileTable.addContainerProperty("Provider", String.class, null);
+		this.downloadedFileTable.addContainerProperty("Open", Component.class, null);
+		this.downloadedFileTable.addContainerProperty("Date Query", Date.class, null);
+		this.downloadedFileTable.addContainerProperty("Date Download", Date.class, null);
+		
+		this.downloadedFileTable.setSizeFull();
+		this.downloadedFileTable.setSelectable(true);
+		this.downloadedFileTable.setImmediate(true);
+		this.downloadedFileTable.setPageLength(12);
 		
 		this.panelLayout = new GridLayout(4, 2);
 		this.panelLayout.setSizeFull();
@@ -74,7 +89,8 @@ public class ResultTab extends VerticalLayout {
 		this.mainPanel.setContent(panelLayout);
 		
 		this.vertical.addComponent(mainPanel);
-		this.vertical.addComponent(fileTable);
+		this.vertical.addComponent(fileProgressTable);
+		this.vertical.addComponent(downloadedFileTable);
 
 		this.addComponent(vertical);
 		
@@ -94,11 +110,11 @@ public class ResultTab extends VerticalLayout {
 	}
 
 	public Table getFileTable() {
-		return fileTable;
+		return fileProgressTable;
 	}
 
 	public void setFileTable(Table fileTable) {
-		this.fileTable = fileTable;
+		this.fileProgressTable = fileTable;
 	}
 
 	public VerticalLayout getVertical() {
@@ -115,6 +131,14 @@ public class ResultTab extends VerticalLayout {
 
 	public void setClear(Button clear) {
 		this.clear = clear;
+	}
+
+	public Table getDownloadedFileTable() {
+		return downloadedFileTable;
+	}
+
+	public void setDownloadedFileTable(Table downloadedFileTable) {
+		this.downloadedFileTable = downloadedFileTable;
 	}
 
 }

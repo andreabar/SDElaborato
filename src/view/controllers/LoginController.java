@@ -6,6 +6,7 @@ import util.AppData;
 import view.views.LoginPage;
 import view.views.RegisterPopUp;
 
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.terminal.UserError;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Window;
@@ -22,6 +23,7 @@ public class LoginController {
 		this.setLoginPage(p);
 		this.getLoginPage().getLogin().addListener(new LoginButtonListener(this));
 		this.getLoginPage().getRegister().addListener(new RegisterListener(this));
+		this.getLoginPage().getLogin().setClickShortcut(KeyCode.ENTER);
 	}
 
 
@@ -95,6 +97,8 @@ class RegisterListener implements Button.ClickListener {
 	public void buttonClick(ClickEvent event) {
 		
 		final RegisterPopUp popUp = new RegisterPopUp();
+		this.loginController.getLoginPage().getLogin().removeClickShortcut();
+		popUp.getSubmit().setClickShortcut(KeyCode.ENTER);
 		
 		popUp.getSubmit().addListener(new Button.ClickListener() {
 			
@@ -125,7 +129,8 @@ class RegisterListener implements Button.ClickListener {
 							popUp.getPass().getValue().toString())){
 						loginController.getLoginPage().getApplication().getMainWindow().
 						showNotification("Registration completed", Notification.TYPE_HUMANIZED_MESSAGE);
-						loginController.getLoginPage().getApplication().getMainWindow().removeWindow(loginController.getLoginPage());
+						loginController.getLoginPage().getLogin().setClickShortcut(KeyCode.ENTER);
+						loginController.getLoginPage().removeWindow(popUp);
 					} else {
 						popUp.getUsername().setComponentError(new UserError("Email is not valid"));
 					}
