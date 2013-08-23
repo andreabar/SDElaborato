@@ -39,7 +39,7 @@ public class ResultViewController implements Serializable{
 	private static final long serialVersionUID = -5972665301072207312L;
 	private ResultTab resultView;
 	private Refresher refresher;
-	
+	private static final String downloadHost = "192.168.1.1";
 	public ResultViewController(ResultTab r){
 		setResultView(r);
 
@@ -219,7 +219,7 @@ public class ResultViewController implements Serializable{
 		ArrayList<URL> urls = new ArrayList<>();
 		ResultSet query = DBHelper.getConnection().createStatement().executeQuery(sql);
 			while(query.next()){
-				urls.add(new URL("http://" + query.getString("path").replace(" ", "%20")));
+				urls.add(new URL("http://" + downloadHost +  "/" + query.getString("path").replace(" ", "%20")));
 			}
 			
 			return urls;

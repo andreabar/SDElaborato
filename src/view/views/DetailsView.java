@@ -41,6 +41,7 @@ public class DetailsView extends Window {
 		this.recordsTable = new Table();
 		recordsTable.setPageLength(10);
 		this.recordsTable.addContainerProperty("Title", String.class, null);
+		this.recordsTable.addContainerProperty("Provider", String.class, null);
 		this.recordsTable.addContainerProperty("Language", String.class, null);
 		this.recordsTable.addContainerProperty("Type", String.class, null);
 		this.recordsTable.addContainerProperty("IPR", String.class, null);
