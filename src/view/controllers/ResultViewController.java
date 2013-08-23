@@ -48,6 +48,7 @@ public class ResultViewController implements Serializable{
 	
 	public void loadResultTable(){
 		this.resultView.getFileTable().removeAllItems();
+		loadNewTask();
 		try {
 			ResultSet result = TaskController.getResults(AppData.userID);
 			while(result.next()){
@@ -112,6 +113,38 @@ public class ResultViewController implements Serializable{
 			e.printStackTrace();
 		}
 	}
+	
+	private void loadNewTask(){
+		try {
+			ResultSet result = TaskController.getNewTask(AppData.userID);
+			while(result.next()){
+				String title = result.getString("title");
+				String type = result.getString("type");
+				String keyword = result.getString("keyword");
+				String provider = result.getString("provider");
+				String sDateQuery = result.getString("date");
+				Date dateQuery = null;
+				Date dateDownload = null;
+				Component c = null;
+				try {
+					dateQuery = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateQuery);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				Integer scheduledTaskId = result.getInt("id");
+
+				String statusCol = "In queue";
+
+				Object rowItem[] = new Object[]{title, type, keyword, provider, statusCol, c, dateQuery, dateDownload};
+
+				this.resultView.getFileTable().addItem(rowItem, scheduledTaskId);
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	
 	public void loadDownloadedFileTable(){
 		this.resultView.getDownloadedFileTable().removeAllItems();

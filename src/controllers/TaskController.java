@@ -125,6 +125,20 @@ public class TaskController {
 		
 		return result;
 	}
+	
+	public static ResultSet getNewTask(int userID) throws SQLException{
+		String q = "select * from task, record, result, query where user = " + userID + 
+				" AND task.record = record.id AND record.id IN (select record from result" + 
+						" where query IN (select query from user_history where user = " + userID + ")) AND result.query = query.id AND result.record = record.id";
+
+		
+		java.sql.PreparedStatement statement = DBHelper.getConnection()
+				.prepareStatement(q);
+		
+		ResultSet result = statement.executeQuery();
+		
+		return result;
+	}
 
 	public static ResultSet getDownload(int taskId) {
 
