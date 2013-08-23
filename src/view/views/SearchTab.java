@@ -200,6 +200,9 @@ public class SearchTab extends VerticalLayout {
 	private void initGroupSelector() {
 		this.groupSelector.addItem(AppData.EUROPEANA);
 		this.groupSelector.addItem(AppData.VIMEO);
+		this.groupSelector.select(AppData.EUROPEANA);
+		this.groupSelector.select(AppData.VIMEO);
+
 	}
 
 	public TextField getTextfield() {

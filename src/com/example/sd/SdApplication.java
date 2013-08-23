@@ -3,6 +3,7 @@ package com.example.sd;
 import java.io.File;
 import java.sql.SQLException;
 
+import util.Languages;
 import view.controllers.LoginController;
 import view.views.LoginPage;
 
@@ -33,7 +34,6 @@ public class SdApplication extends Application {
 
 		
 		DBHelper.connectToDB(properties);
-	
 		
 		LoginController lc = new LoginController(new LoginPage());
 

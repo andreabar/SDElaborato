@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import util.AppData;
 
 import controllers.RecordController;
-import fetcher.EuropeanaFetcher;
 
 public class EuropeanaRecord extends Record {
 

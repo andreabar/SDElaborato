@@ -129,7 +129,6 @@ public class TaskController {
 	public static ResultSet getDownload(int taskId) {
 
 		try {
-			System.out.println("SELECT * FROM download WHERE task = " + taskId + ";");
 			ResultSet set = DBHelper.getConnection().createStatement().executeQuery("SELECT * FROM download WHERE task = " + taskId + ";");
 			return set;
 			
