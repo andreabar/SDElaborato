@@ -8,6 +8,7 @@ import org.vaadin.risto.stepper.IntStepper;
 import util.AppData;
 import util.Languages;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.ListSelect;
@@ -78,7 +79,7 @@ public class SearchTab extends VerticalLayout {
 
 		this.stepper = new IntStepper("N° result");
 		this.stepper.setMinValue(1);
-		this.stepper.setValue(1);
+		this.stepper.setValue(100);
 		this.stepper.setImmediate(true);
 
 		iprSelector = new ListSelect("IPR");
@@ -200,6 +201,10 @@ public class SearchTab extends VerticalLayout {
 	private void initGroupSelector() {
 		this.groupSelector.addItem(AppData.EUROPEANA);
 		this.groupSelector.addItem(AppData.VIMEO);
+
+		groupSelector.select(AppData.EUROPEANA);
+		groupSelector.select(AppData.VIMEO);
+
 	}
 
 	public TextField getTextfield() {

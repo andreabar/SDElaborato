@@ -125,6 +125,7 @@ class RegisterListener implements Button.ClickListener {
 							popUp.getPass().getValue().toString())){
 						loginController.getLoginPage().getApplication().getMainWindow().
 						showNotification("Registration completed", Notification.TYPE_HUMANIZED_MESSAGE);
+						loginController.getLoginPage().getApplication().getMainWindow().removeWindow(loginController.getLoginPage());
 					} else {
 						popUp.getUsername().setComponentError(new UserError("Email is not valid"));
 					}

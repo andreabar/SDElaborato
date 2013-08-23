@@ -28,7 +28,7 @@ public class RegisterPopUp extends Window {
 		VerticalLayout vl = new VerticalLayout();
 		vl.setSpacing(true);
 		
-		this.username = new TextField("Username: ");
+		this.username = new TextField("Email: ");
 		this.pass = new PasswordField("Password: ");
 		this.confirmPass = new PasswordField("Confirm Password: ");
 		this.submit = new Button("Submit");

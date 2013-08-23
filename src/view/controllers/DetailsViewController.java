@@ -45,7 +45,7 @@ public class DetailsViewController {
 		for(Record r : QueryController.getRecords(query)){
 			CheckBox check = new CheckBox(null, false);
 			check.setImmediate(true);
-			Object rowItem[] = new Object[]{r.getTitle(), r.getLanguage(), r.getType(), r.getRights(), check};
+			Object rowItem[] = new Object[]{r.getTitle(), r.getProvider(), r.getLanguage(), r.getType(), r.getRights(), check};
 			this.getDetailsView().getRecordsTable().addItem(rowItem, r);
 		}
 	}
