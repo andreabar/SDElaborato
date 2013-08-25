@@ -39,7 +39,7 @@ public class QueryController {
 			Query query = new Query(result.getInt("id"),
 					result.getString("provider"), result.getString("type"),
 					result.getString("keyword"), result.getString("language"),
-					result.getInt("results"));
+					result.getInt("results"), result.getString("date"));
 
 			searches.add(query);
 		}
@@ -148,6 +148,16 @@ public class QueryController {
 			e.printStackTrace();
 		}
 
+	}
+
+	public static Query getQuery(int id) throws SQLException {
+		String sql = "SELECT * FROM query WHERE id ="  + id;	
+		ResultSet set = DBHelper.getConnection().createStatement().executeQuery(sql);
+	
+		if(set.next())
+			return new  Query(id, set.getString("provider"), set.getString("type"), set.getString("keyword"), set.getString("language"), set.getInt("results"), set.getString("date"));
+		return null;
+		
 	}
 
 }

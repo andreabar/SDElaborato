@@ -9,11 +9,15 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.EuropeanaRecord;
 import model.Record;
+import model.VimeoRecord;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import util.AppData;
 
 import dbutil.DBHelper;
 
@@ -116,6 +120,18 @@ public class RecordController {
 		return records;
 
 	
+	}
+
+	public static Record getRecord(int id) throws SQLException {
+		String sql = "SELECT * FROM record WHERE id ="  + id;	
+		ResultSet set = DBHelper.getConnection().createStatement().executeQuery(sql);
+		if(set.next())
+			if(set.getString("provider").equals(AppData.EUROPEANA))
+				return new EuropeanaRecord(set);
+			else 			if(set.getString("provider").equals(AppData.VIMEO))
+				return new VimeoRecord(set);
+		return null;
+
 	}
 
 	

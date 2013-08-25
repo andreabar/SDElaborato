@@ -1,12 +1,9 @@
 package com.example.sd;
 
 import java.io.File;
-import java.sql.SQLException;
-
-import util.Languages;
+import util.PropertiesReader;
 import view.controllers.LoginController;
 import view.views.LoginPage;
-
 import com.vaadin.Application;
 
 import com.vaadin.terminal.gwt.server.WebApplicationContext;
@@ -14,7 +11,6 @@ import com.vaadin.ui.themes.Runo;
 
 
 import dbutil.DBHelper;
-import dbutil.IprType;
 
 /**
  * Main application class.
@@ -29,17 +25,17 @@ public class SdApplication extends Application {
 	@Override
 	public void init() {
 
+		this.setTheme(Runo.themeName());
+
 		WebApplicationContext context = (WebApplicationContext)getContext();
 		File properties = new File ( context.getHttpSession().getServletContext().getRealPath("/WEB-INF/db.properties"));
 
-		
-		DBHelper.connectToDB(properties);
+		PropertiesReader.initProperties(properties);
+		DBHelper.connectToDB();
 		
 		LoginController lc = new LoginController(new LoginPage());
-
-		this.setTheme(Runo.themeName());
 		this.setMainWindow(lc.getLoginPage());
-
+			
 
 		
 	}

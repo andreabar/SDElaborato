@@ -21,9 +21,18 @@ public class Query implements Serializable {
 	private String dataType;
 	private String provider;
 	private int id;
+	private String date;
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
 
 	public Query(int id, String provider, String dataType, String keyword,
-			String language, int results) {
+			String language, int results, String date) {
 		super();
 		this.id = id;
 		this.provider = provider;
@@ -31,6 +40,8 @@ public class Query implements Serializable {
 		this.keyword = keyword;
 		this.language = language;
 		this.results = results;
+		this.date = date;
+		
 	}
 	
 	public Query(String q) {

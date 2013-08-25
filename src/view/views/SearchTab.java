@@ -95,8 +95,8 @@ public class SearchTab extends VerticalLayout {
 		this.languageSelect.setValue("any");
 
 		this.searchButton = new Button("Search");
-		this.searchButton.setEnabled(false);
-
+		this.searchButton.setDisableOnClick(true);
+		
 		this.detailsButton = new Button("Details");
 		this.detailsButton.setEnabled(false);
 
