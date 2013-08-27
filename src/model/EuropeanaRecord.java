@@ -34,7 +34,7 @@ public class EuropeanaRecord extends Record {
 	@Override
 	public String getShownAt() throws Exception {
 
-		if(getWebResources().isEmpty())
+		if(getWebResources() == null)
 			loadMoreInfo();
 		
 		return getWebResources().get(0);

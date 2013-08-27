@@ -50,35 +50,72 @@ public class ResultViewController implements Serializable{
 		resultView.getClear().addListener(new ClearListener(this));
 	}
 	
+	public Object loadTableItem(ResultSet result){
+		
+		try{
+		Record record = RecordController.getRecord(result.getInt("record"));
+		Query q = QueryController.getQuery(result.getInt("query"));
+		String title = record.getTitle();
+		String type = record.getType();
+		String keyword = q.getKeyword();
+		String provider = record.getProvider();
+		String sDateQuery = q.getDate();
+			
+		Date dateQuery = null;
+		Date dateDownload = null;
+		try {
+			dateQuery = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateQuery);
+			String sDateDownload = result.getString("date_download");
+			dateDownload = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateDownload);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch(SQLException e){
+			
+			dateDownload = null;
+		}
+		
+		Object rowItem[] = new Object[]{title, type, keyword, provider, new String(), new Label(), dateQuery, dateDownload};
+		Integer scheduledTaskId = result.getInt("id");
+			
+		this.resultView.getFileTable().addItem(rowItem, scheduledTaskId);
+		return scheduledTaskId;
+		
+		} catch(SQLException e){
+			e.printStackTrace();
+			return null;
+		}
+
+		
+		
+		
+	}
+	
 	public void loadResultTable(){
 		this.resultView.getFileTable().removeAllItems();
+		
 		try {
-			ResultSet result = TaskController.getResults(AppData.userID);
+			ResultSet result = TaskController.getScheduledTasks(AppData.userID);
+			ResultSet tasks = TaskController.getWaitingTasks(AppData.userID);
+			
+			while(tasks.next()){
+				
+				Object id = loadTableItem(tasks );
+				resultView.getFileTable().getItem(id).getItemProperty("Status").setValue("waiting");
+				resultView.getFileTable().getItem(id).getItemProperty("Progress").setValue(new Label());
+				
+			}
+			
 			while(result.next()){
 
-				Record record = RecordController.getRecord(result.getInt("record"));
-				Query q = QueryController.getQuery(result.getInt("query"));
-				String title = record.getTitle();
-				String type = record.getType();
-				String keyword = q.getKeyword();
-				String provider = record.getProvider();
-				String status = result.getString("status");
-				String sDateQuery = q.getDate();
-				String sDateDownload = result.getString("date_download");
-				Date dateQuery = null;
-				Date dateDownload = null;
-				try {
-					dateQuery = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateQuery);
-					dateDownload = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateDownload);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
+				Object id = loadTableItem(result);
 				Integer scheduledTaskId = result.getInt("id");
-
 				Component c = null;
-				String statusCol = null;
+				String statusCol = null;	
+
 				
-					if(status.equals(Status.SCHEDULED) || status.equals(Status.PROCESSING)){
+				String status = result.getString("status");
+				
+				if(status.equals(Status.SCHEDULED) || status.equals(Status.PROCESSING)){
 						
 						c = new Label("");
 						statusCol = status;
@@ -98,10 +135,9 @@ public class ResultViewController implements Serializable{
 					}
 					
 
-					Object rowItem[] = new Object[]{title, type, keyword, provider, statusCol, c, dateQuery, dateDownload};
-					
-					this.resultView.getFileTable().addItem(rowItem, scheduledTaskId);
-					
+					this.resultView.getFileTable().getItem(id).getItemProperty("Status").setValue(statusCol);
+					this.resultView.getFileTable().getItem(id).getItemProperty("Progress").setValue(c);
+
 					resultView.getFileTable().setSortContainerPropertyId("Status");
 					resultView.getFileTable().setSortAscending(true);
 					resultView.getFileTable().sort();
@@ -145,6 +181,7 @@ public class ResultViewController implements Serializable{
 					this.resultView.getDownloadedFileTable().addItem(rowItem, scheduledTaskId);
 					
 					resultView.getDownloadedFileTable().setSortContainerPropertyId("Date Download");
+					resultView.getDownloadedFileTable().setSortAscending(false);
 					resultView.getDownloadedFileTable().sort();
 				}
 				

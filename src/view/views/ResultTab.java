@@ -58,6 +58,9 @@ public class ResultTab extends VerticalLayout {
 		this.fileProgressTable.setSelectable(true);
 		this.fileProgressTable.setImmediate(true);
 		this.fileProgressTable.setPageLength(12);
+
+		fileProgressTable.setColumnWidth("Status", 150);
+		fileProgressTable.setColumnWidth("Progress", 150);
 		
 		this.downloadedFileTable = new Table("Downloaded Files");
 		this.downloadedFileTable.addContainerProperty("Title", String.class, null);

@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.apache.commons.lang.CharEncoding;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,8 +43,10 @@ public class VimeoFetcher implements JSONFetcher {
 			
 			URL url = buildQueryRequest(q, i);
 			OAuthRequest req = new OAuthRequest(Verb.POST, url.toString());
+			req.setCharset(CharEncoding.UTF_8);
 			service.signRequest(new Token(PropertiesReader.vimeoToken, PropertiesReader.vimeoTokenSecret), req);
 			Response response = req.send();
+
 
 			records.addAll(saveRecords(response.getBody()));
 

@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Set;
 
+import org.apache.commons.lang.CharEncoding;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,8 +46,8 @@ public class EuropeanaFetcher implements JSONFetcher {
 	private ArrayList<Record> fetchResponse(URL request) throws Exception {
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
-				request.openStream()));
-
+				request.openStream(), CharEncoding.UTF_8));
+		
 		String inputLine = new String();
 		while ((inputLine = in.readLine()) != null) {
 

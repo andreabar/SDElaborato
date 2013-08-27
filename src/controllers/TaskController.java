@@ -115,11 +115,8 @@ public class TaskController {
 
 	}
 	
-	public static ResultSet getResults(int userID) throws SQLException{
+	public static ResultSet getScheduledTasks(int userID) throws SQLException{
 		
-//		String q = "select * from scheduled_task, record, result, query where user = " + userID + 
-//				" AND scheduled_task.record = record.id AND record.id IN (select record from result" + 
-//						" where query IN (select query from user_history where user = " + userID + ")) AND result.query = query.id AND result.record = record.id";
 
 		String sql = "SELECT * FROM scheduled_task WHERE user = " + userID + " AND status NOT LIKE '" + Status.DOWNLOADED + "'";
 		
@@ -196,6 +193,19 @@ public class TaskController {
 			
 		}
 		return false;
+		
+	}
+
+	public static ResultSet getWaitingTasks(int userID) throws SQLException {
+		String sql = "SELECT * FROM task WHERE user = " + userID;
+		
+		
+		java.sql.PreparedStatement statement = DBHelper.getConnection()
+				.prepareStatement(sql);
+		
+		ResultSet result = statement.executeQuery();
+		
+		return result;
 		
 	}
 
