@@ -55,6 +55,8 @@ class AddRefreshListener implements SelectedTabChangeListener {
 			addListener(new RefreshTableListener(tbc.getTabSheetView().getResultViewController()));
 			tbc.getTabSheetView().getResultViewController().getResultView().
 			addComponent(tbc.getTabSheetView().getResultViewController().getRefresher());
+			tbc.getTabSheetView().getMainViewController().getMainView().
+			getSearchButton().removeClickShortcut();
 		} else {
 			tbc.getTabSheetView().getResultViewController().getResultView().
 			removeComponent(tbc.getTabSheetView().getResultViewController().getRefresher());

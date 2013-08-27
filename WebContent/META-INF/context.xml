@@ -13,7 +13,7 @@ password="-36degrees-"
 
 driverClassName="com.mysql.jdbc.Driver"
 
-url="jdbc:mysql://localhost:3306/sd"
+url="jdbc:mysql://localhost:3306/multimediadatacrawlerdb"
 
 maxActive="15"
 
