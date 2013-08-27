@@ -41,7 +41,7 @@ public class DetailsView extends Window {
 		
 		
 		this.recordsTable = new Table();
-		recordsTable.setPageLength(10);
+		recordsTable.setSizeFull();
 		this.recordsTable.addContainerProperty("Title", String.class, null);
 		this.recordsTable.addContainerProperty("Provider", String.class, null);
 		this.recordsTable.addContainerProperty("Language", String.class, null);
@@ -66,8 +66,8 @@ public class DetailsView extends Window {
 		
 		layout.addComponent(hl);
 		hl.setSpacing(true);
-		layout.setSpacing(true);
 		this.addComponent(layout);
+		layout.setExpandRatio(recordsTable, 1f);
 		
 	}
 
