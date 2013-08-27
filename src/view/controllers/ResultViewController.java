@@ -11,11 +11,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import model.Query;
+import model.Record;
 import model.Status;
 
+import controllers.QueryController;
+import controllers.RecordController;
 import controllers.TaskController;
 
 import util.AppData;
+import util.PropertiesReader;
 import view.views.ResultTab;
 
 
@@ -39,57 +44,88 @@ public class ResultViewController implements Serializable{
 	private static final long serialVersionUID = -5972665301072207312L;
 	private ResultTab resultView;
 	private Refresher refresher;
-	private static final String downloadHost = "192.168.1.1";
 	public ResultViewController(ResultTab r){
 		setResultView(r);
 
 		resultView.getClear().addListener(new ClearListener(this));
 	}
 	
+	public Object loadTableItem(ResultSet result){
+		
+		try{
+		Record record = RecordController.getRecord(result.getInt("record"));
+		Query q = QueryController.getQuery(result.getInt("query"));
+		String title = record.getTitle();
+		String type = record.getType();
+		String keyword = q.getKeyword();
+		String provider = record.getProvider();
+		String sDateQuery = q.getDate();
+			
+		Date dateQuery = null;
+		Date dateDownload = null;
+		try {
+			dateQuery = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateQuery);
+			String sDateDownload = result.getString("date_download");
+			dateDownload = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateDownload);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch(SQLException e){
+			
+			dateDownload = null;
+		}
+		
+		Object rowItem[] = new Object[]{title, type, keyword, provider, new String(), new Label(), dateQuery, dateDownload};
+		Integer scheduledTaskId = result.getInt("id");
+			
+		this.resultView.getFileTable().addItem(rowItem, scheduledTaskId);
+		return scheduledTaskId;
+		
+		} catch(SQLException e){
+			e.printStackTrace();
+			return null;
+		}
+
+		
+		
+		
+	}
+	
 	public void loadResultTable(){
 		this.resultView.getFileTable().removeAllItems();
-		loadNewTask();
+		
 		try {
-			ResultSet result = TaskController.getResults(AppData.userID);
-			while(result.next()){
-				String title = result.getString("title");
-				String type = result.getString("type");
-				String keyword = result.getString("keyword");
-				String provider = result.getString("provider");
-				String status = result.getString("status");
-				String sDateQuery = result.getString("date");
-				String sDateDownload = result.getString("date_download");
-				Date dateQuery = null;
-				Date dateDownload = null;
-				try {
-					dateQuery = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateQuery);
-					dateDownload = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateDownload);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-				Integer scheduledTaskId = result.getInt("id");
-
-				Component c = null;
-				String statusCol = null;
+			ResultSet result = TaskController.getScheduledTasks(AppData.userID);
+			ResultSet tasks = TaskController.getWaitingTasks(AppData.userID);
+			
+			while(tasks.next()){
 				
-				if(!status.equals(Status.DOWNLOADED)){
-					if(status.equals(Status.SCHEDULED) || status.equals(Status.PROCESSING)){
+				Object id = loadTableItem(tasks );
+				resultView.getFileTable().getItem(id).getItemProperty("Status").setValue("waiting");
+				resultView.getFileTable().getItem(id).getItemProperty("Progress").setValue(new Label());
+				
+			}
+			
+			while(result.next()){
+
+				Object id = loadTableItem(result);
+				Integer scheduledTaskId = result.getInt("id");
+				Component c = null;
+				String statusCol = null;	
+
+				
+				String status = result.getString("status");
+				
+				if(status.equals(Status.SCHEDULED) || status.equals(Status.PROCESSING)){
 						
 						c = new Label("");
 						statusCol = status;
 					}
 					
-//					else if(status.equals(Status.DOWNLOADED)) {
-//						
-//						c = buildLinkFile(result, c);
-//						statusCol = "Downloaded";
-//						
-//					}
+
 					else if(status.equals(Status.DOWNLOADING)){
-						c = new ProgressIndicator();
-						statusCol = "Downloading..";
-						DownloadThread d = new DownloadThread(this, (ProgressIndicator) c, scheduledTaskId);
-						d.start();
+						ArrayList<Long> list = getDownloadStatus(scheduledTaskId);
+						c = new ProgressIndicator((float)list.get(0)/(float)list.get(1));
+						statusCol = "Downloading..(" + Math.floor(list.get(1)/((float)1024*1024)) + " MB)";
 					}
 					
 					
@@ -99,64 +135,34 @@ public class ResultViewController implements Serializable{
 					}
 					
 
-					Object rowItem[] = new Object[]{title, type, keyword, provider, statusCol, c, dateQuery, dateDownload};
-					
-					this.resultView.getFileTable().addItem(rowItem, scheduledTaskId);
-					
+					this.resultView.getFileTable().getItem(id).getItemProperty("Status").setValue(statusCol);
+					this.resultView.getFileTable().getItem(id).getItemProperty("Progress").setValue(c);
+
 					resultView.getFileTable().setSortContainerPropertyId("Status");
 					resultView.getFileTable().setSortAscending(true);
 					resultView.getFileTable().sort();
 				}
 				
-			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	private void loadNewTask(){
-		try {
-			ResultSet result = TaskController.getNewTask(AppData.userID);
-			while(result.next()){
-				String title = result.getString("title");
-				String type = result.getString("type");
-				String keyword = result.getString("keyword");
-				String provider = result.getString("provider");
-				String sDateQuery = result.getString("date");
-				Date dateQuery = null;
-				Date dateDownload = null;
-				Component c = null;
-				try {
-					dateQuery = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDateQuery);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-				Integer scheduledTaskId = result.getInt("id");
-
-				String statusCol = "In queue";
-
-				Object rowItem[] = new Object[]{title, type, keyword, provider, statusCol, c, dateQuery, dateDownload};
-
-				this.resultView.getFileTable().addItem(rowItem, scheduledTaskId);
-
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
 	
 	public void loadDownloadedFileTable(){
 		this.resultView.getDownloadedFileTable().removeAllItems();
 		try {
-			ResultSet result = TaskController.getResults(AppData.userID);
+			ResultSet result = TaskController.getDownloadedFiles(AppData.userID);
 			while(result.next()){
-				String title = result.getString("title");
-				String type = result.getString("type");
-				String keyword = result.getString("keyword");
-				String provider = result.getString("provider");
-				String status = result.getString("status");
-				String sDateQuery = result.getString("date");
+				
+				Record record = RecordController.getRecord(result.getInt("record"));
+				Query q = QueryController.getQuery(result.getInt("query"));
+				
+				String title = record.getTitle();
+				String type = record.getType();
+				String keyword = q.getKeyword();
+				String provider = record.getProvider();
+				String sDateQuery = q.getDate();
 				String sDateDownload = result.getString("date_download");
 				Date dateQuery = null;
 				Date dateDownload = null;
@@ -168,21 +174,18 @@ public class ResultViewController implements Serializable{
 				}
 				Integer scheduledTaskId = result.getInt("id");
 
-				Component c = null;
-				
-				if(status.equals(Status.DOWNLOADED)){
-					c = buildLinkFile(result, c);
+				Component c = buildLinkFile(result, null);
 
 					Object rowItem[] = new Object[]{title, type, keyword, provider, c, dateQuery, dateDownload};
 					
 					this.resultView.getDownloadedFileTable().addItem(rowItem, scheduledTaskId);
 					
-					resultView.getDownloadedFileTable().setSortContainerPropertyId("Title");
-					resultView.getDownloadedFileTable().setSortAscending(true);
+					resultView.getDownloadedFileTable().setSortContainerPropertyId("Date Download");
+					resultView.getDownloadedFileTable().setSortAscending(false);
 					resultView.getDownloadedFileTable().sort();
 				}
 				
-			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -219,11 +222,40 @@ public class ResultViewController implements Serializable{
 		ArrayList<URL> urls = new ArrayList<>();
 		ResultSet query = DBHelper.getConnection().createStatement().executeQuery(sql);
 			while(query.next()){
-				urls.add(new URL("http://" + downloadHost +  "/" + query.getString("path").replace(" ", "%20")));
+				urls.add(new URL("http://" + PropertiesReader.filesHost +  "/" + query.getString("path").replace(" ", "%20")));
 			}
 			
 			return urls;
 		
+		
+	}
+	
+	public ArrayList<Long> getDownloadStatus(int taskId){
+		
+		 try {
+			 
+			 ResultSet task = TaskController.getDownload(taskId);
+
+			 if(task.next()){
+				 
+				long total = task.getLong("size");
+				long temp = task.getLong("temp_size");
+
+				ArrayList<Long> list = new ArrayList<>();
+				list.add(temp);
+				list.add(total);
+				
+				return list;
+				
+				 
+			 }
+			 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		 
+		 return new ArrayList<>();
+
 		
 	}
 

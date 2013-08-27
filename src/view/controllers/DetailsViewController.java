@@ -58,6 +58,10 @@ public class DetailsViewController {
 		this.detailsView = detailsView;
 	}
 
+	public Query getQuery() {
+		return query;
+	}
+
 	
 }
 
@@ -117,7 +121,7 @@ class VerifyListener implements Button.ClickListener {
 		
 		try {
 			
-			TaskController.addTasks(toKeep, AppData.userID);
+			TaskController.addTasks(toKeep, AppData.userID, dvc.getQuery().getId());
 			dvc.getDetailsView().getApplication().getMainWindow().showNotification
 			("Your request is being processed", Window.Notification.TYPE_HUMANIZED_MESSAGE);
 			

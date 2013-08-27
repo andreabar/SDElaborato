@@ -107,9 +107,7 @@ class SearchListener implements Button.ClickListener{
 	}
 
 	public void buttonClick(ClickEvent event) {
-	
-		this.viewController.getMainView().getSearchButton().setEnabled(false);
-		
+			
 		if(viewController.getMainView().getTextfield().getValue().toString().isEmpty()){
 			viewController.getMainView().getTextfield().setComponentError(new UserError("required"));
 			viewController.getMainView().getSearchButton().setEnabled(true);

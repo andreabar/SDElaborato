@@ -27,7 +27,6 @@ public class DownloadThread extends Thread{
 	public void run() {
 
 		 
-		 System.out.println("Started thread...");
 		 
 		 while((Float)((ProgressIndicator) progressBar).getValue() < 1f){
 		 
@@ -45,12 +44,7 @@ public class DownloadThread extends Thread{
 				 
 			 }
 			 
-			 
-			
-			Thread.sleep(1000);
 		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 

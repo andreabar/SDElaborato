@@ -1,20 +1,17 @@
 package dbutil;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+
+import util.AppData;
+import util.PropertiesReader;
 
 import model.Record;
 
@@ -22,20 +19,17 @@ public class DBHelper {
 
 	private static Connection connection;
 	
-	public static Connection connectToDB(File properties) {
+	public static Connection connectToDB() {
 
 
-		
 		try {
 
-		Properties p = new Properties();
-		p.load(new FileInputStream(properties));
 		
 		Context initCtx;
 			initCtx = new InitialContext();
 			Context envCtx = (Context) initCtx.lookup("java:comp/env");
 
-			DataSource ds = (DataSource) envCtx.lookup("jdbc/" + p.getProperty("dbName"));
+			DataSource ds = (DataSource) envCtx.lookup("jdbc/" + PropertiesReader.dbName);
 
 			connection =  ds.getConnection();
 			return connection;
@@ -43,10 +37,6 @@ public class DBHelper {
 		} catch (NamingException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;

@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import util.AppData;
+
 import dbutil.DBHelper;
 
 import model.Record;
@@ -13,15 +15,15 @@ import model.Status;
 
 public class TaskController {
 
-	public static void addTasks(List<Record> records, int userID)
+	public static void addTasks(List<Record> records, int userID, int queryID)
 			throws SQLException {
 
-		String query = "INSERT INTO task (date, user, record, resource, type, provider) VALUES ";
+		String query = "INSERT INTO task (date, user, record, resource, type, provider, query) VALUES ";
 		int j = 1;
 		
 		for(Record r : records){
 			
-			query += "(?,?,?,?,?,?)";
+			query += "(?,?,?,?,?,?,?)";
 
 			if (records.indexOf(r) == records.size() - 1)
 				query += ";";
@@ -70,6 +72,8 @@ public class TaskController {
 						j++;
 						statement.setString(j, r.getProvider());
 						j++;
+						statement.setInt(j, queryID);
+						j++;
 
 					}
 				 catch (Exception e) {
@@ -111,39 +115,39 @@ public class TaskController {
 
 	}
 	
-	public static ResultSet getResults(int userID) throws SQLException{
+	public static ResultSet getScheduledTasks(int userID) throws SQLException{
 		
-		String q = "select * from scheduled_task, record, result, query where user = " + userID + 
-				" AND scheduled_task.record = record.id AND record.id IN (select record from result" + 
-						" where query IN (select query from user_history where user = " + userID + ")) AND result.query = query.id AND result.record = record.id";
 
+		String sql = "SELECT * FROM scheduled_task WHERE user = " + userID + " AND status NOT LIKE '" + Status.DOWNLOADED + "'";
+		
 		
 		java.sql.PreparedStatement statement = DBHelper.getConnection()
-				.prepareStatement(q);
+				.prepareStatement(sql);
 		
 		ResultSet result = statement.executeQuery();
 		
 		return result;
 	}
 	
-	public static ResultSet getNewTask(int userID) throws SQLException{
-		String q = "select * from task, record, result, query where user = " + userID + 
-				" AND task.record = record.id AND record.id IN (select record from result" + 
-						" where query IN (select query from user_history where user = " + userID + ")) AND result.query = query.id AND result.record = record.id";
-
+	public static ResultSet getDownloadedFiles(int userID) throws SQLException {
+		String sql = "SELECT * FROM scheduled_task WHERE user = " + userID + " AND status LIKE " + "'" + Status.DOWNLOADED + "'";
+		
 		
 		java.sql.PreparedStatement statement = DBHelper.getConnection()
-				.prepareStatement(q);
+				.prepareStatement(sql);
 		
 		ResultSet result = statement.executeQuery();
 		
 		return result;
+
 	}
 
 	public static ResultSet getDownload(int taskId) {
 
 		try {
-			ResultSet set = DBHelper.getConnection().createStatement().executeQuery("SELECT * FROM download WHERE task = " + taskId + ";");
+			String sql = "SELECT * FROM download WHERE task = " + taskId + ";";
+			System.out.println(sql);
+			ResultSet set = DBHelper.getConnection().createStatement().executeQuery(sql);
 			return set;
 			
 		} catch (SQLException e) {
@@ -189,6 +193,19 @@ public class TaskController {
 			
 		}
 		return false;
+		
+	}
+
+	public static ResultSet getWaitingTasks(int userID) throws SQLException {
+		String sql = "SELECT * FROM task WHERE user = " + userID;
+		
+		
+		java.sql.PreparedStatement statement = DBHelper.getConnection()
+				.prepareStatement(sql);
+		
+		ResultSet result = statement.executeQuery();
+		
+		return result;
 		
 	}
 

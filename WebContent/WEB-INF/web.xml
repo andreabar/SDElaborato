@@ -42,7 +42,7 @@
 
 		<description>Database for SD</description>
 
-		<res-ref-name>jdbc/sd</res-ref-name>
+		<res-ref-name>jdbc/multimediadatacrawlerdb</res-ref-name>
 
 		<res-type>javax.sql.DataSource</res-type>
 

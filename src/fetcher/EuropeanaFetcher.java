@@ -4,15 +4,18 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Set;
 
+import org.apache.commons.lang.CharEncoding;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import util.AppData;
 import util.Languages;
+import util.PropertiesReader;
 import view.controllers.SearchTabController;
 import model.EuropeanaRecord;
 import model.EuropeanaQuery;
@@ -21,7 +24,6 @@ import model.Record;
 
 public class EuropeanaFetcher implements JSONFetcher {
 
-	private static final String API_KEY = "NFUAy4RDa";
 	private static final String API_ACCESS_POINT = "http://europeana.eu/api//v2/search.json?wskey=";
 	
 
@@ -44,8 +46,8 @@ public class EuropeanaFetcher implements JSONFetcher {
 	private ArrayList<Record> fetchResponse(URL request) throws Exception {
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
-				request.openStream()));
-
+				request.openStream(), CharEncoding.UTF_8));
+		
 		String inputLine = new String();
 		while ((inputLine = in.readLine()) != null) {
 
@@ -95,7 +97,7 @@ public class EuropeanaFetcher implements JSONFetcher {
 	
 	private URL buildQueryRequest(Query q) throws MalformedURLException {
 
-		String urlTarget = API_ACCESS_POINT + API_KEY + "&query=" + q.getInput();
+		String urlTarget = API_ACCESS_POINT + PropertiesReader.europeanaAPIKey + "&query=" + q.getInput();
 		if (-1 != q.getLimit())
 			urlTarget += "&rows=" + q.getLimit();
 		if (q.hasLanguageFilter())

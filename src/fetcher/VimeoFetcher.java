@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.apache.commons.lang.CharEncoding;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +17,7 @@ import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
 import util.AppData;
+import util.PropertiesReader;
 import view.controllers.SearchTabController;
 import model.Query;
 import model.Record;
@@ -24,14 +26,10 @@ import model.VimeoRecord;
 
 public class VimeoFetcher implements JSONFetcher {
 
-	private static final String TOKEN = "1353bf8aabd8b200d0e4b9d7a9a2b514";
-	private static final String  TOKEN_SECRET = "eac01f5d3305858b2f4e1a93a5bc77b0fe54d7f6";
 	private static final String  API_ACCESS_POINT = "http://vimeo.com/api/rest/v2?format=json&method=vimeo.videos.search&query=";
-	private static final String API_KEY = "815936f63c257234e191aba5e70304abe4c3ac8c";
-	private static final String  API_SECRET = "294e76518159aa7017f610dbd0922f0cf9f17643";
 	
-	private OAuthService service = new ServiceBuilder().apiKey(API_KEY)
-			.apiSecret(API_SECRET).provider(VimeoApi.class).build();
+	private OAuthService service = new ServiceBuilder().apiKey(PropertiesReader.vimeoAPIKey)
+			.apiSecret(PropertiesReader.vimeoAPISecret).provider(VimeoApi.class).build();
 
 	@Override
 	public ArrayList<Record> executeQuery(Query v)
@@ -45,8 +43,10 @@ public class VimeoFetcher implements JSONFetcher {
 			
 			URL url = buildQueryRequest(q, i);
 			OAuthRequest req = new OAuthRequest(Verb.POST, url.toString());
-			service.signRequest(new Token(TOKEN, TOKEN_SECRET), req);
+			req.setCharset(CharEncoding.UTF_8);
+			service.signRequest(new Token(PropertiesReader.vimeoToken, PropertiesReader.vimeoTokenSecret), req);
 			Response response = req.send();
+
 
 			records.addAll(saveRecords(response.getBody()));
 
