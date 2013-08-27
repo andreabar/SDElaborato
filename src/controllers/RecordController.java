@@ -25,19 +25,13 @@ public class RecordController {
 
 	public static List<String> getWebResources(Record r) throws Exception {
 
-		int id = DBHelper.getRecordID(r);
+		
+		List<String> list = new ArrayList<>();
+		downloadResources(r, list);
+		
+		return list;
 
-		List<String> list =
-
-		checkForResources(id);
-
-		if (!list.isEmpty())
-			return list;
-		else {
-			downloadResources(r, list);
-			return list;
-
-		}
+		
 
 	}
 
@@ -62,29 +56,36 @@ public class RecordController {
 
 		catch (JSONException e) {
 
+			try{
+				String shownBy = array.getJSONObject(0).getString("edmIsShownAt");
+				list.add(shownBy);
+
+			}
+			catch (JSONException e2) {
+
 			JSONArray webRes = array.getJSONObject(0).getJSONArray(
 					"webResources");
-			for (int j = 0; j < webRes.length(); j++)
-				list.add(webRes.getJSONObject(j).getString("about"));
+				list.add(webRes.getJSONObject(0).getString("about"));
+			}
 
 		}
 		return list;
 
 	}
 
-	private static List<String> checkForResources(int id) throws SQLException {
-
-		List<String> resources = new ArrayList<String>();
-		String q = "SELECT url FROM resource WHERE record = " + id;
-
-		ResultSet set = DBHelper.getConnection().createStatement()
-				.executeQuery(q);
-		while (set.next()) {
-			resources.add(set.getString("url"));
-		}
-
-		return resources;
-	}
+//	private static List<String> checkForResources(int id) throws SQLException {
+//
+//		List<String> resources = new ArrayList<String>();
+//		String q = "SELECT url FROM resource WHERE record = " + id;
+//
+//		ResultSet set = DBHelper.getConnection().createStatement()
+//				.executeQuery(q);
+//		while (set.next()) {
+//			resources.add(set.getString("url"));
+//		}
+//
+//		return resources;
+//	}
 
 	public static List<Record> saveRecords(ArrayList<Record> records) {
 

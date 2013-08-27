@@ -35,11 +35,13 @@ public class DetailsView extends Window {
 		keepAll = new Button("Keep All");
 		verify = new Button("Verify & Download");
 		seeOnline = new Button("See Online");
-
+		
+		seeOnline.setDisableOnClick(true);
+		verify.setDisableOnClick(true);
 		
 		
 		this.recordsTable = new Table();
-		recordsTable.setPageLength(10);
+		recordsTable.setSizeFull();
 		this.recordsTable.addContainerProperty("Title", String.class, null);
 		this.recordsTable.addContainerProperty("Provider", String.class, null);
 		this.recordsTable.addContainerProperty("Language", String.class, null);
@@ -64,8 +66,8 @@ public class DetailsView extends Window {
 		
 		layout.addComponent(hl);
 		hl.setSpacing(true);
-		layout.setSpacing(true);
 		this.addComponent(layout);
+		layout.setExpandRatio(recordsTable, 1f);
 		
 	}
 

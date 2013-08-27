@@ -134,7 +134,7 @@ class SearchListener implements Button.ClickListener{
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.viewController.getMainView().getParentView().getWindow().showNotification("No result found!");
+			this.viewController.getMainView().getParentView().getWindow().showNotification(e.getMessage());
 		}
 		
 		

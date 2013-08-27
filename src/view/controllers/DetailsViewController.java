@@ -81,13 +81,19 @@ class SeeOnlineListener implements Button.ClickListener {
 	@Override
 	public void buttonClick(ClickEvent event) {
 		Record selected = ((Record)dvc.getDetailsView().getRecordsTable().getValue());
-		try {
+		if(selected == null){
+			dvc.getDetailsView().getApplication().getMainWindow().showNotification("Select one row");
+
+		}
+		else try {
 	
 			dvc.getDetailsView().open(new ExternalResource(selected.getShownAt()), "_blank");
 		} catch (Exception e) {
-			dvc.getDetailsView().getApplication().getMainWindow().showNotification("Select just one row", Window.Notification.TYPE_ERROR_MESSAGE);
+			e.printStackTrace();
 		}
-				
+		
+		dvc.getDetailsView().getSeeOnline().setEnabled(true);
+
 	}
 	
 }
