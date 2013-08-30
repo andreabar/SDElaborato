@@ -7,8 +7,6 @@ import org.vaadin.risto.stepper.IntStepper;
 
 import util.AppData;
 import util.Languages;
-
-import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
@@ -21,7 +19,6 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.BaseTheme;
-import com.vaadin.ui.themes.Reindeer;
 
 import dbutil.IprType;
 

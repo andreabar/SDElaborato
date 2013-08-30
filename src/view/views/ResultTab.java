@@ -23,7 +23,7 @@ public class ResultTab extends VerticalLayout {
 	private Label info;
 	private Table fileProgressTable;
 	private Table downloadedFileTable;
-	private Button clear, deleteTask, deleteFile;
+	private Button clear;
 	
 	public ResultTab(){
 		initViewComponents();
@@ -43,14 +43,6 @@ public class ResultTab extends VerticalLayout {
 		this.clear = new Button("Clear");
 		this.clear.setDescription("Remove from the table all 'Not downloadable' files.");
 		this.clear.setEnabled(false);
-		
-		this.deleteTask = new Button("Stop");
-		this.deleteTask.setDescription("Stop a download or a file being processed");
-		this.deleteTask.setEnabled(false);
-		
-		this.deleteFile = new Button("Delete");
-		this.deleteFile.setDescription("Delete a file already downloaded");
-		this.deleteFile.setEnabled(false);
 				
 		this.fileProgressTable = new Table("Files in Download");
 		this.fileProgressTable.addContainerProperty("Title", String.class, null);
@@ -96,9 +88,6 @@ public class ResultTab extends VerticalLayout {
 		
 		this.panelLayout.addComponent(info, 0, 0, 3, 0);
 		this.panelLayout.addComponent(clear, 0, 1);
-		this.panelLayout.addComponent(deleteTask, 1, 1);
-		this.panelLayout.addComponent(deleteFile, 2, 1);
-
 		
 		this.mainPanel.setContent(panelLayout);
 		
@@ -153,22 +142,6 @@ public class ResultTab extends VerticalLayout {
 
 	public void setDownloadedFileTable(Table downloadedFileTable) {
 		this.downloadedFileTable = downloadedFileTable;
-	}
-
-	public Button getDeleteTask() {
-		return deleteTask;
-	}
-
-	public void setDeleteTask(Button deleteTask) {
-		this.deleteTask = deleteTask;
-	}
-
-	public Button getDeleteFile() {
-		return deleteFile;
-	}
-
-	public void setDeleteFile(Button deleteFile) {
-		this.deleteFile = deleteFile;
 	}
 
 }

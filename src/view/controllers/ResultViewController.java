@@ -25,8 +25,6 @@ import view.views.ResultTab;
 
 
 import com.github.wolfie.refresher.Refresher;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
@@ -34,7 +32,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.ProgressIndicator;
-import com.vaadin.ui.Table;
 
 import dbutil.DBHelper;
 
@@ -49,12 +46,8 @@ public class ResultViewController implements Serializable{
 	private Refresher refresher;
 	public ResultViewController(ResultTab r){
 		setResultView(r);
+
 		resultView.getClear().addListener(new ClearListener(this));
-		resultView.getDeleteTask().addListener(new deleteTaskListener(this));
-		resultView.getDeleteFile().addListener(new deleteFileListener(this));
-		resultView.getFileTable().addListener(new FileTableListener(resultView.getFileTable(), resultView.getDeleteTask()));
-		resultView.getDownloadedFileTable().addListener(new FileTableListener
-				(resultView.getDownloadedFileTable(), resultView.getDeleteFile()));
 	}
 	
 	public Object loadTableItem(ResultSet result){
@@ -284,33 +277,6 @@ public class ResultViewController implements Serializable{
 
 }
 
-class FileTableListener implements ValueChangeListener {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8855354048788184836L;
-	
-	private Table table;
-	private Button button;
-	
-	public FileTableListener(Table t, Button b){
-		this.table = t;
-		this.button = b;
-	}
-
-	@Override
-	public void valueChange(ValueChangeEvent event) {
-		if(null != table.getValue()){
-			button.setEnabled(true);
-		} else {
-			button.setEnabled(false);
-		}
-		
-	}
-	
-}
-
 class ClearListener implements Button.ClickListener {
 
 	/**
@@ -333,50 +299,6 @@ class ClearListener implements Button.ClickListener {
 	
 }
 
-class deleteTaskListener implements Button.ClickListener {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8248905226288671342L;
-	
-	private ResultViewController rvc;
-
-	public deleteTaskListener(ResultViewController rvc){
-		this.rvc = rvc;
-	}
-	
-	@Override
-	public void buttonClick(ClickEvent event) {
-		Integer rowId = (Integer) rvc.getResultView().getFileTable().getValue();
-		TaskController.deleteTask(rowId);
-		rvc.loadResultTable();
-	}
-	
-}
-
-class deleteFileListener implements Button.ClickListener {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8248905226288671342L;
-	
-	private ResultViewController rvc;
-
-	public deleteFileListener(ResultViewController rvc){
-		this.rvc = rvc;
-	}
-	
-	@Override
-	public void buttonClick(ClickEvent event) {
-		Integer rowId = (Integer) rvc.getResultView().getDownloadedFileTable().getValue();
-		TaskController.deleteFile(rowId);
-		TaskController.deleteTask(rowId);
-		rvc.loadDownloadedFileTable();
-	}
-	
-}
 
 
 

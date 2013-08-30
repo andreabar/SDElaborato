@@ -23,7 +23,7 @@ public class LoginController {
 		this.setLoginPage(p);
 		this.getLoginPage().getLogin().addListener(new LoginButtonListener(this));
 		this.getLoginPage().getRegister().addListener(new RegisterListener(this));
-		this.getLoginPage().getLogin().setClickShortcut(KeyCode.ENTER, 0);
+		this.getLoginPage().getLogin().setClickShortcut(KeyCode.ENTER);
 	}
 
 
@@ -60,9 +60,6 @@ class LoginButtonListener implements Button.ClickListener {
 			int loginResult = DBHelper.handleLogin(loginController.getLoginPage().getUsername().getValue().toString(), 
 					loginController.getLoginPage().getPass().getValue().toString());
 			if(loginResult != -1){
-				this.loginController.getLoginPage().removeAllComponents();
-				
-				this.loginController.getLoginPage().getLogin().removeClickShortcut();
 				AppData.userID = loginResult;
 				TabViewController tvc = new TabViewController();
 				Window main = tvc.getTabSheetView();
@@ -70,10 +67,9 @@ class LoginButtonListener implements Button.ClickListener {
 				this.loginController.getLoginPage().getApplication().addWindow(main);
 				this.loginController.getLoginPage().getApplication().setMainWindow(main);
 				
-				
 				this.loginController.getLoginPage().getApplication().
 					removeWindow(this.loginController.getLoginPage());
-								
+				
 			}
 			else 
 				this.loginController.getLoginPage().getLogin().setComponentError(new UserError("Login failed"));
