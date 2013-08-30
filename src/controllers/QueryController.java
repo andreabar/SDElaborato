@@ -58,7 +58,7 @@ public class QueryController {
 			String currentTime = sdf.format(dt);
 
 			String i = "INSERT INTO query(date, provider, type, language, keyword, results) VALUES ('" +currentTime+ "','" + query.getProvider() + "','" + query.getDataType() + "','" +
-					query.getLanguage() + "','" + query.getKeyword() + "', " + query.getResults() + ");";
+					query.getLanguage() + "','" + query.getKeyword() + "', " + query.getLimit() + ");";
 
 			statement.executeUpdate(i, Statement.RETURN_GENERATED_KEYS);
 			ResultSet keys = statement.getGeneratedKeys();
@@ -137,7 +137,7 @@ public class QueryController {
 
 				statement.setInt(j, updated.getId());
 				j++;
-				statement.setInt(j, DBHelper.getRecordID(r));
+				statement.setInt(j, r.getID());
 				j++;
 			}
 

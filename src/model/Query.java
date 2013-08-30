@@ -75,14 +75,7 @@ public class Query implements Serializable {
 		this.id = id;
 	}
 
-	public int getResults() {
-		return results;
-	}
-
-	public void setResults(int results) {
-		this.results = results;
-	}
-
+	
 
 	public void setInput(String input) {
 		this.keyword = input;
@@ -103,8 +96,12 @@ public class Query implements Serializable {
 	public void setIprType(Set<Object> types) {
 
 		iprType = new ArrayList<String>();
+		if(types.contains(AppData.ANY_TYPE))
+			return;
+		
 		for (Object o : types)
 			iprType.add(IprType.getIprUrl(o.toString()));
+		
 
 	}
 

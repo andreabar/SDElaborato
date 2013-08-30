@@ -1,55 +1,71 @@
 package view.controllers;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.ProgressIndicator;
 
-import controllers.TaskController;
+public class DownloadThread extends Thread {
 
-public class DownloadThread extends Thread{
-
-	private Component progressBar;
+	private ProgressIndicator progressBar;
 	int taskId;
-	ResultViewController view; 
-	public DownloadThread(ResultViewController resultViewController, ProgressIndicator p, int id) {
-		
+	ResultViewController view;
+	private boolean refresh;
+
+	public DownloadThread(ResultViewController resultViewController,
+			ProgressIndicator p) {
+
+		refresh = false;
 		view = resultViewController;
 		progressBar = p;
 		((AbstractComponent) progressBar).setImmediate(true);
-		((ProgressIndicator) progressBar).setPollingInterval(1000);
-		taskId = id;
-		
+
 	}
-	 @Override
+
+	public boolean isRefresh() {
+		return refresh;
+	}
+
+	public void setRefresh(boolean refresh) {
+		this.refresh = refresh;
+	}
+
+	@Override
 	public void run() {
 
-		 
-		 
-		 while((Float)((ProgressIndicator) progressBar).getValue() < 1f){
-		 
-		 try {
-			 
-			 ResultSet task = TaskController.getDownload(taskId);
+		while (true) {
+//			System.out.println("in");
+//			if (isRefresh()) {
+//
+//				try {
+//					sleep(progressBar.getPollingInterval());
+//					
+//					view.refresh();
+//
+//					synchronized (view.getResultView()) {
+//						if (view.getResultView().isVisible()) {
+//							synchronized (view.getResultView().getApplication()) {
+//								view.getProgressIndicator().setValue(
+//										Math.random());
+//							}
+//						}
+//					}
+//				} catch (InterruptedException e1) {
+//					e1.printStackTrace();
+//				}
+//
+//			}
+//		}
+			
+			try {
+				Thread.sleep(progressBar.getPollingInterval());
+//				view.refresh();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			progressBar.setValue(Math.random());
+			
 
-			 if(task.next()){
-				 
-				long total = task.getLong("size");
-				long temp = task.getLong("temp_size");
-				
-				
-				((ProgressIndicator) progressBar).setValue(new Float((float)temp/(float)total));
-				 
-			 }
-			 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		 }
-	 }
+	}
+		
+	}
 }
-
-

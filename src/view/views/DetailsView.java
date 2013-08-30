@@ -29,6 +29,7 @@ public class DetailsView extends Window {
 
 		setSizeFull();
 		
+		
 		this.layout = new VerticalLayout();
 		
 		

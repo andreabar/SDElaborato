@@ -16,6 +16,8 @@ import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
+import dbutil.DBHelper;
+
 import util.AppData;
 import util.PropertiesReader;
 import view.controllers.SearchTabController;
@@ -28,8 +30,8 @@ public class VimeoFetcher implements JSONFetcher {
 
 	private static final String  API_ACCESS_POINT = "http://vimeo.com/api/rest/v2?format=json&method=vimeo.videos.search&query=";
 	
-	private OAuthService service = new ServiceBuilder().apiKey(PropertiesReader.vimeoAPIKey)
-			.apiSecret(PropertiesReader.vimeoAPISecret).provider(VimeoApi.class).build();
+	private OAuthService service = new ServiceBuilder().apiKey(PropertiesReader.getVimeoAPIKey())
+			.apiSecret(PropertiesReader.getVimeoAPISecret()).provider(VimeoApi.class).build();
 
 	@Override
 	public ArrayList<Record> executeQuery(Query v)
@@ -44,7 +46,7 @@ public class VimeoFetcher implements JSONFetcher {
 			URL url = buildQueryRequest(q, i);
 			OAuthRequest req = new OAuthRequest(Verb.POST, url.toString());
 			req.setCharset(CharEncoding.UTF_8);
-			service.signRequest(new Token(PropertiesReader.vimeoToken, PropertiesReader.vimeoTokenSecret), req);
+			service.signRequest(new Token(PropertiesReader.getVimeoToken(), PropertiesReader.getVimeoTokenSecret()), req);
 			Response response = req.send();
 
 
@@ -77,10 +79,12 @@ public class VimeoFetcher implements JSONFetcher {
 
 		for (int i = 0; i < items.length(); i++) {
 
-			Record item = new VimeoRecord();
+			VimeoRecord item = new VimeoRecord();
 
 			JSONObject jsonItem = items.getJSONObject(i);
-
+			
+			item.setMetadata(jsonItem);
+			
 			item.setTitle(jsonItem.getString("title"));
 			item.setUniqueUrl(AppData.VIMEO_URL + jsonItem.getInt("id"));
 
@@ -94,8 +98,9 @@ public class VimeoFetcher implements JSONFetcher {
 	private URL buildQueryRequest(Query q, int page)
 			throws MalformedURLException {
 
-		String urlTarget = API_ACCESS_POINT + q.getInput();
-		
+		String urlTarget = API_ACCESS_POINT + q.getInput() + "&summary_response=1";
+;
+		 
 		int total = q.getLimit();
 		int missingResults = total - (page-1)*VimeoQuery
 				.MAXIMUM_RPP;
@@ -103,7 +108,6 @@ public class VimeoFetcher implements JSONFetcher {
 		if (q.getLimit() > 50) {
 			urlTarget += "&page=" + page + "&per_page="
 					+ (missingResults<VimeoQuery.MAXIMUM_RPP? missingResults : VimeoQuery.MAXIMUM_RPP);
-			;
 
 		}
 		

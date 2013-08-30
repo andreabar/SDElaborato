@@ -58,7 +58,7 @@ public class SearchTabController implements Serializable{
 			searches = QueryController.getQueries(AppData.userID);
 			if(!searches.isEmpty()){
 				for(Query q : searches){
-					Object rowItem[] = new Object[]{q.getKeyword(), q.getProvider(), q.getDataType(), q.getLanguage(), q.getResults()};
+					Object rowItem[] = new Object[]{q.getKeyword(), q.getProvider(), q.getDataType(), q.getLanguage(), q.getLimit()};
 					this.mainView.getSearchTable().addItem(rowItem, q);
 				}
 			}
@@ -120,7 +120,7 @@ class SearchListener implements Button.ClickListener{
 			
 			Query query = fetcher.buildQuery(viewController);
 			ArrayList<Record> list = fetcher.executeQuery(query);
-			
+			query.setLimit(list.size());
 			Query updated = QueryController.saveQuery(query, AppData.userID);
 
 			List<Record> records = RecordController.saveRecords(list);
@@ -144,7 +144,7 @@ class SearchListener implements Button.ClickListener{
 
 	private void updateQueryTable(Query query) {
 		this.viewController.getMainView().getSearchButton().setEnabled(true);
-		Object rowItem[] = new Object[]{query.getKeyword(), query.getProvider(), query.getDataType(), query.getLanguage(), query.getResults()};
+		Object rowItem[] = new Object[]{query.getKeyword(), query.getProvider(), query.getDataType(), query.getLanguage(), query.getLimit()};
 		viewController.getMainView().getSearchTable().addItem(rowItem, query);
 		viewController.getMainView().getSearchTable().select(query);
 		viewController.getMainView().getDetailsButton().click();

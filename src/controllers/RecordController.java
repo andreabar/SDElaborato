@@ -117,6 +117,9 @@ public class RecordController {
 				e.printStackTrace(); 
 			}
 			
+			if(r.getProvider().equals(AppData.VIMEO))
+				DBHelper.saveMetadata(r.getID(), (((VimeoRecord)r).getMetadata()));
+			
 		}
 		return records;
 

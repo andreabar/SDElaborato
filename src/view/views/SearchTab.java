@@ -77,12 +77,12 @@ public class SearchTab extends VerticalLayout {
 		this.textfield.setImmediate(true);
 		this.textfield.setWidth("100%");
 
-		this.stepper = new IntStepper("N° result");
+		this.stepper = new IntStepper("N° result (each)");
 		this.stepper.setMinValue(1);
 		this.stepper.setValue(100);
 		this.stepper.setImmediate(true);
 
-		iprSelector = new ListSelect("IPR");
+		iprSelector = new ListSelect("IPR (ctrl-click to multi-select)");
 		initIprSelector();
 
 		this.typeSelect = new NativeSelect("Type");
@@ -154,12 +154,15 @@ public class SearchTab extends VerticalLayout {
 	private void initIprSelector() {
 
 		iprSelector.setMultiSelect(true);
-
+		iprSelector.addItem(AppData.ANY_TYPE);
 		for (String k : IprType.getTypes()) {
 
 			iprSelector.addItem(k);
 
 		}
+		
+		iprSelector.setValue(AppData.ANY_TYPE);
+	
 
 	}
 

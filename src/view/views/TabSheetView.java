@@ -16,6 +16,7 @@ public class TabSheetView extends Window {
 	private SearchTabController mainViewController;
 	private ResultViewController resultViewController;
 
+
 	
 	
 	public TabSheetView(){
@@ -33,7 +34,7 @@ public class TabSheetView extends Window {
 		this.mainViewController = new SearchTabController(new SearchTab(this));
 		this.tabSheet.addTab(mainViewController.getMainView(), mainViewController.getMainView().getCaption());
 		
-		this.resultViewController = new ResultViewController(new ResultTab());
+		this.resultViewController = new ResultViewController(new ResultTab(this));
 		this.tabSheet.addTab(resultViewController.getResultView(), resultViewController.getResultView().getCaption());
 		
 		this.addComponent(tabSheet);

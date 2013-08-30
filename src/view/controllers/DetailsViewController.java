@@ -28,7 +28,7 @@ public class DetailsViewController {
 		query = q;
 		
 		this.detailsView.getRecordsTable().setCaption("Query: "  +
-				" on " + query.getKeyword());
+				" on " + query.getKeyword() + ". Total results: " + query.getLimit());
 		try {
 			loadDetailsTable();
 		} catch (SQLException e) {

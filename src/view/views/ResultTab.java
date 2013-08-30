@@ -23,16 +23,20 @@ public class ResultTab extends VerticalLayout {
 	private Label info;
 	private Table fileProgressTable;
 	private Table downloadedFileTable;
-	private Button clear;
-	
-	public ResultTab(){
+	private Button clear, deleteSelected, seeMetadata;
+
+	public Button getSeeMetadata() {
+		return seeMetadata;
+	}
+
+	public ResultTab(TabSheetView tabSheetView){
 		initViewComponents();
+		
 	}
 	
 	private void initViewComponents(){
 		
 		this.setCaption("My Results");
-
 		
 		this.vertical = new VerticalLayout();
 		
@@ -43,7 +47,12 @@ public class ResultTab extends VerticalLayout {
 		this.clear = new Button("Clear");
 		this.clear.setDescription("Remove from the table all 'Not downloadable' files.");
 		this.clear.setEnabled(false);
-				
+		
+		deleteSelected = new Button("Delete Selected Row");
+		deleteSelected.setEnabled(false);
+		
+		seeMetadata = new Button("See metadata");
+		seeMetadata.setEnabled(false);
 		this.fileProgressTable = new Table("Files in Download");
 		this.fileProgressTable.addContainerProperty("Title", String.class, null);
 		this.fileProgressTable.addContainerProperty("Type", String.class, null);
@@ -88,17 +97,28 @@ public class ResultTab extends VerticalLayout {
 		
 		this.panelLayout.addComponent(info, 0, 0, 3, 0);
 		this.panelLayout.addComponent(clear, 0, 1);
+		this.panelLayout.addComponent(deleteSelected, 1, 1);
+		
 		
 		this.mainPanel.setContent(panelLayout);
 		
 		this.vertical.addComponent(mainPanel);
 		this.vertical.addComponent(fileProgressTable);
+		vertical.addComponent(seeMetadata);
 		this.vertical.addComponent(downloadedFileTable);
 
 		this.addComponent(vertical);
 		
 	}
 	
+	public Button getDeleteSelected() {
+		return deleteSelected;
+	}
+
+	public void setDeleteSelected(Button deleteSelected) {
+		this.deleteSelected = deleteSelected;
+	}
+
 	public GridLayout getPanelLayout() {
 		return panelLayout;
 	}

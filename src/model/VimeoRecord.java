@@ -3,10 +3,13 @@ package model;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import org.json.JSONObject;
+
 import util.AppData;
 
 public class VimeoRecord extends Record {
 
+	private JSONObject metadata;
 	public VimeoRecord() {
 
 		setType(AppData.VIDEO);
@@ -37,6 +40,14 @@ public class VimeoRecord extends Record {
 			loadMoreInfo();
 
 		return getWebResources().get(0);
+	}
+
+	public void setMetadata(JSONObject jsonItem) {
+		metadata = jsonItem;
+	}
+
+	public JSONObject getMetadata() {
+		return metadata;
 	}
 
 }
