@@ -45,21 +45,23 @@ class AddRefreshListener implements SelectedTabChangeListener {
 	public void selectedTabChange(SelectedTabChangeEvent event) {
 		final TabSheet source = (TabSheet) event.getSource();
 
-		if (source.getSelectedTab().getCaption().equals("My Results")) {
-			tbc.getTabSheetView().getMainViewController().getMainView()
-					.getSearchButton().removeClickShortcut();
-			tbc.getTabSheetView().getResultViewController().loadResultTable();
-			tbc.getTabSheetView().getResultViewController()
-					.loadDownloadedFileTable();
-				tbc.getTabSheetView().getResultViewController().enableClear();
-			tbc.getTabSheetView().getResultViewController().getRefresher().setRefreshInterval(PropertiesReader.getRefreshingTime()*1000);
-		} else {
-			
-			tbc.getTabSheetView().getResultViewController().getRefresher().setRefreshInterval(0); //disable the refreshing
-			
-			tbc.getTabSheetView().getMainViewController().getMainView()
-					.getSearchButton().setClickShortcut(KeyCode.ENTER);
-		}
+	
+		
+//		if (source.getSelectedTab().getCaption().equals("My Results")) {
+//			tbc.getTabSheetView().getMainViewController().getMainView()
+//					.getSearchButton().removeClickShortcut();
+//			tbc.getTabSheetView().getResultViewController().loadResultTable();
+//			tbc.getTabSheetView().getResultViewController()
+//					.loadDownloadedFileTable();
+//				tbc.getTabSheetView().getResultViewController().enableClear();
+//			tbc.getTabSheetView().getResultViewController().getRefresher().setRefreshInterval(PropertiesReader.getRefreshingTime()*1000);
+//		} else {
+//			
+//			tbc.getTabSheetView().getResultViewController().getRefresher().setRefreshInterval(0); //disable the refreshing
+//			
+//			tbc.getTabSheetView().getMainViewController().getMainView()
+//					.getSearchButton().setClickShortcut(KeyCode.ENTER);
+//		}
 
 	}
 

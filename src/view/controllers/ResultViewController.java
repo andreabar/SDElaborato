@@ -14,6 +14,8 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
+
+import refresher.RefreshableTable;
 import model.Query;
 import model.Record;
 import model.Status;
@@ -52,9 +54,37 @@ public class ResultViewController implements Serializable {
 	public ResultViewController(ResultTab r) {
 		setResultView(r);
 		refresher = new Refresher();
-		refresher.addListener(new RefreshTableListener(this));
 		refresher.setRefreshInterval(PropertiesReader.getRefreshingTime()*1000);
 		resultView.addComponent(refresher);
+		
+		r.setFileTable(new RefreshableTable("Files in Download") {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1591212827872294809L;
+
+			@Override
+			public void refresh() {
+				loadResultTable();
+			}
+		});
+		
+		resultView.setDownloadedFileTable(new RefreshableTable("Downloaded Files") {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 2857000704837068039L;
+
+			@Override
+			public void refresh() {
+				loadDownloadedFileTable();
+			}
+		});
+		
+		resultView.addComponent(new refresher.Refresher((RefreshableTable) resultView.getFileTable()));
+		resultView.addComponent(new refresher.Refresher((RefreshableTable) resultView.getDownloadedFileTable()));
 		
 		resultView.getClear().addListener(new ClearListener(this));
 		resultView.getDeleteSelected().addListener(
@@ -379,7 +409,7 @@ class RefreshTableListener implements RefreshListener {
 	@Override
 	public void refresh(Refresher source) {
 
-		System.out.println("REFRESHING");
+		System.out.println("REFRESHING WITH ADDON");
 		Object id = rvc.getResultView().getFileTable()
 				.getCurrentPageFirstItemId();
 		Object id2 = rvc.getResultView().getDownloadedFileTable()

@@ -2,6 +2,8 @@ package view.views;
 
 import java.util.Date;
 
+import refresher.RefreshableTable;
+
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
@@ -53,7 +55,13 @@ public class ResultTab extends VerticalLayout {
 		
 		seeMetadata = new Button("See metadata");
 		seeMetadata.setEnabled(false);
-		this.fileProgressTable = new Table("Files in Download");
+		this.fileProgressTable = new RefreshableTable("Files in Download") {
+			
+			@Override
+			public void refresh() {
+				
+			}
+		};
 		this.fileProgressTable.addContainerProperty("Title", String.class, null);
 		this.fileProgressTable.addContainerProperty("Type", String.class, null);
 		this.fileProgressTable.addContainerProperty("Keyword", String.class, null);

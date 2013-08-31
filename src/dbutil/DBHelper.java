@@ -172,11 +172,13 @@ public class DBHelper {
 	public static void deleteTask(int selected) {
 
 		try {
-			String sql = "DELETE FROM scheduled_task WHERE id = " + selected;
+			
+			String sql = "DELETE FROM download WHERE task = " + selected;
+			connection.createStatement().execute(sql);
+			 sql = "DELETE FROM scheduled_task WHERE id = " + selected;
 			connection.createStatement().execute(sql);
 
-			sql = "DELETE FROM download WHERE task = " + selected;
-			connection.createStatement().execute(sql);
+		
 
 		} catch (SQLException e) {
 			e.printStackTrace();

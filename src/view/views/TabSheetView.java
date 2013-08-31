@@ -1,8 +1,11 @@
 package view.views;
 
+import refresher.Refresher;
 import view.controllers.ResultViewController;
 import view.controllers.SearchTabController;
 
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Window;
 
@@ -36,6 +39,7 @@ public class TabSheetView extends Window {
 		
 		this.resultViewController = new ResultViewController(new ResultTab(this));
 		this.tabSheet.addTab(resultViewController.getResultView(), resultViewController.getResultView().getCaption());
+		
 		
 		this.addComponent(tabSheet);
 	}
