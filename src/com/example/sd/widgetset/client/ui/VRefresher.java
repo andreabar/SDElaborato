@@ -3,9 +3,6 @@ import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.UIDL;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -19,6 +16,8 @@ public class VRefresher extends Widget implements Paintable {
 	public static final String CLASSNAME = "v-refresher";
 
 	public static final String CLICK_EVENT_IDENTIFIER = "click";
+	
+	public static Integer refreshTime = 10000;
 
 	/** The client side widget identifier */
 	protected String paintableId;
@@ -64,7 +63,7 @@ public class VRefresher extends Widget implements Paintable {
 		
 		Timer t = new MyTimer(this);
 	    // Schedule the timer to run once in 5 seconds.
-	    t.scheduleRepeating(10*1000);
+	    t.scheduleRepeating(refreshTime);
 
 		// Process attributes/variables from the server
 		// The attribute names are the same as we used in 

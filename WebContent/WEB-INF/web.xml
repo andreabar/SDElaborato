@@ -22,7 +22,13 @@
 			<description>
 			Application widgetset</description>
 			<param-name>widgetset</param-name>
-			<param-value>com.example.sd.widgetset.Europeana_crawlerWidgetset</param-value>
+			<param-value>com.example.sd.widgetset.SdWidgetset</param-value>
+		</init-param>
+		<init-param>
+			<description>
+			Refresher widgetset</description>
+			<param-name>widgetset</param-name>
+			<param-value>com.example.sd.widgetset.client.ui.VRefresher</param-value>
 		</init-param>
 	</servlet>
 	<servlet-mapping>

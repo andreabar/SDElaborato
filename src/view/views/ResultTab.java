@@ -46,8 +46,7 @@ public class ResultTab extends VerticalLayout {
 		
 		this.info = new Label("Here you can check out the progess of the data you requested.");
 		
-		this.clear = new Button("Clear");
-		this.clear.setDescription("Remove from the table all 'Not downloadable' files.");
+		this.clear = new Button("Clear all 'Not downloadable' items");
 		this.clear.setEnabled(false);
 		
 		deleteSelected = new Button("Delete Selected Row");
@@ -57,6 +56,11 @@ public class ResultTab extends VerticalLayout {
 		seeMetadata.setEnabled(false);
 		this.fileProgressTable = new RefreshableTable("Files in Download") {
 			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -5046174992144574336L;
+
 			@Override
 			public void refresh() {
 				

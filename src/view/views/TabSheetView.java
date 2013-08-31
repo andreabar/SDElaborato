@@ -1,13 +1,15 @@
 package view.views;
 
-import refresher.Refresher;
 import view.controllers.ResultViewController;
 import view.controllers.SearchTabController;
 
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.BaseTheme;
 
 public class TabSheetView extends Window {
 
@@ -19,6 +21,8 @@ public class TabSheetView extends Window {
 	private SearchTabController mainViewController;
 	private ResultViewController resultViewController;
 
+	private Button logoutButton;
+	private Label logged;
 
 	
 	
@@ -32,6 +36,15 @@ public class TabSheetView extends Window {
 		this.setHeight("100%");
 		this.setScrollable(true);
 		
+		GridLayout gl = new GridLayout(5, 1);
+		gl.setSpacing(true);
+		gl.setWidth("100%");
+		
+		this.logoutButton = new Button("Logout");
+		this.logoutButton.setStyleName(BaseTheme.BUTTON_LINK);
+
+		this.logged = new Label();
+		
 		this.tabSheet = new TabSheet();
 		
 		this.mainViewController = new SearchTabController(new SearchTab(this));
@@ -40,6 +53,10 @@ public class TabSheetView extends Window {
 		this.resultViewController = new ResultViewController(new ResultTab(this));
 		this.tabSheet.addTab(resultViewController.getResultView(), resultViewController.getResultView().getCaption());
 		
+		gl.addComponent(logged, 3, 0);
+		gl.addComponent(logoutButton, 4, 0);
+		gl.setComponentAlignment(logoutButton, Alignment.MIDDLE_RIGHT);
+		this.addComponent(gl);
 		
 		this.addComponent(tabSheet);
 	}
@@ -65,6 +82,22 @@ public class TabSheetView extends Window {
 
 	public void setResultViewController(ResultViewController resultViewController) {
 		this.resultViewController = resultViewController;
+	}
+
+	public Label getLogged() {
+		return logged;
+	}
+
+	public void setLogged(Label logged) {
+		this.logged = logged;
+	}
+
+	public Button getLogoutButton() {
+		return logoutButton;
+	}
+
+	public void setLogoutButton(Button logoutButton) {
+		this.logoutButton = logoutButton;
 	}
 	
 

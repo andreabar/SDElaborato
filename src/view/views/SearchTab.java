@@ -44,8 +44,7 @@ public class SearchTab extends VerticalLayout {
 	private Table searchTable;
 	private Button detailsButton;
 	private Button deleteButton;
-	private Button logoutButton;
-	private Label logged, eu;
+	private Label eu;
 
 	public SearchTab(TabSheetView parent) {
 		setParentView(parent);
@@ -103,10 +102,7 @@ public class SearchTab extends VerticalLayout {
 		this.deleteButton = new Button("Delete");
 		this.deleteButton.setEnabled(false);
 
-		this.logoutButton = new Button("Logout");
-		this.logoutButton.setStyleName(BaseTheme.BUTTON_LINK);
-
-		this.logged = new Label();
+		
 		this.eu = new Label("Europeana only");
 
 		this.groupSelector = new OptionGroup("Source");
@@ -136,8 +132,6 @@ public class SearchTab extends VerticalLayout {
 		this.europeanaPanel.addComponent(iprSelector);
 
 		this.panelLayout.addComponent(groupSelector, 0, 0);
-		this.panelLayout.addComponent(logged, 3, 0);
-		this.panelLayout.addComponent(logoutButton, 4, 0);
 		this.panelLayout.addComponent(textfield, 0, 1, 2, 1);
 		this.panelLayout.addComponent(stepper, 0, 2);
 		this.panelLayout.addComponent(europeanaPanel, 1, 2, 3, 2);
@@ -294,21 +288,6 @@ public class SearchTab extends VerticalLayout {
 		this.parentView = parentView;
 	}
 
-	public Button getLogoutButton() {
-		return logoutButton;
-	}
-
-	public void setLogoutButton(Button logoutButton) {
-		this.logoutButton = logoutButton;
-	}
-
-	public Label getLogged() {
-		return logged;
-	}
-
-	public void setLogged(Label logged) {
-		this.logged = logged;
-	}
 
 	public Panel getEuropeanaPanel() {
 		return europeanaPanel;

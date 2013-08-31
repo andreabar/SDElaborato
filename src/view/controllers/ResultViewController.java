@@ -15,7 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 
-import refresher.RefreshableTable;
+import refresher.Refresher;
 import model.Query;
 import model.Record;
 import model.Status;
@@ -28,8 +28,7 @@ import util.AppData;
 import util.PropertiesReader;
 import view.views.ResultTab;
 
-import com.github.wolfie.refresher.Refresher;
-import com.github.wolfie.refresher.Refresher.RefreshListener;
+
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.terminal.ExternalResource;
@@ -53,38 +52,8 @@ public class ResultViewController implements Serializable {
 
 	public ResultViewController(ResultTab r) {
 		setResultView(r);
-		refresher = new Refresher();
-		refresher.setRefreshInterval(PropertiesReader.getRefreshingTime()*1000);
+		refresher = new Refresher(this);
 		resultView.addComponent(refresher);
-		
-		r.setFileTable(new RefreshableTable("Files in Download") {
-			
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1591212827872294809L;
-
-			@Override
-			public void refresh() {
-				loadResultTable();
-			}
-		});
-		
-		resultView.setDownloadedFileTable(new RefreshableTable("Downloaded Files") {
-			
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 2857000704837068039L;
-
-			@Override
-			public void refresh() {
-				loadDownloadedFileTable();
-			}
-		});
-		
-		resultView.addComponent(new refresher.Refresher((RefreshableTable) resultView.getFileTable()));
-		resultView.addComponent(new refresher.Refresher((RefreshableTable) resultView.getDownloadedFileTable()));
 		
 		resultView.getClear().addListener(new ClearListener(this));
 		resultView.getDeleteSelected().addListener(
@@ -223,6 +192,8 @@ public class ResultViewController implements Serializable {
 				resultView.getFileTable().setSortAscending(true);
 				resultView.getFileTable().sort();
 			}
+			this.resultView.getFileTable().setCaption("Files in Download (Total items : " + 
+			this.resultView.getFileTable().size() + ")");
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -271,6 +242,8 @@ public class ResultViewController implements Serializable {
 				resultView.getDownloadedFileTable().setSortAscending(false);
 				resultView.getDownloadedFileTable().sort();
 			}
+			this.resultView.getDownloadedFileTable().setCaption("Downloaded Files (Total items : " + 
+					this.resultView.getDownloadedFileTable().size() + ")");
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -393,42 +366,42 @@ class ClearListener implements Button.ClickListener {
 
 }
 
-class RefreshTableListener implements RefreshListener {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5765045110932725268L;
-
-	private ResultViewController rvc;
-
-	public RefreshTableListener(ResultViewController rvc) {
-		this.rvc = rvc;
-	}
-
-	@Override
-	public void refresh(Refresher source) {
-
-		System.out.println("REFRESHING WITH ADDON");
-		Object id = rvc.getResultView().getFileTable()
-				.getCurrentPageFirstItemId();
-		Object id2 = rvc.getResultView().getDownloadedFileTable()
-				.getCurrentPageFirstItemId();
-
-		rvc.loadResultTable();
-		rvc.loadDownloadedFileTable();
-
-		rvc.getResultView().getFileTable().setCurrentPageFirstItemId(id);
-		rvc.getResultView().getDownloadedFileTable()
-				.setCurrentPageFirstItemId(id2);
-
-		if (rvc.isJunkDataInTable()) {
-			rvc.getResultView().getClear().setEnabled(true);
-		}
-
-	}
-
-}
+//class RefreshTableListener implements RefreshListener {
+//
+//	/**
+//	 * 
+//	 */
+//	private static final long serialVersionUID = 5765045110932725268L;
+//
+//	private ResultViewController rvc;
+//
+//	public RefreshTableListener(ResultViewController rvc) {
+//		this.rvc = rvc;
+//	}
+//
+//	@Override
+//	public void refresh(TablesRefresher source) {
+//
+//		System.out.println("REFRESHING WITH ADDON");
+//		Object id = rvc.getResultView().getFileTable()
+//				.getCurrentPageFirstItemId();
+//		Object id2 = rvc.getResultView().getDownloadedFileTable()
+//				.getCurrentPageFirstItemId();
+//
+//		rvc.loadResultTable();
+//		rvc.loadDownloadedFileTable();
+//
+//		rvc.getResultView().getFileTable().setCurrentPageFirstItemId(id);
+//		rvc.getResultView().getDownloadedFileTable()
+//				.setCurrentPageFirstItemId(id2);
+//
+//		if (rvc.isJunkDataInTable()) {
+//			rvc.getResultView().getClear().setEnabled(true);
+//		}
+//
+//	}
+//
+//}
 
 class DeleteSelectedListener implements Button.ClickListener {
 

@@ -40,8 +40,6 @@ public class SearchTabController implements Serializable{
 	
 	public SearchTabController(SearchTab m){
 		this.setMainView(m);
-		this.mainView.getLogged().setValue("Logged as : " + DBHelper.getUserName(AppData.userID));
-		this.mainView.getLogoutButton().addListener(new LogoutListener(this));
 		this.mainView.getSearchButton().addListener(new SearchListener(this));
 		this.mainView.getSearchButton().setClickShortcut(KeyCode.ENTER);
 		this.mainView.getGroupSelector().addListener(new GroupSelectorListener(this));
@@ -278,25 +276,4 @@ class DetailsListener implements Button.ClickListener {
 	
 }
 
-class LogoutListener implements Button.ClickListener {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5508313346827627646L;
-	private SearchTabController viewController;
-	
-	public LogoutListener(SearchTabController c){
-		this.viewController = c;
-	}
-	
-	public void buttonClick(ClickEvent event) {
-		AppData.userID = -1;
-		LoginController lc = new LoginController(new LoginPage());
-		this.viewController.getMainView().getApplication().setMainWindow(lc.getLoginPage());
-		this.viewController.getMainView().getApplication().removeWindow
-		(this.viewController.getMainView().getParentView());
-		
-	}
-	
-}

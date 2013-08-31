@@ -2,6 +2,9 @@ package refresher;
 
 import java.util.Map;
 
+import view.controllers.ResultViewController;
+
+import com.example.sd.widgetset.client.ui.VRefresher;
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 import com.vaadin.ui.AbstractComponent;
@@ -13,10 +16,14 @@ import com.vaadin.ui.Label;
 @com.vaadin.ui.ClientWidget(com.example.sd.widgetset.client.ui.VRefresher.class)
 public class Refresher extends AbstractComponent {
 
-private RefreshableTable table = null;
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8914468654734344811L;
+	private ResultViewController rvc;
 	
-	public Refresher(RefreshableTable table) {
-		this.table = table;
+	public Refresher(ResultViewController rvc) {
+		this.rvc = rvc;
 	}
 
 	@Override
@@ -54,8 +61,24 @@ private RefreshableTable table = null;
 //			message += "<br/>" + variables.get("click");
 
 //			requestRepaint();
-			table.refresh();
+			Object id = rvc.getResultView().getFileTable()
+					.getCurrentPageFirstItemId();
+			Object id2 = rvc.getResultView().getDownloadedFileTable()
+					.getCurrentPageFirstItemId();
+
+			rvc.loadResultTable();
+			rvc.loadDownloadedFileTable();
+
+			rvc.getResultView().getFileTable().setCurrentPageFirstItemId(id);
+			rvc.getResultView().getDownloadedFileTable()
+					.setCurrentPageFirstItemId(id2);
+
+			if (rvc.isJunkDataInTable()) {
+				rvc.getResultView().getClear().setEnabled(true);
+			}
 		}
 	}
+	
+	
 }
 
