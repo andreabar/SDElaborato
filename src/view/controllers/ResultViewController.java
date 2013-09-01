@@ -366,42 +366,6 @@ class ClearListener implements Button.ClickListener {
 
 }
 
-//class RefreshTableListener implements RefreshListener {
-//
-//	/**
-//	 * 
-//	 */
-//	private static final long serialVersionUID = 5765045110932725268L;
-//
-//	private ResultViewController rvc;
-//
-//	public RefreshTableListener(ResultViewController rvc) {
-//		this.rvc = rvc;
-//	}
-//
-//	@Override
-//	public void refresh(TablesRefresher source) {
-//
-//		System.out.println("REFRESHING WITH ADDON");
-//		Object id = rvc.getResultView().getFileTable()
-//				.getCurrentPageFirstItemId();
-//		Object id2 = rvc.getResultView().getDownloadedFileTable()
-//				.getCurrentPageFirstItemId();
-//
-//		rvc.loadResultTable();
-//		rvc.loadDownloadedFileTable();
-//
-//		rvc.getResultView().getFileTable().setCurrentPageFirstItemId(id);
-//		rvc.getResultView().getDownloadedFileTable()
-//				.setCurrentPageFirstItemId(id2);
-//
-//		if (rvc.isJunkDataInTable()) {
-//			rvc.getResultView().getClear().setEnabled(true);
-//		}
-//
-//	}
-//
-//}
 
 class DeleteSelectedListener implements Button.ClickListener {
 

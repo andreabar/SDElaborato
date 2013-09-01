@@ -173,15 +173,24 @@ public class DBHelper {
 
 		try {
 			
+			connection.setAutoCommit(false);
+			
 			String sql = "DELETE FROM download WHERE task = " + selected;
 			connection.createStatement().execute(sql);
 			 sql = "DELETE FROM scheduled_task WHERE id = " + selected;
 			connection.createStatement().execute(sql);
 
+			connection.commit();
+			connection.setAutoCommit(true);
 		
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 

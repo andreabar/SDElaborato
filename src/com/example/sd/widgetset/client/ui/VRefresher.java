@@ -1,4 +1,6 @@
 package com.example.sd.widgetset.client.ui;
+import util.PropertiesReader;
+
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.UIDL;
@@ -17,7 +19,7 @@ public class VRefresher extends Widget implements Paintable {
 
 	public static final String CLICK_EVENT_IDENTIFIER = "click";
 	
-	public static Integer refreshTime = 10000;
+	public static Integer refreshTime = PropertiesReader.getRefreshingTime()*1000;
 
 	/** The client side widget identifier */
 	protected String paintableId;

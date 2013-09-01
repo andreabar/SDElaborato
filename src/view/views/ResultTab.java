@@ -54,18 +54,7 @@ public class ResultTab extends VerticalLayout {
 		
 		seeMetadata = new Button("See metadata");
 		seeMetadata.setEnabled(false);
-		this.fileProgressTable = new RefreshableTable("Files in Download") {
-			
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -5046174992144574336L;
-
-			@Override
-			public void refresh() {
-				
-			}
-		};
+		this.fileProgressTable = new Table("Files in Download");
 		this.fileProgressTable.addContainerProperty("Title", String.class, null);
 		this.fileProgressTable.addContainerProperty("Type", String.class, null);
 		this.fileProgressTable.addContainerProperty("Keyword", String.class, null);

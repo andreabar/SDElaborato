@@ -49,15 +49,18 @@ public class VimeoFetcher implements JSONFetcher {
 			service.signRequest(new Token(PropertiesReader.getVimeoToken(), PropertiesReader.getVimeoTokenSecret()), req);
 			Response response = req.send();
 
-
-			records.addAll(saveRecords(response.getBody()));
-
+			if(i==q.getPages())
+				records.addAll(saveRecords(response.getBody(), q.getLimit()-records.size())); //in the last page, retrieve 50 but save just the remaining
+			else
+				records.addAll(saveRecords(response.getBody(), -1));
+			
+		
 		}
 		return records;
 
 	}
 
-	private ArrayList<Record> saveRecords(String response)
+	private ArrayList<Record> saveRecords(String response, int remainingResult)
 			throws JSONException, Exception {
 
 		JSONObject o = new JSONObject(response);
@@ -67,17 +70,18 @@ public class VimeoFetcher implements JSONFetcher {
 			throw new Exception("No result found.");
 
 		JSONArray items = o.getJSONObject("videos").getJSONArray("video");
-		ArrayList<Record> records = getRecordList(items);
+		ArrayList<Record> records = getRecordList(items, remainingResult);
 		return records;
 
 	}
 
-	private ArrayList<Record> getRecordList(JSONArray items)
+	private ArrayList<Record> getRecordList(JSONArray items, int remainingResult)
 			throws JSONException {
 
 		ArrayList<Record> list = new ArrayList<Record>();
-
-		for (int i = 0; i < items.length(); i++) {
+		int limit = remainingResult != -1? remainingResult : items.length();
+			
+		for (int i = 0; i < limit; i++) {
 
 			VimeoRecord item = new VimeoRecord();
 
@@ -99,15 +103,11 @@ public class VimeoFetcher implements JSONFetcher {
 			throws MalformedURLException {
 
 		String urlTarget = API_ACCESS_POINT + q.getInput() + "&summary_response=1";
-;
-		 
-		int total = q.getLimit();
-		int missingResults = total - (page-1)*VimeoQuery
-				.MAXIMUM_RPP;
-		
+
+
 		if (q.getLimit() > 50) {
 			urlTarget += "&page=" + page + "&per_page="
-					+ (missingResults<VimeoQuery.MAXIMUM_RPP? missingResults : VimeoQuery.MAXIMUM_RPP);
+					+ VimeoQuery.MAXIMUM_RPP;
 
 		}
 		
