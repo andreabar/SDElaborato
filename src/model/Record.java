@@ -39,6 +39,7 @@ public abstract  class Record {
 			e.printStackTrace();
 		}
 		
+		
 	}
 	
 	public Record() {

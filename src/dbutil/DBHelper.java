@@ -63,9 +63,10 @@ public class DBHelper {
 			ResultSet resultSet = getConnection().createStatement()
 					.executeQuery(q);
 			int id = -1;
-			while (resultSet.next())
+			while (resultSet.next()){
 				id = resultSet.getInt("id");
-
+			}
+			resultSet.close();
 			return id;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -88,6 +89,8 @@ public class DBHelper {
 				.prepareStatement(q);
 
 		ResultSet result = statement.executeQuery();
+		
+		statement.close();
 
 		return result;
 
@@ -125,9 +128,12 @@ public class DBHelper {
 			if (result.next()) {
 				name = result.getString("username");
 			}
+			statement.close();
+			result.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
 
 		return name;
 	}
@@ -165,7 +171,7 @@ public class DBHelper {
 		java.sql.PreparedStatement stat = getConnection().prepareStatement(s);
 
 		stat.executeUpdate();
-
+		
 		return true;
 	}
 
@@ -224,6 +230,7 @@ public static void saveMetadata(int record, JSONObject o) {
 
 			if (set.next()) {
 				JSONObject obj = new JSONObject(set.getString("data"));
+				set.close();
 				return obj;
 			}
 		}

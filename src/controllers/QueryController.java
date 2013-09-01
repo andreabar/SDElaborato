@@ -33,6 +33,8 @@ public class QueryController {
 				.prepareStatement(q);
 
 		ResultSet result = statement.executeQuery();
+		
+		
 
 		while (result.next()) {
 
@@ -43,7 +45,9 @@ public class QueryController {
 
 			searches.add(query);
 		}
-
+		
+		statement.close();
+		
 		return searches;
 	}
 
@@ -71,11 +75,13 @@ public class QueryController {
 				statement.executeUpdate(uh);
 
 			}
+			keys.close();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
+		
 		return query;
 	}
 
@@ -103,6 +109,9 @@ public class QueryController {
 			list.add(r);
 
 		}
+		
+		statement.close();
+		set.close();
 
 		return list;
 
@@ -114,6 +123,7 @@ public class QueryController {
 		Statement statement = DBHelper.getConnection().createStatement();
 
 		statement.executeUpdate(s);
+		
 	}
 
 	public static void addQueryResult(List<Record> records, Query updated) {
@@ -154,8 +164,12 @@ public class QueryController {
 		String sql = "SELECT * FROM query WHERE id ="  + id;	
 		ResultSet set = DBHelper.getConnection().createStatement().executeQuery(sql);
 	
-		if(set.next())
-			return new  Query(id, set.getString("provider"), set.getString("type"), set.getString("keyword"), set.getString("language"), set.getInt("results"), set.getString("date"));
+		if(set.next()){
+			Query q = new Query(id, set.getString("provider"), set.getString("type"), set.getString("keyword"), set.getString("language"), set.getInt("results"), set.getString("date"));
+			set.getStatement().close();
+			set.close();
+			return q;
+		}
 		return null;
 		
 	}
