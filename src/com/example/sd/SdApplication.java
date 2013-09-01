@@ -4,6 +4,8 @@ import java.io.File;
 import util.PropertiesReader;
 import view.controllers.LoginController;
 import view.views.LoginPage;
+import view.views.MainWindow;
+
 import com.vaadin.Application;
 
 import com.vaadin.terminal.gwt.server.WebApplicationContext;
@@ -33,8 +35,10 @@ public class SdApplication extends Application {
 		PropertiesReader.initProperties(properties);
 		DBHelper.connectToDB();
 		
+		MainWindow mainWindow = new MainWindow();
 		LoginController lc = new LoginController(new LoginPage());
-		this.setMainWindow(lc.getLoginPage());
+		mainWindow.setContent(lc.getLoginPage());
+		this.setMainWindow(mainWindow);
 			
 
 		

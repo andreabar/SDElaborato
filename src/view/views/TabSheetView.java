@@ -8,10 +8,11 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.BaseTheme;
 
-public class TabSheetView extends Window {
+public class TabSheetView extends VerticalLayout {
 
 	/**
 	 * 
@@ -27,14 +28,13 @@ public class TabSheetView extends Window {
 	
 	
 	public TabSheetView(){
-		super("Multimedia Data Crawler");
+		super();
 		initViewComponents();
 	}
 	
 	private void initViewComponents(){
 		this.setWidth("100%");
 		this.setHeight("100%");
-		this.setScrollable(true);
 		
 		GridLayout gl = new GridLayout(5, 1);
 		gl.setSpacing(true);

@@ -88,9 +88,7 @@ class LogoutListener implements Button.ClickListener {
 	public void buttonClick(ClickEvent event) {
 		AppData.userID = -1;
 		LoginController lc = new LoginController(new LoginPage());
-		this.viewController.getTabSheetView().getApplication().setMainWindow(lc.getLoginPage());
-		this.viewController.getTabSheetView().getApplication().removeWindow
-		(this.viewController.getTabSheetView());
+		this.viewController.getTabSheetView().getApplication().getMainWindow().setContent(lc.getLoginPage());
 		
 	}
 	

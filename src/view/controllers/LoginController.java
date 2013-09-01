@@ -62,13 +62,9 @@ class LoginButtonListener implements Button.ClickListener {
 			if(loginResult != -1){
 				AppData.userID = loginResult;
 				TabViewController tvc = new TabViewController();
-				Window main = tvc.getTabSheetView();
 				
-				this.loginController.getLoginPage().getApplication().addWindow(main);
-				this.loginController.getLoginPage().getApplication().setMainWindow(main);
+				this.loginController.getLoginPage().getApplication().getMainWindow().setContent(tvc.getTabSheetView());
 				
-				this.loginController.getLoginPage().getApplication().
-					removeWindow(this.loginController.getLoginPage());
 				
 			}
 			else 
@@ -129,8 +125,9 @@ class RegisterListener implements Button.ClickListener {
 							popUp.getPass().getValue().toString())){
 						loginController.getLoginPage().getApplication().getMainWindow().
 						showNotification("Registration completed", Notification.TYPE_HUMANIZED_MESSAGE);
+						popUp.getSubmit().removeClickShortcut();
 						loginController.getLoginPage().getLogin().setClickShortcut(KeyCode.ENTER);
-						loginController.getLoginPage().removeWindow(popUp);
+						loginController.getLoginPage().getApplication().getMainWindow().removeWindow(popUp);
 					} else {
 						popUp.getUsername().setComponentError(new UserError("Email is not valid"));
 					}
@@ -143,7 +140,7 @@ class RegisterListener implements Button.ClickListener {
 			}
 		});
 
-		loginController.getLoginPage().addWindow(popUp);
+		loginController.getLoginPage().getApplication().getMainWindow().addWindow(popUp);
 		
 		
 	}

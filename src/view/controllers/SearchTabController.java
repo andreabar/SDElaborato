@@ -271,7 +271,7 @@ class DetailsListener implements Button.ClickListener {
 	public void buttonClick(ClickEvent event) {
 		Query selectedQuery = (Query)this.viewController.getMainView().getSearchTable().getValue();
 		DetailsViewController dvc = new DetailsViewController(selectedQuery);
-		this.viewController.getMainView().getParentView().addWindow(dvc.getDetailsView());
+		this.viewController.getMainView().getApplication().getMainWindow().addWindow(dvc.getDetailsView());
 	}
 	
 }

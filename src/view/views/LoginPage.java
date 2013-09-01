@@ -7,10 +7,9 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.BaseTheme;
 
-public class LoginPage extends Window {
+public class LoginPage extends VerticalLayout {
 
 	/**
 	 * 
@@ -60,7 +59,7 @@ public class LoginPage extends Window {
 		
 		loginPanel.addComponent(loginLayout);
 		
-		setContent(loginPanel);
+		addComponent(loginPanel);
 	}
 
 	public VerticalLayout getLoginLayout() {
