@@ -126,6 +126,7 @@ public class ResultViewController implements Serializable {
 			Integer scheduledTaskId = result.getInt("id");
 
 			this.resultView.getFileTable().addItem(rowItem, scheduledTaskId);
+			
 			return scheduledTaskId;
 
 		} catch (SQLException e) {
@@ -192,6 +193,8 @@ public class ResultViewController implements Serializable {
 				resultView.getFileTable().setSortAscending(true);
 				resultView.getFileTable().sort();
 			}
+			result.close();
+			tasks.close();
 			this.resultView.getFileTable().setCaption("Files in Download (Total items : " + 
 			this.resultView.getFileTable().size() + ")");
 
@@ -244,7 +247,7 @@ public class ResultViewController implements Serializable {
 			}
 			this.resultView.getDownloadedFileTable().setCaption("Downloaded Files (Total items : " + 
 					this.resultView.getDownloadedFileTable().size() + ")");
-
+			result.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -290,6 +293,8 @@ public class ResultViewController implements Serializable {
 			urls.add(new URL("http://" + PropertiesReader.getFilesHost() + "/"
 					+ query.getString("path").replace(" ", "%20")));
 		}
+		
+		query.close();
 
 		return urls;
 
@@ -309,6 +314,8 @@ public class ResultViewController implements Serializable {
 				ArrayList<Long> list = new ArrayList<>();
 				list.add(temp);
 				list.add(total);
+				
+				task.close();
 
 				return list;
 

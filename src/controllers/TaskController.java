@@ -112,6 +112,7 @@ public class TaskController {
 //		}
 
 		statement.executeUpdate();
+		statement.close();
 
 	}
 	
@@ -125,7 +126,7 @@ public class TaskController {
 				.prepareStatement(sql);
 		
 		ResultSet result = statement.executeQuery();
-		
+				
 		return result;
 	}
 	
@@ -137,7 +138,7 @@ public class TaskController {
 				.prepareStatement(sql);
 		
 		ResultSet result = statement.executeQuery();
-		
+				
 		return result;
 
 	}
@@ -146,7 +147,6 @@ public class TaskController {
 
 		try {
 			String sql = "SELECT * FROM download WHERE task = " + taskId + ";";
-			System.out.println(sql);
 			ResultSet set = DBHelper.getConnection().createStatement().executeQuery(sql);
 			return set;
 			
@@ -167,6 +167,7 @@ public class TaskController {
 			statement = DBHelper.getConnection()
 					.prepareStatement(s);
 			statement.executeUpdate();
+			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -183,11 +184,16 @@ public class TaskController {
 			ResultSet result = statement.executeQuery(q);
 			if(result.next()){
 				if(result.getString("status").equals(Status.NOT_DOWNLOADABLE)){
+					statement.close();
+					result.close();
 					return true;
 				} else {
+					statement.close();
+					result.close();
 					return false;
 				}
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			
@@ -204,6 +210,7 @@ public class TaskController {
 				.prepareStatement(sql);
 		
 		ResultSet result = statement.executeQuery();
+		
 		
 		return result;
 		

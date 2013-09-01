@@ -82,6 +82,8 @@ public class RecordController {
 		while (set.next()) {
 			resources.add(set.getString("url"));
 		}
+		
+		set.close();
 
 		return resources;
 	}
@@ -108,8 +110,12 @@ public class RecordController {
 				
 				ResultSet keys = statement.getGeneratedKeys();
 				
-				if(keys.next())
-					r.setID(keys.getInt(1));
+				
+				if(keys.next()){
+					r.setID(keys.getInt(1));	
+				}
+				statement.close();
+				keys.close();
 					
 			} catch (SQLException e) {
 
