@@ -164,8 +164,12 @@ public class QueryController {
 		String sql = "SELECT * FROM query WHERE id ="  + id;	
 		ResultSet set = DBHelper.getConnection().createStatement().executeQuery(sql);
 	
-		if(set.next())
-			return new  Query(id, set.getString("provider"), set.getString("type"), set.getString("keyword"), set.getString("language"), set.getInt("results"), set.getString("date"));
+		if(set.next()){
+			Query q = new Query(id, set.getString("provider"), set.getString("type"), set.getString("keyword"), set.getString("language"), set.getInt("results"), set.getString("date"));
+			set.getStatement().close();
+			set.close();
+			return q;
+		}
 		return null;
 		
 	}

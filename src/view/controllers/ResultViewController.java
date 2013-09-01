@@ -193,7 +193,9 @@ public class ResultViewController implements Serializable {
 				resultView.getFileTable().setSortAscending(true);
 				resultView.getFileTable().sort();
 			}
+			result.getStatement().close();
 			result.close();
+			tasks.getStatement().close();
 			tasks.close();
 			this.resultView.getFileTable().setCaption("Files in Download (Total items : " + 
 			this.resultView.getFileTable().size() + ")");
@@ -247,8 +249,9 @@ public class ResultViewController implements Serializable {
 			}
 			this.resultView.getDownloadedFileTable().setCaption("Downloaded Files (Total items : " + 
 					this.resultView.getDownloadedFileTable().size() + ")");
+			result.getStatement().close();
 			result.close();
-		} catch (SQLException e) {
+			} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}

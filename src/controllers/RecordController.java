@@ -135,10 +135,19 @@ public class RecordController {
 		String sql = "SELECT * FROM record WHERE id ="  + id;	
 		ResultSet set = DBHelper.getConnection().createStatement().executeQuery(sql);
 		if(set.next())
-			if(set.getString("provider").equals(AppData.EUROPEANA))
-				return new EuropeanaRecord(set);
-			else 			if(set.getString("provider").equals(AppData.VIMEO))
-				return new VimeoRecord(set);
+			if(set.getString("provider").equals(AppData.EUROPEANA)){
+				EuropeanaRecord r = new EuropeanaRecord(set);
+				set.getStatement().close();
+				set.close();
+				return r;
+
+			}else if(set.getString("provider").equals(AppData.VIMEO)){
+				VimeoRecord r = new VimeoRecord(set);
+				set.getStatement().close();
+				set.close();
+				return r;
+				}
+			
 		return null;
 
 	}
