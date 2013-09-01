@@ -9,7 +9,6 @@ import view.views.RegisterPopUp;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.terminal.UserError;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Window.Notification;
 
@@ -35,7 +34,6 @@ public class LoginController {
 	public void setLoginPage(LoginPage loginPage) {
 		this.loginPage = loginPage;
 	}
-
 	
 }
 
@@ -62,8 +60,9 @@ class LoginButtonListener implements Button.ClickListener {
 			if(loginResult != -1){
 				AppData.userID = loginResult;
 				TabViewController tvc = new TabViewController();
-				
-				this.loginController.getLoginPage().getApplication().getMainWindow().setContent(tvc.getTabSheetView());
+							
+				this.loginController.getLoginPage().getApplication().getMainWindow().replaceComponent
+				(this.loginController.getLoginPage(), tvc.getTabSheetView());
 				
 				
 			}
@@ -93,8 +92,6 @@ class RegisterListener implements Button.ClickListener {
 	public void buttonClick(ClickEvent event) {
 		
 		final RegisterPopUp popUp = new RegisterPopUp();
-		this.loginController.getLoginPage().getLogin().removeClickShortcut();
-		popUp.getSubmit().setClickShortcut(KeyCode.ENTER);
 		
 		popUp.getSubmit().addListener(new Button.ClickListener() {
 			
@@ -125,8 +122,6 @@ class RegisterListener implements Button.ClickListener {
 							popUp.getPass().getValue().toString())){
 						loginController.getLoginPage().getApplication().getMainWindow().
 						showNotification("Registration completed", Notification.TYPE_HUMANIZED_MESSAGE);
-						popUp.getSubmit().removeClickShortcut();
-						loginController.getLoginPage().getLogin().setClickShortcut(KeyCode.ENTER);
 						loginController.getLoginPage().getApplication().getMainWindow().removeWindow(popUp);
 					} else {
 						popUp.getUsername().setComponentError(new UserError("Email is not valid"));

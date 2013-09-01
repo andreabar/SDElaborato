@@ -19,11 +19,12 @@ public class TabViewController {
 
 	public TabViewController() {
 		setTabSheetView(new TabSheetView());
-		tabSheetView.getTabSheet().addListener(new AddRefreshListener(this));
 		tabSheetView.getLogged().setValue("Logged as : " + DBHelper.getUserName(AppData.userID));
+		tabSheetView.getTabSheet().addListener(new AddRefreshListener(this));
 		tabSheetView.getLogoutButton().addListener(new LogoutListener(this));
 		
 	}
+	
 
 	public TabSheetView getTabSheetView() {
 		return tabSheetView;
@@ -32,6 +33,8 @@ public class TabViewController {
 	public void setTabSheetView(TabSheetView tabSheetView) {
 		this.tabSheetView = tabSheetView;
 	}
+
+
 
 }
 
@@ -59,7 +62,7 @@ class AddRefreshListener implements SelectedTabChangeListener {
 			tbc.getTabSheetView().getResultViewController().loadResultTable();
 			tbc.getTabSheetView().getResultViewController()
 					.loadDownloadedFileTable();
-				tbc.getTabSheetView().getResultViewController().enableClear();
+			tbc.getTabSheetView().getResultViewController().enableClear();
 //			tbc.getTabSheetView().getResultViewController().getRefresher().setRefreshTime(PropertiesReader.getRefreshingTime()*1000);
 		} else {
 			
@@ -88,7 +91,9 @@ class LogoutListener implements Button.ClickListener {
 	public void buttonClick(ClickEvent event) {
 		AppData.userID = -1;
 		LoginController lc = new LoginController(new LoginPage());
-		this.viewController.getTabSheetView().getApplication().getMainWindow().setContent(lc.getLoginPage());
+		this.viewController.getTabSheetView().dismissAllComponent();
+		this.viewController.getTabSheetView().getApplication().getMainWindow().replaceComponent
+		(this.viewController.getTabSheetView(), lc.getLoginPage());
 		
 	}
 	

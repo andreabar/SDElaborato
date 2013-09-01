@@ -100,5 +100,12 @@ public class TabSheetView extends VerticalLayout {
 		this.logoutButton = logoutButton;
 	}
 	
+	public void dismissAllComponent(){
+		this.resultViewController.setRefresher(null);
+		this.mainViewController.getMainView().removeAllComponents();
+		this.resultViewController.getResultView().removeAllComponents();
+		this.tabSheet.removeAllComponents();
+	}
+	
 
 }

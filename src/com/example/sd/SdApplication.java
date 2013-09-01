@@ -37,7 +37,7 @@ public class SdApplication extends Application {
 		
 		MainWindow mainWindow = new MainWindow();
 		LoginController lc = new LoginController(new LoginPage());
-		mainWindow.setContent(lc.getLoginPage());
+		mainWindow.addComponent(lc.getLoginPage());
 		this.setMainWindow(mainWindow);
 			
 
