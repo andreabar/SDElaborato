@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import util.AppData;
 import view.views.LoginPage;
+import view.views.MainWindow;
 import view.views.RegisterPopUp;
 
 import com.vaadin.event.ShortcutAction.KeyCode;
@@ -60,9 +61,13 @@ class LoginButtonListener implements Button.ClickListener {
 			if(loginResult != -1){
 				AppData.userID = loginResult;
 				TabViewController tvc = new TabViewController();
-							
+				
+				MainWindow main = (MainWindow) this.loginController.getLoginPage().getApplication().getMainWindow();
+				main.getRefresher().setRvc(tvc.getTabSheetView().getResultViewController());
+				
 				this.loginController.getLoginPage().getApplication().getMainWindow().replaceComponent
 				(this.loginController.getLoginPage(), tvc.getTabSheetView());
+				
 				
 				
 			}

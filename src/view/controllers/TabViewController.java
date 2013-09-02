@@ -11,6 +11,7 @@ import dbutil.DBHelper;
 
 import util.AppData;
 import view.views.LoginPage;
+import view.views.MainWindow;
 import view.views.TabSheetView;
 
 public class TabViewController {
@@ -92,6 +93,8 @@ class LogoutListener implements Button.ClickListener {
 		AppData.userID = -1;
 		LoginController lc = new LoginController(new LoginPage());
 		this.viewController.getTabSheetView().dismissAllComponent();
+		MainWindow main = (MainWindow) this.viewController.getTabSheetView().getApplication().getMainWindow();
+		main.getRefresher().setRvc(null);
 		this.viewController.getTabSheetView().getApplication().getMainWindow().replaceComponent
 		(this.viewController.getTabSheetView(), lc.getLoginPage());
 		

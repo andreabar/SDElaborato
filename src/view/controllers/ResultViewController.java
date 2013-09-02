@@ -48,17 +48,16 @@ public class ResultViewController implements Serializable {
 	 */
 	private static final long serialVersionUID = -5972665301072207312L;
 	private ResultTab resultView;
-	private Refresher refresher;
 
 	public ResultViewController(ResultTab r) {
 		setResultView(r);
-		refresher = new Refresher(this);
-		resultView.addComponent(refresher);
+	
 		
 		resultView.getClear().addListener(new ClearListener(this));
 		resultView.getDeleteSelected().addListener(
 				new DeleteSelectedListener(this));
 		resultView.getSeeMetadata().addListener(new SeeMetadataListener(this));
+		resultView.getDeleteFile().addListener(new DeleteFileListener(this));
 		resultView.getFileTable().addListener(
 				new Property.ValueChangeListener() {
 
@@ -86,10 +85,15 @@ public class ResultViewController implements Serializable {
 
 					@Override
 					public void valueChange(ValueChangeEvent event) {
-						if (event.getProperty().getValue() != null)
+						if (event.getProperty().getValue() != null){
 							resultView.getSeeMetadata().setEnabled(true);
-						else
+							resultView.getDeleteFile().setEnabled(true);
+						}else {
 							resultView.getSeeMetadata().setEnabled(false);
+							resultView.getDeleteFile().setEnabled(false);
+						}
+							
+
 					}
 				});
 
@@ -297,6 +301,7 @@ public class ResultViewController implements Serializable {
 					+ query.getString("path").replace(" ", "%20")));
 		}
 		
+		query.getStatement().close();
 		query.close();
 
 		return urls;
@@ -318,6 +323,7 @@ public class ResultViewController implements Serializable {
 				list.add(temp);
 				list.add(total);
 				
+				task.getStatement().close();
 				task.close();
 
 				return list;
@@ -338,14 +344,6 @@ public class ResultViewController implements Serializable {
 
 	public void setResultView(ResultTab resultView) {
 		this.resultView = resultView;
-	}
-
-	public Refresher getRefresher() {
-		return refresher;
-	}
-
-	public void setRefresher(Refresher refresher) {
-		this.refresher = refresher;
 	}
 
 	public void enableClear() {
@@ -478,6 +476,29 @@ class SeeMetadataListener implements Button.ClickListener {
 			e.printStackTrace();
 		}
 
+	}
+
+}
+
+class DeleteFileListener implements Button.ClickListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8248905226288671342L;
+
+	private ResultViewController rvc;
+
+	public DeleteFileListener(ResultViewController rvc){
+		this.rvc = rvc;
+	}
+
+	@Override
+	public void buttonClick(ClickEvent event) {
+		Integer rowId = (Integer) rvc.getResultView().getDownloadedFileTable().getValue();
+		TaskController.deleteFile(rowId);
+		TaskController.deleteTask(rowId);
+		rvc.loadDownloadedFileTable();
 	}
 
 }

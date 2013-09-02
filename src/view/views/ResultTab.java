@@ -7,6 +7,7 @@ import refresher.RefreshableTable;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
@@ -25,7 +26,9 @@ public class ResultTab extends VerticalLayout {
 	private Label info;
 	private Table fileProgressTable;
 	private Table downloadedFileTable;
-	private Button clear, deleteSelected, seeMetadata;
+	private Button clear, deleteSelected, seeMetadata, deleteFile;
+
+	
 
 	public Button getSeeMetadata() {
 		return seeMetadata;
@@ -41,6 +44,8 @@ public class ResultTab extends VerticalLayout {
 		this.setCaption("My Results");
 		
 		this.vertical = new VerticalLayout();
+		
+		HorizontalLayout hl = new HorizontalLayout();
 		
 		this.mainPanel = new Panel("Multimedia Data Crawler");
 		
@@ -97,6 +102,9 @@ public class ResultTab extends VerticalLayout {
 		this.downloadedFileTable.setImmediate(true);
 		this.downloadedFileTable.setPageLength(12);
 		
+		this.deleteFile = new Button("Delete a file");
+		this.deleteFile.setEnabled(false);
+		
 		this.panelLayout = new GridLayout(4, 2);
 		this.panelLayout.setSizeFull();
 		this.panelLayout.setSpacing(true);
@@ -114,9 +122,12 @@ public class ResultTab extends VerticalLayout {
 		
 		this.mainPanel.setContent(panelLayout);
 		
+		hl.addComponent(seeMetadata);
+		hl.addComponent(deleteFile);
+		
 		this.vertical.addComponent(mainPanel);
 		this.vertical.addComponent(fileProgressTable);
-		vertical.addComponent(seeMetadata);
+		this.vertical.addComponent(hl);
 		this.vertical.addComponent(downloadedFileTable);
 
 		this.addComponent(vertical);
@@ -174,6 +185,14 @@ public class ResultTab extends VerticalLayout {
 
 	public void setDownloadedFileTable(Table downloadedFileTable) {
 		this.downloadedFileTable = downloadedFileTable;
+	}
+	
+	public Button getDeleteFile() {
+		return deleteFile;
+	}
+
+	public void setDeleteFile(Button deleteFile) {
+		this.deleteFile = deleteFile;
 	}
 
 }

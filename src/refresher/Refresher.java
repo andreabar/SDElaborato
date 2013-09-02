@@ -22,8 +22,15 @@ public class Refresher extends AbstractComponent {
 	private static final long serialVersionUID = -8914468654734344811L;
 	private ResultViewController rvc;
 	
-	public Refresher(ResultViewController rvc) {
+	public ResultViewController getRvc() {
+		return rvc;
+	}
+
+	public void setRvc(ResultViewController rvc) {
 		this.rvc = rvc;
+	}
+
+	public Refresher() {
 	}
 
 	@Override
@@ -51,16 +58,11 @@ public class Refresher extends AbstractComponent {
 
 		// Variables set by the widget are returned in the "variables" map.
 
-		if (variables.containsKey("refresh")) {
+		if (variables.containsKey("refresh") && null != rvc) {
+			
 			System.out.println("Refreshing");
 
-			// When the user has clicked the component we increase the 
-			// click count, update the message and request a repaint so 
-			// the changes are sent back to the client.
-//			clicks++;
-//			message += "<br/>" + variables.get("click");
 
-//			requestRepaint();
 			Object id = rvc.getResultView().getFileTable()
 					.getCurrentPageFirstItemId();
 			Object id2 = rvc.getResultView().getDownloadedFileTable()
@@ -75,6 +77,7 @@ public class Refresher extends AbstractComponent {
 
 			if (rvc.isJunkDataInTable()) {
 				rvc.getResultView().getClear().setEnabled(true);
+				
 			}
 		}
 	}
