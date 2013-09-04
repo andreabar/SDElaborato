@@ -155,6 +155,9 @@ public class ResultViewController implements Serializable {
 						.getItemProperty("Progress").setValue(new Label());
 
 			}
+			
+			tasks.getStatement().close();
+
 
 			while (result.next()) {
 
@@ -197,7 +200,6 @@ public class ResultViewController implements Serializable {
 				resultView.getFileTable().sort();
 			}
 			result.getStatement().close();
-			tasks.getStatement().close();
 			this.resultView.getFileTable().setCaption("Files in Download (Total items : " + 
 			this.resultView.getFileTable().size() + ")");
 

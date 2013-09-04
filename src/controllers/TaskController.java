@@ -7,8 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import shared.PropertiesReader;
 import util.AppData;
-import util.PropertiesReader;
 
 import dbutil.DBHelper;
 
@@ -226,7 +226,10 @@ public class TaskController {
 
 			ResultSet result = statement.executeQuery();
 			if(result.next()){
+				if(PropertiesReader.getFilesHost().endsWith("/"))
 				path = PropertiesReader.getFilesHost() + result.getString("path");
+				else 	path = PropertiesReader.getFilesHost() + "/" + result.getString("path");
+
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

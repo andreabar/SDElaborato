@@ -40,9 +40,10 @@ public class DBHelper {
 			DataSource ds = (DataSource) envCtx.lookup("jdbc/"
 					+ PropertiesReader.getDbName());
 
-			connection = ds.getConnection();
+			Connection connection = ds.getConnection();
+			connection.setAutoCommit(false);
 			connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-
+			return connection;
 		} catch (NamingException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -235,6 +236,10 @@ public static void saveMetadata(int record, JSONObject o) {
 		}
 		return null;
 
+	}
+
+	public static void setConnection(Connection connectToDB) {
+		connection = connectToDB;
 	}
 
 }
