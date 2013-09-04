@@ -15,7 +15,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 
-import refresher.Refresher;
 import model.Query;
 import model.Record;
 import model.Status;
@@ -38,6 +37,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.ProgressIndicator;
+import com.vaadin.ui.Window;
 
 import dbutil.DBHelper;
 
@@ -454,15 +454,15 @@ class SeeMetadataListener implements Button.ClickListener {
 		JSONObject o;
 		try {
 			o = DBHelper.getMetadata((int) task);
-			com.vaadin.ui.Window w = new com.vaadin.ui.Window("Metadata");
-			Label data = new Label(XML.toString(o.toString()));
+			Window w = new Window("Metadata");
+			String dataXML ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + XML.toString(o); 
+			Label data = new Label(dataXML);
+			System.out.println(dataXML);
 			w.center();
 			w.setWidth("50%");
 
 			w.setHeight("50%");
 			data.setSizeFull();
-
-			data.setContentMode(Label.CONTENT_XML);
 			w.addComponent(data);
 
 			controller.getResultView().getApplication().getMainWindow()
