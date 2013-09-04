@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.naming.Context;
@@ -12,14 +13,15 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.tools.ant.taskdefs.SQLExec.Transaction;
 import org.apache.xml.serialize.XMLSerializer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import controllers.TaskController;
 
+import shared.PropertiesReader;
 import util.AppData;
-import util.PropertiesReader;
 
 import model.Record;
 
@@ -39,7 +41,7 @@ public class DBHelper {
 					+ PropertiesReader.getDbName());
 
 			connection = ds.getConnection();
-			return connection;
+			connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 
 		} catch (NamingException e) {
 			e.printStackTrace();
@@ -66,7 +68,7 @@ public class DBHelper {
 			while (resultSet.next()){
 				id = resultSet.getInt("id");
 			}
-			resultSet.close();
+			resultSet.getStatement().close();
 			return id;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -129,7 +131,6 @@ public class DBHelper {
 				name = result.getString("username");
 			}
 			statement.close();
-			result.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -178,16 +179,13 @@ public class DBHelper {
 	public static void deleteTask(int selected) {
 
 		try {
-			
-			connection.setAutoCommit(false);
-			
 			String sql = "DELETE FROM download WHERE task = " + selected;
-			connection.createStatement().execute(sql);
+			Statement st = connection.createStatement();
+			st.execute(sql);
 			 sql = "DELETE FROM scheduled_task WHERE id = " + selected;
-			connection.createStatement().execute(sql);
-
-			connection.commit();
-			connection.setAutoCommit(true);
+			st.execute(sql);
+			
+			st.close();
 		
 
 		} catch (SQLException e) {
@@ -211,6 +209,7 @@ public static void saveMetadata(int record, JSONObject o) {
 			prepareStatement.setString(1, o.toString());
 			
 			prepareStatement.execute();
+			prepareStatement.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

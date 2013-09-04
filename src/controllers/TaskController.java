@@ -29,25 +29,7 @@ public class TaskController {
 				query += ";";
 			else query += ",";
 		}
-
-//		for (Record r : records) {
-//			try {
-//				for (String res : r.getWebResources()) {
-//					query += "(?,?,?,?,?)";
-//
-//					if (records.indexOf(r) == records.size() - 1
-//							&& r.getWebResources().indexOf(res) == r
-//									.getWebResources().size() - 1)
-//						query += ";";
-//					else
-//						query += ",";
-//				}
-//			} catch (Exception e) {
-//				return;
-//			}
-//
-//		}
-
+		
 		java.sql.PreparedStatement statement = DBHelper.getConnection()
 				.prepareStatement(query);
 		
@@ -159,7 +141,7 @@ public class TaskController {
 		
 	}
 	
-	public static void removeNotDownloadableTask(int userID){
+	public static void removeNotDownloadableTasks(int userID){
 		String s = "DELETE FROM scheduled_task WHERE user = " + userID + " AND status = '" + Status.NOT_DOWNLOADABLE + "';"; 
 		
 		java.sql.PreparedStatement statement;

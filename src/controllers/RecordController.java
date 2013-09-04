@@ -83,7 +83,7 @@ public class RecordController {
 			resources.add(set.getString("url"));
 		}
 		
-		set.close();
+		set.getStatement().close();
 
 		return resources;
 	}
@@ -115,17 +115,28 @@ public class RecordController {
 					r.setID(keys.getInt(1));	
 				}
 				statement.close();
-				keys.close();
 					
 			} catch (SQLException e) {
 
 				e.printStackTrace(); 
 			}
 			
-			if(r.getProvider().equals(AppData.VIMEO))
-				DBHelper.saveMetadata(r.getID(), (((VimeoRecord)r).getMetadata()));
+			
+			
 			
 		}
+		
+		try {
+			DBHelper.getConnection().commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		for(Record r : records)
+			if(r.getProvider().equals(AppData.VIMEO))	//europeana resources metadata are saved in the background app at download time FIXME could make another retrieval for Vimeo too
+				DBHelper.saveMetadata(r.getID(), (((VimeoRecord)r).getMetadata()));
+		
 		return records;
 
 	

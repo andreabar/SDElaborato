@@ -152,6 +152,7 @@ public class QueryController {
 			}
 
 			statement.execute();
+			statement.close();
 		}
 
 		catch (Exception e) {

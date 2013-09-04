@@ -120,11 +120,14 @@ class SearchListener implements Button.ClickListener{
 			ArrayList<Record> list = fetcher.executeQuery(query);
 			query.setLimit(list.size());
 			Query updated = QueryController.saveQuery(query, AppData.userID);
-
+			DBHelper.getConnection().commit();
+			
 			List<Record> records = RecordController.saveRecords(list);
-			
+			DBHelper.getConnection().commit();
+
 			QueryController.addQueryResult(records, updated);
-			
+			DBHelper.getConnection().commit();
+
 			
 			updateQueryTable(query);
 			
@@ -222,6 +225,7 @@ class DeleteListener implements Button.ClickListener {
 		Query q = (Query) this.viewController.getMainView().getSearchTable().getValue();
 		try {
 			QueryController.deleteSearch(q);
+			DBHelper.getConnection().commit();
 			this.viewController.loadSearchTable();
 		} catch (SQLException e) {
 			e.printStackTrace();

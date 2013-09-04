@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import org.json.XML;
 
 import refresher.Refresher;
+import shared.PropertiesReader;
 import model.Query;
 import model.Record;
 import model.Status;
@@ -25,7 +26,6 @@ import controllers.RecordController;
 import controllers.TaskController;
 
 import util.AppData;
-import util.PropertiesReader;
 import view.views.ResultTab;
 
 
@@ -142,7 +142,6 @@ public class ResultViewController implements Serializable {
 		try {
 			ResultSet result = TaskController.getScheduledTasks(AppData.userID);
 			ResultSet tasks = TaskController.getWaitingTasks(AppData.userID);
-
 			while (tasks.next()) {
 
 				Object id = loadTableItem(tasks);
@@ -194,9 +193,7 @@ public class ResultViewController implements Serializable {
 				resultView.getFileTable().sort();
 			}
 			result.getStatement().close();
-			result.close();
 			tasks.getStatement().close();
-			tasks.close();
 			this.resultView.getFileTable().setCaption("Files in Download (Total items : " + 
 			this.resultView.getFileTable().size() + ")");
 
@@ -369,9 +366,14 @@ class ClearListener implements Button.ClickListener {
 
 	@Override
 	public void buttonClick(ClickEvent event) {
-		TaskController.removeNotDownloadableTask(AppData.userID);
-		rvc.loadResultTable();
-		rvc.getResultView().getClear().setEnabled(false);
+		try {
+			TaskController.removeNotDownloadableTasks(AppData.userID);
+			DBHelper.getConnection().commit();
+			rvc.loadResultTable();
+			rvc.getResultView().getClear().setEnabled(false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
@@ -393,7 +395,12 @@ class DeleteSelectedListener implements Button.ClickListener {
 	public void buttonClick(ClickEvent event) {
 
 		Object selected = controller.getResultView().getFileTable().getValue();
-		DBHelper.deleteTask((int) selected);
+		try {
+			DBHelper.deleteTask((int) selected);
+			DBHelper.getConnection().commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		controller.loadResultTable();
 
 	}

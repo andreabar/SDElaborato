@@ -15,9 +15,9 @@ import org.json.JSONObject;
 
 import dbutil.DBHelper;
 
+import shared.PropertiesReader;
 import util.AppData;
 import util.Languages;
-import util.PropertiesReader;
 import view.controllers.SearchTabController;
 import model.EuropeanaRecord;
 import model.EuropeanaQuery;

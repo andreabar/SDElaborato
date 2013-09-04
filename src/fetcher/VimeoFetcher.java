@@ -18,8 +18,8 @@ import org.scribe.oauth.OAuthService;
 
 import dbutil.DBHelper;
 
+import shared.PropertiesReader;
 import util.AppData;
-import util.PropertiesReader;
 import view.controllers.SearchTabController;
 import model.Query;
 import model.Record;

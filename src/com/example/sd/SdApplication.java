@@ -1,7 +1,8 @@
 package com.example.sd;
 
 import java.io.File;
-import util.PropertiesReader;
+
+import shared.PropertiesReader;
 import view.controllers.LoginController;
 import view.views.LoginPage;
 import view.views.MainWindow;
