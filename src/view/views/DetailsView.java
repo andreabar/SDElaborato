@@ -36,7 +36,7 @@ public class DetailsView extends Window {
 		keepAll = new Button("Keep All");
 		verify = new Button("Verify & Download");
 		seeOnline = new Button("See Online");
-
+		seeOnline.setDisableOnClick(true);
 		
 		
 		this.recordsTable = new Table();
