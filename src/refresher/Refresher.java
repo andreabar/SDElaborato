@@ -4,11 +4,9 @@ import java.util.Map;
 
 import view.controllers.ResultViewController;
 
-import com.example.sd.widgetset.client.ui.VRefresher;
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.Label;
 
 /**
  * Server side component for the VRefresher widget.

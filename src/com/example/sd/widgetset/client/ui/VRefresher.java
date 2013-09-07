@@ -1,4 +1,6 @@
 package com.example.sd.widgetset.client.ui;
+import shared.PropertiesReader;
+
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.UIDL;
@@ -17,7 +19,7 @@ public class VRefresher extends Widget implements Paintable {
 
 	public static final String CLICK_EVENT_IDENTIFIER = "click";
 	
-	public static Integer refreshTime = 10000;
+	public static Integer refreshTime = 20*1000;
 
 	/** The client side widget identifier */
 	protected String paintableId;
@@ -63,7 +65,7 @@ public class VRefresher extends Widget implements Paintable {
 		
 		Timer t = new MyTimer(this);
 	    // Schedule the timer to run once in 5 seconds.
-	    t.scheduleRepeating(refreshTime);
+	    t.scheduleRepeating(20000);
 
 		// Process attributes/variables from the server
 		// The attribute names are the same as we used in 
@@ -85,7 +87,6 @@ public class VRefresher extends Widget implements Paintable {
     	 }
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
 			_ref.client.updateVariable(_ref.paintableId, "refresh", _counter++, true);
 		}
     	 

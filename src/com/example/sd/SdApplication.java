@@ -1,7 +1,8 @@
 package com.example.sd;
 
 import java.io.File;
-import util.PropertiesReader;
+
+import shared.PropertiesReader;
 import view.controllers.LoginController;
 import view.views.LoginPage;
 import view.views.MainWindow;
@@ -33,7 +34,7 @@ public class SdApplication extends Application {
 		File properties = new File ( context.getHttpSession().getServletContext().getRealPath("/WEB-INF/db.properties"));
 
 		PropertiesReader.initProperties(properties);
-		DBHelper.connectToDB();
+		DBHelper.setConnection(DBHelper.connectToDB());
 		
 		MainWindow mainWindow = new MainWindow();
 		LoginController lc = new LoginController(new LoginPage());

@@ -18,8 +18,8 @@ import org.scribe.oauth.OAuthService;
 
 import dbutil.DBHelper;
 
+import shared.PropertiesReader;
 import util.AppData;
-import util.PropertiesReader;
 import view.controllers.SearchTabController;
 import model.Query;
 import model.Record;
@@ -34,8 +34,8 @@ public class VimeoFetcher implements JSONFetcher {
 			.apiSecret(PropertiesReader.getVimeoAPISecret()).provider(VimeoApi.class).build();
 
 	@Override
-	public ArrayList<Record> executeQuery(Query v)
-			throws MalformedURLException, Exception {
+	public ArrayList<Record> executeQuery(Query v) throws MalformedURLException, JSONException, NoResultException, ConnectionErrorException
+			{
 
 		ArrayList<Record> records = new ArrayList<>();
 		
@@ -49,35 +49,39 @@ public class VimeoFetcher implements JSONFetcher {
 			service.signRequest(new Token(PropertiesReader.getVimeoToken(), PropertiesReader.getVimeoTokenSecret()), req);
 			Response response = req.send();
 
-
-			records.addAll(saveRecords(response.getBody()));
-
+			if(i==q.getPages())
+				records.addAll(saveRecords(response.getBody(), q.getLimit()-records.size())); //in the last page, retrieve 50 but save just the remaining
+			else
+				records.addAll(saveRecords(response.getBody(), -1));
+			
+		
 		}
 		return records;
 
 	}
 
-	private ArrayList<Record> saveRecords(String response)
-			throws JSONException, Exception {
+	private ArrayList<Record> saveRecords(String response, int remainingResult)
+			throws JSONException, NoResultException, ConnectionErrorException {
 
 		JSONObject o = new JSONObject(response);
 		if (!o.getString("stat").equals("ok"))
-			throw new Exception("Request couldn't be satisfied.");
+			throw new ConnectionErrorException();
 		if (o.getJSONObject("videos").getInt("total") == 0)
-			throw new Exception("No result found.");
+			throw new NoResultException();
 
 		JSONArray items = o.getJSONObject("videos").getJSONArray("video");
-		ArrayList<Record> records = getRecordList(items);
+		ArrayList<Record> records = getRecordList(items, remainingResult);
 		return records;
 
 	}
 
-	private ArrayList<Record> getRecordList(JSONArray items)
+	private ArrayList<Record> getRecordList(JSONArray items, int remainingResult)
 			throws JSONException {
 
 		ArrayList<Record> list = new ArrayList<Record>();
-
-		for (int i = 0; i < items.length(); i++) {
+		int limit = remainingResult != -1? remainingResult : items.length();
+			
+		for (int i = 0; i < limit; i++) {
 
 			VimeoRecord item = new VimeoRecord();
 
@@ -99,15 +103,11 @@ public class VimeoFetcher implements JSONFetcher {
 			throws MalformedURLException {
 
 		String urlTarget = API_ACCESS_POINT + q.getInput() + "&summary_response=1";
-;
-		 
-		int total = q.getLimit();
-		int missingResults = total - (page-1)*VimeoQuery
-				.MAXIMUM_RPP;
-		
+
+
 		if (q.getLimit() > 50) {
 			urlTarget += "&page=" + page + "&per_page="
-					+ (missingResults<VimeoQuery.MAXIMUM_RPP? missingResults : VimeoQuery.MAXIMUM_RPP);
+					+ VimeoQuery.MAXIMUM_RPP;
 
 		}
 		

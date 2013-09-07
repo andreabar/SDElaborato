@@ -1,7 +1,9 @@
 package fetcher;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -15,9 +17,9 @@ import org.json.JSONObject;
 
 import dbutil.DBHelper;
 
+import shared.PropertiesReader;
 import util.AppData;
 import util.Languages;
-import util.PropertiesReader;
 import view.controllers.SearchTabController;
 import model.EuropeanaRecord;
 import model.EuropeanaQuery;
@@ -29,7 +31,7 @@ public class EuropeanaFetcher implements JSONFetcher {
 	private static final String API_ACCESS_POINT = "http://europeana.eu/api//v2/search.json?wskey=";
 
 	@Override
-	public ArrayList<Record> executeQuery(Query v) throws Exception {
+	public ArrayList<Record> executeQuery(Query v) throws ConnectionErrorException, NoResultException, JSONException, IOException, MalformedURLException {
 
 		URL request = buildQueryRequest(v);
 		if (request != null) {
@@ -39,11 +41,11 @@ public class EuropeanaFetcher implements JSONFetcher {
 		}
 
 		else
-			throw new Exception("Can't encode url.");
+			throw new ConnectionErrorException();
 
 	}
 
-	private ArrayList<Record> fetchResponse(URL request) throws Exception {
+	private ArrayList<Record> fetchResponse(URL request) throws NoResultException, ConnectionErrorException, IOException, JSONException {
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				request.openStream(), CharEncoding.UTF_8));
@@ -53,9 +55,9 @@ public class EuropeanaFetcher implements JSONFetcher {
 
 			JSONObject o = new JSONObject(inputLine);
 			if (!o.getBoolean("success"))
-				throw new Exception("Request couldn't be satisfied.");
+				throw new ConnectionErrorException();
 			if (o.getInt("totalResults") == 0)
-				throw new Exception("No result found.");
+				throw new NoResultException();
 			
 
 			JSONArray items = o.getJSONArray("items");

@@ -18,6 +18,8 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 
+import dbutil.DBHelper;
+
 public class DetailsViewController {
 
 	private DetailsView detailsView;
@@ -122,6 +124,7 @@ class VerifyListener implements Button.ClickListener {
 		try {
 			
 			TaskController.addTasks(toKeep, AppData.userID, dvc.getQuery().getId());
+			DBHelper.getConnection().commit();
 			dvc.getDetailsView().getApplication().getMainWindow().showNotification
 			("Your request is being processed", Window.Notification.TYPE_HUMANIZED_MESSAGE);
 			

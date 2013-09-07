@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.naming.Context;
@@ -12,14 +13,15 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.tools.ant.taskdefs.SQLExec.Transaction;
 import org.apache.xml.serialize.XMLSerializer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import controllers.TaskController;
 
+import shared.PropertiesReader;
 import util.AppData;
-import util.PropertiesReader;
 
 import model.Record;
 
@@ -38,9 +40,10 @@ public class DBHelper {
 			DataSource ds = (DataSource) envCtx.lookup("jdbc/"
 					+ PropertiesReader.getDbName());
 
-			connection = ds.getConnection();
+			Connection connection = ds.getConnection();
+			connection.setAutoCommit(false);
+			connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			return connection;
-
 		} catch (NamingException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -66,7 +69,7 @@ public class DBHelper {
 			while (resultSet.next()){
 				id = resultSet.getInt("id");
 			}
-			resultSet.close();
+			resultSet.getStatement().close();
 			return id;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -129,7 +132,6 @@ public class DBHelper {
 				name = result.getString("username");
 			}
 			statement.close();
-			result.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -178,16 +180,22 @@ public class DBHelper {
 	public static void deleteTask(int selected) {
 
 		try {
-			
 			String sql = "DELETE FROM download WHERE task = " + selected;
-			connection.createStatement().execute(sql);
+			Statement st = connection.createStatement();
+			st.execute(sql);
 			 sql = "DELETE FROM scheduled_task WHERE id = " + selected;
-			connection.createStatement().execute(sql);
-
+			st.execute(sql);
+			
+			st.close();
 		
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -202,6 +210,7 @@ public static void saveMetadata(int record, JSONObject o) {
 			prepareStatement.setString(1, o.toString());
 			
 			prepareStatement.execute();
+			prepareStatement.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -227,6 +236,10 @@ public static void saveMetadata(int record, JSONObject o) {
 		}
 		return null;
 
+	}
+
+	public static void setConnection(Connection connectToDB) {
+		connection = connectToDB;
 	}
 
 }
