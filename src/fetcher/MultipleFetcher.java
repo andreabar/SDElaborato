@@ -1,8 +1,13 @@
 package fetcher;
 
 import java.net.MalformedURLException;
+import java.nio.channels.NoConnectionPendingException;
 import java.util.ArrayList;
 import java.util.Set;
+
+import org.json.JSONException;
+
+import com.google.gwt.dev.json.JsonException;
 
 import model.MultiQuery;
 import model.Query;
@@ -23,7 +28,7 @@ public class MultipleFetcher implements JSONFetcher{
 	
 	@Override
 	public ArrayList<Record> executeQuery(Query v)
-			throws MalformedURLException, Exception {
+			throws MalformedURLException, NoResultException, ConnectionErrorException, JSONException {
 
 		ArrayList<Record> records = new ArrayList<>();
 
@@ -40,7 +45,7 @@ public class MultipleFetcher implements JSONFetcher{
 		}
 	
 		if(records.isEmpty())
-			throw new Exception("No result found");
+			throw new NoResultException();
 		
 		return records;
 	}

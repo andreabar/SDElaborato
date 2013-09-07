@@ -82,7 +82,9 @@ public class ResultTab extends VerticalLayout {
 		this.downloadedFileTable.addContainerProperty("Type", String.class, null);
 		this.downloadedFileTable.addContainerProperty("Keyword", String.class, null);
 		this.downloadedFileTable.addContainerProperty("Provider", String.class, null);
-		this.downloadedFileTable.addContainerProperty("Open", Component.class, null);
+		this.downloadedFileTable.addContainerProperty("Status", String.class, null);
+
+		this.downloadedFileTable.addContainerProperty("Link", Component.class, null);
 		this.downloadedFileTable.addContainerProperty("Date Query", Date.class, null);
 		this.downloadedFileTable.addContainerProperty("Date Download", Date.class, null);
 		
@@ -105,14 +107,14 @@ public class ResultTab extends VerticalLayout {
 		this.panelLayout.setSizeFull();
 		
 		this.panelLayout.addComponent(info, 0, 0, 3, 0);
-		this.panelLayout.addComponent(clear, 0, 1);
-		this.panelLayout.addComponent(deleteSelected, 1, 1);
+		this.panelLayout.addComponent(deleteSelected, 0, 1);
 		
 		
 		this.mainPanel.setContent(panelLayout);
 		
 		hl.addComponent(seeMetadata);
 		hl.addComponent(deleteFile);
+		hl.addComponent(clear);
 		
 		this.vertical.addComponent(mainPanel);
 		this.vertical.addComponent(fileProgressTable);

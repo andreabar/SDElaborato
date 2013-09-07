@@ -3,6 +3,7 @@ package controllers;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -103,7 +104,7 @@ public class TaskController {
 	public static ResultSet getScheduledTasks(int userID) throws SQLException{
 		
 
-		String sql = "SELECT * FROM scheduled_task WHERE user = " + userID + " AND status NOT LIKE '" + Status.DOWNLOADED + "'";
+		String sql = "SELECT * FROM scheduled_task WHERE user = " + userID + " AND (status NOT LIKE '" + Status.DOWNLOADED + "' AND status NOT LIKE '" + Status.NOT_DOWNLOADABLE+"')";
 		
 		
 		java.sql.PreparedStatement statement = DBHelper.getConnection()
@@ -115,7 +116,7 @@ public class TaskController {
 	}
 	
 	public static ResultSet getDownloadedFiles(int userID) throws SQLException {
-		String sql = "SELECT * FROM scheduled_task WHERE user = " + userID + " AND status LIKE " + "'" + Status.DOWNLOADED + "'";
+		String sql = "SELECT * FROM scheduled_task WHERE user = " + userID + " AND (status LIKE " + "'" + Status.DOWNLOADED + "' OR status LIKE '" + Status.NOT_DOWNLOADABLE +"')";
 		
 		
 		java.sql.PreparedStatement statement = DBHelper.getConnection()
@@ -202,63 +203,28 @@ public class TaskController {
 	
 	public static void deleteTask(int taskID){
 		String s = "DELETE FROM scheduled_task WHERE id = " +taskID+ " ;";
-		java.sql.PreparedStatement statement;
 		try {
-			statement = DBHelper.getConnection()
-					.prepareStatement(s);
-			statement.executeUpdate();
+			Statement statement = DBHelper.getConnection().createStatement();
+
+			statement.execute("DELETE FROM file WHERE scheduled_task = " + taskID);			
+			statement.execute(s);
+			DBHelper.getConnection().commit();
+
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-
-	}
-
-	public static void deleteFile(int taskID){
-
-		String sql = "SELECT file.path FROM file inner join scheduled_task on  " +
-				"file.scheduled_task = scheduled_task.id WHERE scheduled_task.id = " + taskID;
-
-		String path = null;
-		try {
-			java.sql.PreparedStatement statement = DBHelper.getConnection()
-					.prepareStatement(sql);
-			System.out.println(sql);
-
-			ResultSet result = statement.executeQuery();
-			if(result.next()){
-				if(PropertiesReader.getFilesHost().endsWith("/"))
-				path = PropertiesReader.getFilesHost() + result.getString("path");
-				else 	path = PropertiesReader.getFilesHost() + "/" + result.getString("path");
-
+			try {
+				DBHelper.getConnection().rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
+		
+		
+		
 
-		System.out.println(path);
-
-		File f = new File(path);
-
-		if (!f.exists())
-			throw new IllegalArgumentException(
-					"Delete: no such file or directory: " + path);
-
-		if (!f.canWrite())
-			throw new IllegalArgumentException("Delete: write protected: "
-					+ path);
-
-		if (f.isDirectory()) {
-			String[] files = f.list();
-			if (files.length > 0)
-				throw new IllegalArgumentException(
-						"Delete: directory not empty: " + path);
-		}
-
-
-		boolean success = f.delete();
-
-		if (!success)
-			throw new IllegalArgumentException("Delete: deletion failed");
 	}
+
+	
 
 }

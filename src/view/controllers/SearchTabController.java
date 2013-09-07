@@ -5,8 +5,10 @@ import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import model.Query;
 import model.Record;
@@ -27,6 +29,8 @@ import controllers.RecordController;
 import dbutil.DBHelper;
 
 import fetcher.JSONFetcher;
+import fetcher.JSONFetcher.ConnectionErrorException;
+import fetcher.JSONFetcher.NoResultException;
 import fetcher.MultipleFetcher;
 
 public class SearchTabController implements Serializable{
@@ -113,29 +117,32 @@ class SearchListener implements Button.ClickListener{
 		}
 	
 		JSONFetcher fetcher = initalizeFetcher();
-			
+		Query query = fetcher.buildQuery(viewController);
+
 		try {
 			
-			Query query = fetcher.buildQuery(viewController);
 			ArrayList<Record> list = fetcher.executeQuery(query);
 			query.setLimit(list.size());
 			Query updated = QueryController.saveQuery(query, AppData.userID);
-			DBHelper.getConnection().commit();
-			
 			List<Record> records = RecordController.saveRecords(list);
-			DBHelper.getConnection().commit();
-
 			QueryController.addQueryResult(records, updated);
+
 			DBHelper.getConnection().commit();
 
 			
 			updateQueryTable(query);
+			viewController.getMainView().getDetailsButton().click();
+
 			
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
+		} catch (NoResultException e) {
+			this.viewController.getMainView().getParentView().getWindow().showNotification(e.getMessage());
+			query.setLimit(0);
+			QueryController.saveQuery(query, AppData.userID);
+			updateQueryTable(query);
+			
+			
 		} catch (Exception e) {
-			e.printStackTrace();
-			this.viewController.getMainView().getParentView().getWindow().showNotification("No result found!");
+			this.viewController.getMainView().getParentView().getWindow().showNotification(new ConnectionErrorException().getMessage());
 		}
 		
 		
@@ -148,7 +155,6 @@ class SearchListener implements Button.ClickListener{
 		Object rowItem[] = new Object[]{query.getKeyword(), query.getProvider(), query.getDataType(), query.getLanguage(), query.getLimit()};
 		viewController.getMainView().getSearchTable().addItem(rowItem, query);
 		viewController.getMainView().getSearchTable().select(query);
-		viewController.getMainView().getDetailsButton().click();
 	}
 
 	private JSONFetcher initalizeFetcher() {
@@ -157,7 +163,10 @@ class SearchListener implements Button.ClickListener{
 		
 		if(viewController.getSourceSelected().size() > 1){
 			fetcher = new MultipleFetcher();
-			for(Object o : viewController.getSourceSelected())
+
+			TreeSet<Object> ordered = new TreeSet<>(viewController.getSourceSelected());
+	
+			for(Object o : ordered)
 				((MultipleFetcher)fetcher).addFetcher(factory.getFetcher(o.toString()));
 			
 			

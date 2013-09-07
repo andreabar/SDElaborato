@@ -34,8 +34,8 @@ public class VimeoFetcher implements JSONFetcher {
 			.apiSecret(PropertiesReader.getVimeoAPISecret()).provider(VimeoApi.class).build();
 
 	@Override
-	public ArrayList<Record> executeQuery(Query v)
-			throws MalformedURLException, Exception {
+	public ArrayList<Record> executeQuery(Query v) throws MalformedURLException, JSONException, NoResultException, ConnectionErrorException
+			{
 
 		ArrayList<Record> records = new ArrayList<>();
 		
@@ -61,13 +61,13 @@ public class VimeoFetcher implements JSONFetcher {
 	}
 
 	private ArrayList<Record> saveRecords(String response, int remainingResult)
-			throws JSONException, Exception {
+			throws JSONException, NoResultException, ConnectionErrorException {
 
 		JSONObject o = new JSONObject(response);
 		if (!o.getString("stat").equals("ok"))
-			throw new Exception("Request couldn't be satisfied.");
+			throw new ConnectionErrorException();
 		if (o.getJSONObject("videos").getInt("total") == 0)
-			throw new Exception("No result found.");
+			throw new NoResultException();
 
 		JSONArray items = o.getJSONObject("videos").getJSONArray("video");
 		ArrayList<Record> records = getRecordList(items, remainingResult);

@@ -1,5 +1,7 @@
 package view.controllers;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,12 +13,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 
-import refresher.Refresher;
 import shared.PropertiesReader;
+
 import model.Query;
 import model.Record;
 import model.Status;
@@ -32,12 +35,18 @@ import view.views.ResultTab;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.terminal.ExternalResource;
+import com.vaadin.terminal.Resource;
+import com.vaadin.terminal.StreamResource;
+import com.vaadin.terminal.StreamResource.StreamSource;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.ProgressIndicator;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.Window;
 
 import dbutil.DBHelper;
 
@@ -184,11 +193,7 @@ public class ResultViewController implements Serializable {
 							+ " MB)";
 				}
 
-				else if (status.equals(Status.NOT_DOWNLOADABLE)) {
-					c = new Link("Click to see online", new ExternalResource(
-							result.getString("resource"), "_blank"));
-					statusCol = "Not downloadable";
-				}
+				
 
 				this.resultView.getFileTable().getItem(id)
 						.getItemProperty("Status").setValue(statusCol);
@@ -236,11 +241,16 @@ public class ResultViewController implements Serializable {
 					e.printStackTrace();
 				}
 				Integer scheduledTaskId = result.getInt("id");
-
-				Component c = buildLinkFile(result, null);
-
+				Component c;
+				
+				if(result.getString("status").equals(Status.DOWNLOADED))
+					 c = buildLinkFile(result, null);
+				else 
+					c = new Link("Click to see online", new ExternalResource(
+							result.getString("resource"), "_blank"));
+				
 				Object rowItem[] = new Object[] { title, type, keyword,
-						provider, c, dateQuery, dateDownload };
+						provider, result.getString("status"),c, dateQuery, dateDownload };
 
 				this.resultView.getDownloadedFileTable().addItem(rowItem,
 						scheduledTaskId);
@@ -262,9 +272,9 @@ public class ResultViewController implements Serializable {
 	public boolean isJunkDataInTable() {
 		@SuppressWarnings("unchecked")
 		Collection<Integer> ids = (Collection<Integer>) resultView
-				.getFileTable().getItemIds();
+				.getDownloadedFileTable().getItemIds();
 		for (Integer i : ids) {
-			if (getResultView().getFileTable().getItem(i)
+			if (getResultView().getDownloadedFileTable().getItem(i)
 					.getItemProperty("Status").getValue().toString()
 					.equals(Status.NOT_DOWNLOADABLE)) {
 				return true;
@@ -369,7 +379,7 @@ class ClearListener implements Button.ClickListener {
 		try {
 			TaskController.removeNotDownloadableTasks(AppData.userID);
 			DBHelper.getConnection().commit();
-			rvc.loadResultTable();
+			rvc.loadDownloadedFileTable();
 			rvc.getResultView().getClear().setEnabled(false);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -427,15 +437,14 @@ class SeeMetadataListener implements Button.ClickListener {
 		JSONObject o;
 		try {
 			o = DBHelper.getMetadata((int) task);
-			com.vaadin.ui.Window w = new com.vaadin.ui.Window("Metadata");
-			Label data = new Label(XML.toString(o.toString()));
+			Window w = new Window("Metadata");
+			final String dataXML ="<?xml version=\"1.0\" encoding=\"UTF-8\"?><record>" + XML.toString(o) + "</record>"; 
+			Label data = new Label(dataXML);
 			w.center();
 			w.setWidth("50%");
-
+					
 			w.setHeight("50%");
 			data.setSizeFull();
-
-			data.setContentMode(Label.CONTENT_XML);
 			w.addComponent(data);
 
 			controller.getResultView().getApplication().getMainWindow()
@@ -469,7 +478,6 @@ class DeleteFileListener implements Button.ClickListener {
 	@Override
 	public void buttonClick(ClickEvent event) {
 		Integer rowId = (Integer) rvc.getResultView().getDownloadedFileTable().getValue();
-		TaskController.deleteFile(rowId);
 		TaskController.deleteTask(rowId);
 		rvc.loadDownloadedFileTable();
 	}
