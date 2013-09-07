@@ -1,7 +1,5 @@
 package view.controllers;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
@@ -29,24 +26,19 @@ import controllers.RecordController;
 import controllers.TaskController;
 
 import util.AppData;
-import util.PropertiesReader;
+import util.XMLFormatter;
 import view.views.ResultTab;
 
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.terminal.ExternalResource;
-import com.vaadin.terminal.Resource;
-import com.vaadin.terminal.StreamResource;
-import com.vaadin.terminal.StreamResource.StreamSource;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.ProgressIndicator;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.Window;
 
 import dbutil.DBHelper;
@@ -440,13 +432,15 @@ class SeeMetadataListener implements Button.ClickListener {
 			o = DBHelper.getMetadata((int) task);
 			Window w = new Window("Metadata");
 
-			final String dataXML ="<?xml version=\"1.0\" encoding=\"UTF-8\"?><record>" + XML.toString(o) + "</record>"; 
-			Label data = new Label(dataXML);
+			String dataXML ="<?xml version=\"1.0\" encoding=\"UTF-8\"?><record>" + XML.toString(o) + "</record>"; 
+			String formattedXML = XMLFormatter.format(dataXML);
+			System.out.println(formattedXML);
+			Label data = new Label(formattedXML);
+			data.setContentMode(Label.CONTENT_PREFORMATTED);
 			w.center();
 			w.setWidth("50%");
 					
 			w.setHeight("50%");
-			data.setSizeFull();
 			w.addComponent(data);
 
 			controller.getResultView().getApplication().getMainWindow()
