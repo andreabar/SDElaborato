@@ -25,31 +25,21 @@ public class RecordController {
 
 	public static List<String> getWebResources(Record r) throws Exception {
 
-		int id = DBHelper.getRecordID(r);
 
-		List<String> list =
-
-		checkForResources(id);
-
-		if (!list.isEmpty())
-			return list;
-		else {
-			downloadResources(r, list);
-			return list;
-
-		}
-
+		return downloadResources(r);
+		
 	}
 
-	private static List<String> downloadResources(Record r, List<String> list)
+	private static List<String> downloadResources(Record r)
 			throws Exception {
-		
+
 		BufferedReader in = new BufferedReader(new InputStreamReader(new URL(
 				r.getUniqueUrl()).openStream()));
+		List<String> list = new ArrayList<>();
 
 		String inputLine = new String();
 		JSONObject o = null;
-		while ((inputLine = in.readLine()) != null) 
+		while ((inputLine = in.readLine()) != null)
 			o = new JSONObject(inputLine);
 
 		JSONArray array = o.getJSONObject("object")
@@ -82,7 +72,7 @@ public class RecordController {
 		while (set.next()) {
 			resources.add(set.getString("url"));
 		}
-		
+
 		set.getStatement().close();
 
 		return resources;
@@ -105,64 +95,64 @@ public class RecordController {
 				statement.setString(5, r.getRights());
 				statement.setString(6, r.getProvider());
 
-
 				statement.executeUpdate();
-				
+
 				ResultSet keys = statement.getGeneratedKeys();
-				
-				
-				if(keys.next()){
-					r.setID(keys.getInt(1));	
+
+				if (keys.next()) {
+					r.setID(keys.getInt(1));
 				}
 				statement.close();
-					
+
 			} catch (SQLException e) {
 
-				e.printStackTrace(); 
+				e.printStackTrace();
 			}
-			
-			
-			
-			
+
 		}
-		
+
 		try {
 			DBHelper.getConnection().commit();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		for(Record r : records)
-			if(r.getProvider().equals(AppData.VIMEO))	//europeana resources metadata are saved in the background app at download time FIXME could make another retrieval for Vimeo too
-				DBHelper.saveMetadata(r.getID(), (((VimeoRecord)r).getMetadata()));
-		
+
+		for (Record r : records)
+			if (r.getProvider().equals(AppData.VIMEO)) // europeana resources
+														// metadata are saved in
+														// the background app at
+														// download time FIXME
+														// could make another
+														// retrieval for Vimeo
+														// too
+				DBHelper.saveMetadata(r.getID(),
+						(((VimeoRecord) r).getMetadata()));
+
 		return records;
 
-	
 	}
 
 	public static Record getRecord(int id) throws SQLException {
-		String sql = "SELECT * FROM record WHERE id ="  + id;	
-		ResultSet set = DBHelper.getConnection().createStatement().executeQuery(sql);
-		if(set.next())
-			if(set.getString("provider").equals(AppData.EUROPEANA)){
+		String sql = "SELECT * FROM record WHERE id =" + id;
+		ResultSet set = DBHelper.getConnection().createStatement()
+				.executeQuery(sql);
+		if (set.next())
+			if (set.getString("provider").equals(AppData.EUROPEANA)) {
 				EuropeanaRecord r = new EuropeanaRecord(set);
 				set.getStatement().close();
 				set.close();
 				return r;
 
-			}else if(set.getString("provider").equals(AppData.VIMEO)){
+			} else if (set.getString("provider").equals(AppData.VIMEO)) {
 				VimeoRecord r = new VimeoRecord(set);
 				set.getStatement().close();
 				set.close();
 				return r;
-				}
-			
+			}
+
 		return null;
 
 	}
-
-	
 
 }
