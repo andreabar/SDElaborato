@@ -25,6 +25,7 @@ import controllers.TaskController;
 
 import util.AppData;
 import util.PropertiesReader;
+import util.XMLFormatter;
 import view.views.ResultTab;
 
 
@@ -456,6 +457,7 @@ class SeeMetadataListener implements Button.ClickListener {
 			o = DBHelper.getMetadata((int) task);
 			Window w = new Window("Metadata");
 			String dataXML ="<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + XML.toString(o); 
+			//String dataXML = XMLFormatter.format(unformattedDataXML);
 			Label data = new Label(dataXML);
 			System.out.println(dataXML);
 			w.center();
