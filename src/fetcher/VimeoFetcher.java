@@ -16,7 +16,7 @@ import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
-import dbutil.DBHelper;
+import controllers.RecordController;
 
 import shared.PropertiesReader;
 import util.AppData;
@@ -83,15 +83,27 @@ public class VimeoFetcher implements JSONFetcher {
 			
 		for (int i = 0; i < limit; i++) {
 
-			VimeoRecord item = new VimeoRecord();
+			Record item = new VimeoRecord();
 
 			JSONObject jsonItem = items.getJSONObject(i);
 			
-			item.setMetadata(jsonItem);
+			Record previous = RecordController.getRecord(AppData.VIMEO_URL + jsonItem.getInt("id"));
 			
+			if(null != previous){
+					item = previous;
+					((VimeoRecord) item).setMetadata(jsonItem);
+
+			}
+
+			
+			else{
+				((VimeoRecord) item).setMetadata(jsonItem);
+
 			item.setTitle(jsonItem.getString("title"));
 			item.setUniqueUrl(AppData.VIMEO_URL + jsonItem.getInt("id"));
-
+			item.setPortalLink(item.getUniqueUrl());
+			
+			}
 			list.add(item);
 		}
 

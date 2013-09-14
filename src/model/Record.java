@@ -15,6 +15,8 @@ public abstract  class Record {
 	private String year;
 	private String rights;
 	private String provider;
+	private String dataProvider, dataProviderDescr;
+	private String portalLink;
 	
 	public String getProvider() {
 		return provider;
@@ -29,12 +31,16 @@ public abstract  class Record {
 	public Record(ResultSet set){
 		
 		try {
+			setID(set.getInt("id"));
 			setType(set.getString("type"));
 			setLanguage(set.getString("language"));
 			setTitle(set.getString("title"));
 			setUniqueUrl(set.getString("url"));
 			setRights(set.getString("ipr_type"));
 			setProvider(set.getString("provider"));
+			setDataProvider(set.getString("data_provider"));
+			setDataProviderDescr(set.getString("data_provider_descr"));
+			setPortalLink(set.getString("portal_link"));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -43,7 +49,8 @@ public abstract  class Record {
 	}
 	
 	public Record() {
-
+		
+		id = -1;
 	}
 
 	public String getUniqueUrl() {
@@ -106,5 +113,23 @@ public abstract  class Record {
 	public void setRights(String r) {
 
 			rights = r;
+	}
+	public String getDataProvider() {
+		return dataProvider;
+	}
+	public void setDataProvider(String dataProvider) {
+		this.dataProvider = dataProvider;
+	}
+	public String getDataProviderDescr() {
+		return dataProviderDescr;
+	}
+	public void setDataProviderDescr(String dataProviderDescr) {
+		this.dataProviderDescr = dataProviderDescr;
+	}
+	public String getPortalLink() {
+		return portalLink;
+	}
+	public void setPortalLink(String portalLink) {
+		this.portalLink = portalLink;
 	}
 }

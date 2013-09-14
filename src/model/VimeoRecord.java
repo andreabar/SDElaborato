@@ -16,6 +16,9 @@ public class VimeoRecord extends Record {
 		setLanguage("unknown");
 		setRights("unknown");
 		setProvider(AppData.VIMEO);
+		setDataProvider("unknown");
+		setDataProviderDescr("unknown");
+		
 	}
 
 	public VimeoRecord(ResultSet set) {

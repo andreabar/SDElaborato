@@ -140,6 +140,7 @@ class SearchListener implements Button.ClickListener{
 			
 		} catch (Exception e) {
 			this.viewController.getMainView().getParentView().getWindow().showNotification(new ConnectionErrorException().getMessage());
+			e.printStackTrace();
 		}
 		
 		

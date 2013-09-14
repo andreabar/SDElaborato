@@ -5,6 +5,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Link;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -41,7 +42,10 @@ public class DetailsView extends Window {
 		
 		this.recordsTable = new Table();
 		this.recordsTable.addContainerProperty("Title", String.class, null);
+		this.recordsTable.addContainerProperty("Source", String.class, null);
 		this.recordsTable.addContainerProperty("Provider", String.class, null);
+		this.recordsTable.addContainerProperty("Data Provider", String.class, null);
+		this.recordsTable.addContainerProperty("Source link", Link.class, null);
 		this.recordsTable.addContainerProperty("Language", String.class, null);
 		this.recordsTable.addContainerProperty("Type", String.class, null);
 		this.recordsTable.addContainerProperty("IPR", String.class, null);

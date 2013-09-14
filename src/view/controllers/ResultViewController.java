@@ -36,9 +36,12 @@ import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.ProgressIndicator;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 import dbutil.DBHelper;
@@ -101,7 +104,7 @@ public class ResultViewController implements Serializable {
 
 	}
 
-	public Object loadTableItem(ResultSet result) {
+	public Object loadTableItem(ResultSet result, boolean isScheduled) {
 
 		try {
 			Record record = RecordController.getRecord(result.getInt("record"));
@@ -126,9 +129,11 @@ public class ResultViewController implements Serializable {
 
 				dateDownload = null;
 			}
-
-			Object rowItem[] = new Object[] { title, type, keyword, provider,
+			
+			
+			Object rowItem[] = new Object[] { title, type, keyword, provider, (isScheduled? new Link(result.getString("resource"), new ExternalResource(result.getString("resource"), "_blank")) : null),
 					new String(), new Label(), dateQuery, dateDownload };
+				
 			Integer scheduledTaskId = result.getInt("id");
 
 			this.resultView.getFileTable().addItem(rowItem, scheduledTaskId);
@@ -150,7 +155,7 @@ public class ResultViewController implements Serializable {
 			ResultSet tasks = TaskController.getWaitingTasks(AppData.userID);
 			while (tasks.next()) {
 
-				Object id = loadTableItem(tasks);
+				Object id = loadTableItem(tasks, false);
 				resultView.getFileTable().getItem(id).getItemProperty("Status")
 						.setValue("waiting");
 				resultView.getFileTable().getItem(id)
@@ -163,7 +168,7 @@ public class ResultViewController implements Serializable {
 
 			while (result.next()) {
 
-				Object id = loadTableItem(result);
+				Object id = loadTableItem(result, true);
 				Integer scheduledTaskId = result.getInt("id");
 				Component c = null;
 				String statusCol = null;
@@ -216,11 +221,19 @@ public class ResultViewController implements Serializable {
 				Record record = RecordController.getRecord(result
 						.getInt("record"));
 				Query q = QueryController.getQuery(result.getInt("query"));
-
+ 
 				String title = record.getTitle();
 				String type = record.getType();
 				String keyword = q.getKeyword();
-				String provider = record.getProvider();
+				String source = record.getProvider();
+				String dataProvider =  record.getDataProvider();
+				String dataProviderDescr = record.getDataProviderDescr();
+				Link sourceLink = new Link("Source Link", new ExternalResource(
+						record.getPortalLink(), "_blank"));
+				
+				Link resourceLink = new Link("Resource Link", new ExternalResource(
+						result.getString("resource"), "_blank"));
+				
 				String sDateQuery = q.getDate();
 				String sDateDownload = result.getString("date_download");
 				Date dateQuery = null;
@@ -242,12 +255,13 @@ public class ResultViewController implements Serializable {
 					c = new Link("Click to see online", new ExternalResource(
 							result.getString("resource"), "_blank"));
 				
-				Object rowItem[] = new Object[] { title, type, keyword,
-						provider, result.getString("status"),c, dateQuery, dateDownload };
+				Object rowItem[] = new Object[] { title, type, source, keyword, 
+						result.getString("status"), c , dataProvider, dataProviderDescr, sourceLink, resourceLink, record.getLanguage(), dateQuery, dateDownload };
 
-				this.resultView.getDownloadedFileTable().addItem(rowItem,
+				
+					this.resultView.getDownloadedFileTable().addItem(rowItem,
 						scheduledTaskId);
-
+					
 				resultView.getDownloadedFileTable().setSortContainerPropertyId(
 						"Date Download");
 				resultView.getDownloadedFileTable().setSortAscending(false);
@@ -279,7 +293,7 @@ public class ResultViewController implements Serializable {
 	public Component buildLinkFile(ResultSet result, Component c)
 			throws SQLException {
 		try {
-			ArrayList<URL> urls = getFileLink(result.getInt("id"));
+			ArrayList<URL> urls = getFileLink(result.getString("resource"));
 			if (urls.size() > 0) {
 				c = new Link("Click to open", new ExternalResource(urls.get(0)
 						.toString()));
@@ -291,10 +305,11 @@ public class ResultViewController implements Serializable {
 		return c;
 	}
 
-	private ArrayList<URL> getFileLink(int id) throws SQLException,
+	private ArrayList<URL> getFileLink(String r) throws SQLException,
 			MalformedURLException {
 
-		String sql = "SELECT * from file WHERE scheduled_task = " + id + ";";
+		String sql = "SELECT file.* from file, scheduled_task WHERE scheduled_task.id = file.scheduled_task AND " +
+				"scheduled_task.resource = '" + r + "'";
 		ArrayList<URL> urls = new ArrayList<>();
 		ResultSet query = DBHelper.getConnection().createStatement()
 				.executeQuery(sql);
@@ -398,6 +413,8 @@ class DeleteSelectedListener implements Button.ClickListener {
 	public void buttonClick(ClickEvent event) {
 
 		Object selected = controller.getResultView().getFileTable().getValue();
+		controller.getResultView().getFileTable().removeItem(selected);
+
 		try {
 			DBHelper.deleteTask((int) selected);
 			DBHelper.getConnection().commit();
@@ -405,6 +422,7 @@ class DeleteSelectedListener implements Button.ClickListener {
 			e.printStackTrace();
 		}
 		controller.loadResultTable();
+
 
 	}
 
@@ -431,17 +449,17 @@ class SeeMetadataListener implements Button.ClickListener {
 		try {
 			o = DBHelper.getMetadata((int) task);
 			Window w = new Window("Metadata");
-
+			w.setWidth("700px");
 			String dataXML ="<?xml version=\"1.0\" encoding=\"UTF-8\"?><record>" + XML.toString(o) + "</record>"; 
 			String formattedXML = XMLFormatter.format(dataXML);
 			System.out.println(formattedXML);
 			Label data = new Label(formattedXML);
 			data.setContentMode(Label.CONTENT_PREFORMATTED);
 			w.center();
-			w.setWidth("50%");
-					
-			w.setHeight("50%");
-			w.addComponent(data);
+			HorizontalLayout l = new HorizontalLayout();
+			l.addComponent(data);
+			data.setSizeFull();
+			w.setContent(l);
 
 			controller.getResultView().getApplication().getMainWindow()
 					.addWindow(w);

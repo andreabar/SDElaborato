@@ -15,6 +15,7 @@ import view.views.DetailsView;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Link;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 
@@ -47,7 +48,7 @@ public class DetailsViewController {
 		for(Record r : QueryController.getRecords(query)){
 			CheckBox check = new CheckBox(null, false);
 			check.setImmediate(true);
-			Object rowItem[] = new Object[]{r.getTitle(), r.getProvider(), r.getLanguage(), r.getType(), r.getRights(), check};
+			Object rowItem[] = new Object[]{r.getTitle(), r.getProvider(), r.getDataProvider(), r.getDataProviderDescr(), new Link("Link", new ExternalResource(r.getPortalLink(), "_blank")), r.getLanguage(), r.getType(), r.getRights(), check};
 			this.getDetailsView().getRecordsTable().addItem(rowItem, r);
 		}
 	}

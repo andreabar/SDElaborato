@@ -62,29 +62,18 @@ public class RecordController {
 
 	}
 
-	private static List<String> checkForResources(int id) throws SQLException {
-
-		List<String> resources = new ArrayList<String>();
-		String q = "SELECT url FROM resource WHERE record = " + id;
-
-		ResultSet set = DBHelper.getConnection().createStatement()
-				.executeQuery(q);
-		while (set.next()) {
-			resources.add(set.getString("url"));
-		}
-
-		set.getStatement().close();
-
-		return resources;
-	}
-
 	public static List<Record> saveRecords(ArrayList<Record> records) {
-
+		String query = "INSERT INTO record (type, language, url, title, ipr_type, provider, data_provider, data_provider_descr, portal_link) VALUES "
+				+ "(?,?,?,?,?,?,?,?,?);";
+		
 		for (Record r : records) {
-			String query = "INSERT INTO record (type, language, url, title, ipr_type, provider) VALUES "
-					+ "(?,?,?,?,?,?);";
+			
+			if(r.getID() == -1){
+
+			
 			java.sql.PreparedStatement statement;
 			try {
+				
 				statement = DBHelper.getConnection().prepareStatement(query,
 						Statement.RETURN_GENERATED_KEYS);
 
@@ -94,6 +83,10 @@ public class RecordController {
 				statement.setString(4, r.getTitle());
 				statement.setString(5, r.getRights());
 				statement.setString(6, r.getProvider());
+				statement.setString(7, r.getDataProvider());
+				statement.setString(8, r.getDataProviderDescr());
+				statement.setString(9, r.getPortalLink());
+
 
 				statement.executeUpdate();
 
@@ -108,7 +101,8 @@ public class RecordController {
 
 				e.printStackTrace();
 			}
-
+		}
+		
 		}
 
 		try {
@@ -119,7 +113,7 @@ public class RecordController {
 		}
 
 		for (Record r : records)
-			if (r.getProvider().equals(AppData.VIMEO)) // europeana resources
+			if(r.getProvider().equals(AppData.VIMEO)){ // europeana resources
 														// metadata are saved in
 														// the background app at
 														// download time FIXME
@@ -128,6 +122,14 @@ public class RecordController {
 														// too
 				DBHelper.saveMetadata(r.getID(),
 						(((VimeoRecord) r).getMetadata()));
+				try {
+					DBHelper.getConnection().commit();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
 
 		return records;
 
@@ -154,5 +156,31 @@ public class RecordController {
 		return null;
 
 	}
+
+	public static Record getRecord(String string) {
+		// TODO Auto-generated method stub
+		String sql = "SELECT * FROM record WHERE url ='" + string + "'";
+		try {
+			ResultSet set = DBHelper.getConnection().createStatement()
+					.executeQuery(sql);
+			if (set.next())
+				if (set.getString("provider").equals(AppData.EUROPEANA)) {
+					EuropeanaRecord r = new EuropeanaRecord(set);
+					set.getStatement().close();
+					set.close();
+					return r;
+
+				} else if (set.getString("provider").equals(AppData.VIMEO)) {
+					VimeoRecord r = new VimeoRecord(set);
+					set.getStatement().close();
+					set.close();
+					return r;
+				}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;	}
 
 }

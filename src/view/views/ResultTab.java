@@ -9,6 +9,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Link;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
@@ -64,6 +65,8 @@ public class ResultTab extends VerticalLayout {
 		this.fileProgressTable.addContainerProperty("Type", String.class, null);
 		this.fileProgressTable.addContainerProperty("Keyword", String.class, null);
 		this.fileProgressTable.addContainerProperty("Provider", String.class, null);
+		this.fileProgressTable.addContainerProperty("URL to process", Link.class, null);
+		
 		this.fileProgressTable.addContainerProperty("Status", String.class, null);
 		this.fileProgressTable.addContainerProperty("Progress", Component.class, null);
 		this.fileProgressTable.addContainerProperty("Date Query", Date.class, null);
@@ -80,11 +83,17 @@ public class ResultTab extends VerticalLayout {
 		this.downloadedFileTable = new Table("Downloaded Files");
 		this.downloadedFileTable.addContainerProperty("Title", String.class, null);
 		this.downloadedFileTable.addContainerProperty("Type", String.class, null);
+		this.downloadedFileTable.addContainerProperty("Source", String.class, null);
 		this.downloadedFileTable.addContainerProperty("Keyword", String.class, null);
-		this.downloadedFileTable.addContainerProperty("Provider", String.class, null);
 		this.downloadedFileTable.addContainerProperty("Status", String.class, null);
-
 		this.downloadedFileTable.addContainerProperty("Link", Component.class, null);
+
+		this.downloadedFileTable.addContainerProperty("Provider", String.class, null);
+		this.downloadedFileTable.addContainerProperty("Data Provider", String.class, null);
+		this.downloadedFileTable.addContainerProperty("Source link", Link.class, null);
+		this.downloadedFileTable.addContainerProperty("Resource link", Link.class, null);
+
+		this.downloadedFileTable.addContainerProperty("Language", String.class, null);
 		this.downloadedFileTable.addContainerProperty("Date Query", Date.class, null);
 		this.downloadedFileTable.addContainerProperty("Date Download", Date.class, null);
 		

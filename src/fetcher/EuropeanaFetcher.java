@@ -3,10 +3,8 @@ package fetcher;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -15,7 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import dbutil.DBHelper;
+import controllers.RecordController;
 
 import shared.PropertiesReader;
 import util.AppData;
@@ -31,7 +29,9 @@ public class EuropeanaFetcher implements JSONFetcher {
 	private static final String API_ACCESS_POINT = "http://europeana.eu/api//v2/search.json?wskey=";
 
 	@Override
-	public ArrayList<Record> executeQuery(Query v) throws ConnectionErrorException, NoResultException, JSONException, IOException, MalformedURLException {
+	public ArrayList<Record> executeQuery(Query v)
+			throws ConnectionErrorException, NoResultException, JSONException,
+			IOException, MalformedURLException {
 
 		URL request = buildQueryRequest(v);
 		if (request != null) {
@@ -45,7 +45,9 @@ public class EuropeanaFetcher implements JSONFetcher {
 
 	}
 
-	private ArrayList<Record> fetchResponse(URL request) throws NoResultException, ConnectionErrorException, IOException, JSONException {
+	private ArrayList<Record> fetchResponse(URL request)
+			throws NoResultException, ConnectionErrorException, IOException,
+			JSONException {
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				request.openStream(), CharEncoding.UTF_8));
@@ -58,7 +60,6 @@ public class EuropeanaFetcher implements JSONFetcher {
 				throw new ConnectionErrorException();
 			if (o.getInt("totalResults") == 0)
 				throw new NoResultException();
-			
 
 			JSONArray items = o.getJSONArray("items");
 			ArrayList<Record> records = getRecordList(items);
@@ -79,39 +80,71 @@ public class EuropeanaFetcher implements JSONFetcher {
 			Record item = new EuropeanaRecord();
 
 			JSONObject jsonItem = items.getJSONObject(i);
-			try {
-				item.setType(jsonItem.getString("type"));
-			} catch (JSONException e) {
-				item.setType("unknown");
+			Record previous = RecordController.getRecord(jsonItem
+					.getString("link"));
+			if (null != previous)
+				item = previous;
+			else {
+				try {
+					item.setType(jsonItem.getString("type"));
+				} catch (JSONException e) {
+					item.setType("unknown");
+				}
+				try {
+
+					item.setTitle(jsonItem.getJSONArray("title").getString(0));
+				} catch (JSONException e) {
+
+					item.setTitle("unknown");
+				}
+				try {
+
+					item.setLanguage(jsonItem.getJSONArray("language")
+							.getString(0));
+				} catch (JSONException e) {
+
+					item.setLanguage("unknown");
+				}
+				try {
+
+					item.setRights(jsonItem.getJSONArray("rights").getString(0));
+				} catch (JSONException e) {
+
+					item.setRights("unknown");
+				}
+				try {
+
+					item.setUniqueUrl(jsonItem.getString("link"));
+				} catch (JSONException e) {
+
+				}
+
+				try {
+
+					item.setDataProvider(jsonItem.getJSONArray("provider")
+							.getString(0));
+				} catch (JSONException e) {
+					item.setDataProvider("unknown");
+
+				}
+
+				try {
+
+					item.setDataProviderDescr(jsonItem.getJSONArray(
+							"dataProvider").getString(0));
+				} catch (JSONException e) {
+					item.setDataProviderDescr("unknown");
+
+				}
+
+				try {
+
+					item.setPortalLink(jsonItem.getString("guid"));
+				} catch (JSONException e) {
+					item.setPortalLink("unknown");
+
+				}
 			}
-			try {
-
-				item.setTitle(jsonItem.getJSONArray("title").getString(0));
-			} catch (JSONException e) {
-
-				item.setTitle("unknown");
-			}
-			try {
-
-				item.setLanguage(jsonItem.getJSONArray("language").getString(0));
-			} catch (JSONException e) {
-
-				item.setLanguage("unknown");
-			}
-			try {
-
-				item.setRights(jsonItem.getJSONArray("rights").getString(0));
-			} catch (JSONException e) {
-
-				item.setRights("unknown");
-			}
-			try {
-
-				item.setUniqueUrl(jsonItem.getString("link"));
-			} catch (JSONException e) {
-
-			}
-
 			list.add(item);
 		}
 
